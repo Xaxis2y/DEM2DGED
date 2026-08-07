@@ -1,0 +1,3 @@
+SKIPPED -- no rasters found under C:\Users\Son\Documents\DEM2DGED\dem2dged_v0.41\DEM
+Drop one or more source DEMs there and re-run to exercise the
+full 19-step harness against real terrain.

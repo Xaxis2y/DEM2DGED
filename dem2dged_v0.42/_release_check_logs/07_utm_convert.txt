@@ -1,0 +1,56 @@
+command: C:\ProgramData\anaconda3\envs\DGED\python.exe dem2dged.py C:\Users\Son\AppData\Local\Temp\dem2dged_relcheck_7j3ld2we\utm_source.tif C:\Users\Son\AppData\Local\Temp\dem2dged_relcheck_7j3ld2we\utm_tiles --mode utm --level 5 --zone 32N --verbose
+returncode: 0
+tiles produced: 2
+INFO    : ============================================================
+INFO    : dem2dged v0.42  -  mode: UTM   level: 5
+INFO    : input  : C:\Users\Son\AppData\Local\Temp\dem2dged_relcheck_7j3ld2we\utm_source.tif
+INFO    : output : C:\Users\Son\AppData\Local\Temp\dem2dged_relcheck_7j3ld2we\utm_tiles
+INFO    : ============================================================
+Creating output file that is 5001P x 5001L.
+Using internal nodata values (e.g. -32767) for image C:\Users\Son\AppData\Local\Temp\dem2dged_relcheck_7j3ld2we\utm_source.tif.
+Processing utm_source.tif [1/1] : 0...10...20...30...40...50...60...70...80...90...100 - done.
+Creating output file that is 5001P x 5001L.
+Using internal nodata values (e.g. -32767) for image C:\Users\Son\AppData\Local\Temp\dem2dged_relcheck_7j3ld2we\utm_source.tif.
+Processing utm_source.tif [1/1] : 0...10...20...30...40...50...60...70...80...90...100 - done.
+INFO    : ============================================================
+INFO    : Validating output...
+INFO    : Validation: PASS=37  WARN=0  FAIL=0  -> PASS
+INFO    : Validation report written: C:\Users\Son\AppData\Local\Temp\dem2dged_relcheck_7j3ld2we\utm_tiles\DGED_Validation_Report.html
+INFO    : ============================================================
+OS: win32
+Input extent: (500000.0, 6150000.0, 512000.0, 6147000.0, '32632')
+GSD=2 m  posts=5001  tile=10000 m  EPSG:32632
+Output data type: Float32
+Resampler: bilinear  (src~=10.000 m -> dst=2.000 m)
+WARNING: -source_vertical not set - output heights are ASSUMED to already be EGM2008; no vertical transform is applied (only the EPSG:32632+3855 label). Pass -source_vertical if your DEM uses another vertical datum.
+Bounding box: 500000.0 512000.0 6147000.0 6150000.0
+------------------------------------------------------------
+Creating: C:\Users\Son\AppData\Local\Temp\dem2dged_relcheck_7j3ld2we\utm_tiles\DGEDL5UtD_32N6140_500_A_U_01.tif
+gdalwarp -t_srs EPSG:32632 -te 499999.0 6139999.0 510001.0 6150001.0 -dstnodata -32767 -tr 2 2 -r bilinear -ot Float32 -co COMPRESS=LZW -co PREDICTOR=3 -co TILED=YES --config GTIFF_REPORT_COMPD_CS YES 'C:\Users\Son\AppData\Local\Temp\dem2dged_relcheck_7j3ld2we\utm_source.tif' 'C:\Users\Son\AppData\Local\Temp\dem2dged_relcheck_7j3ld2we\utm_tiles\DGEDL5UtD_32N6140_500_A_U_01.tif'
+Fixing TIFF header ...
+50% done
+------------------------------------------------------------
+Creating: C:\Users\Son\AppData\Local\Temp\dem2dged_relcheck_7j3ld2we\utm_tiles\DGEDL5UtD_32N6140_510_A_U_01.tif
+gdalwarp -t_srs EPSG:32632 -te 509999.0 6139999.0 520001.0 6150001.0 -dstnodata -32767 -tr 2 2 -r bilinear -ot Float32 -co COMPRESS=LZW -co PREDICTOR=3 -co TILED=YES --config GTIFF_REPORT_COMPD_CS YES 'C:\Users\Son\AppData\Local\Temp\dem2dged_relcheck_7j3ld2we\utm_source.tif' 'C:\Users\Son\AppData\Local\Temp\dem2dged_relcheck_7j3ld2we\utm_tiles\DGEDL5UtD_32N6140_510_A_U_01.tif'
+Fixing TIFF header ...
+100% done
+Table of contents written: C:\Users\Son\AppData\Local\Temp\dem2dged_relcheck_7j3ld2we\utm_tiles\TABLE_OF_CONTENTS.xml
+Collection metadata written: C:\Users\Son\AppData\Local\Temp\dem2dged_relcheck_7j3ld2we\utm_tiles\DGEDL5U_32N_COLLECTION.xml
+All done!
+dem2dged_validate v0.42
+Tile folder: C:\Users\Son\AppData\Local\Temp\dem2dged_relcheck_7j3ld2we\utm_tiles
+
+?? A. File pairing (.tif <-> .xml) ???????????????????????????????????
+
+?? B-F. Per-tile checks (naming, header, grid, XML, statistics) ??????
+
+?? G. Edge-overlap consistency between adjacent tiles ????????????????
+
+?? H. Comparison against source DEM ??????????????????????????????????
+
+?? H2. Sample-window pixel difference (tiles vs re-warped source) ????
+  Pixel-level sample window: max difference 0.00 m
+
+?? Summary ???????????????????????????????????????????????????????????
+PASS=37  WARN=0  FAIL=0
+RESULT: PASS

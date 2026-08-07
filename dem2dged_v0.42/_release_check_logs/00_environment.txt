@@ -1,0 +1,21 @@
+dem2dged release check  -  2026-08-07 12:22:18
+Project folder: C:\Users\Son\Documents\DEM2DGED\dem2dged_v0.41
+Executable:     C:\ProgramData\anaconda3\envs\DGED\python.exe
+Python:         3.10.20 | packaged by conda-forge | (main, Jun 11 2026, 03:28:51) [MSC v.1944 64 bit (AMD64)]
+CONDA_PREFIX:   C:\ProgramData\anaconda3\envs\DGED
+GDAL_DATA:      C:\ProgramData\anaconda3\envs\DGED\Library\share\gdal
+PROJ_LIB:       (not set)
+
+osgeo.gdal version: 3.13.2
+gdal data dir:      C:\ProgramData\anaconda3\envs\DGED\Library\share\gdal
+PROJ version:       9.8.1
+numpy        2.2.6
+pytest       9.1.1
+PyInstaller  6.21.0
+
+gdalwarp         C:\ProgramData\anaconda3\envs\DGED\Library\bin\gdalwarp.EXE
+gdalinfo         C:\ProgramData\anaconda3\envs\DGED\Library\bin\gdalinfo.EXE
+gdal_translate   C:\ProgramData\anaconda3\envs\DGED\Library\bin\gdal_translate.EXE
+
+-- conda list (filtered) --
+(conda list unavailable: rc=999)

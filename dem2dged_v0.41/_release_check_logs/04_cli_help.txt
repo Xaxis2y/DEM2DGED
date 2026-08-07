@@ -1,0 +1,128 @@
+==========================================================================
+dem2dged --version   (rc=0)
+==========================================================================
+dem2dged v0.41
+
+==========================================================================
+dem2dged --help   (rc=0)
+==========================================================================
+usage: dem2dged [-h] [--mode {geo,utm}] [--level LEVEL] [--zone ZONE]
+                [--source-type LETTER] [--security-class CLASS]
+                [--product-version VER] [--resample ALG]
+                [--source-vertical EPSG] [--org CODE] [--abs-hacc METRES]
+                [--abs-vacc METRES] [--lineage TEXT] [--verbose] [--debug]
+                [--quiet] [--no-validate] [--skip-sanity-check] [--version]
+                input_raster output_folder
+
+Convert a raster DEM to DGED tiles (GEO or UTM).
+
+positional arguments:
+  input_raster          Input elevation raster (GeoTIFF, VRT, ...)
+  output_folder         Output directory (will be created if absent)
+
+options:
+  -h, --help            show this help message and exit
+  --mode {geo,utm}      Output projection mode (default: geo)
+  --level LEVEL         DGED product level (default: 5)
+  --zone ZONE           UTM zone e.g. 32N (UTM mode only; auto-detect if
+                        omitted)
+  --source-type LETTER  Source-type code (default: A)
+  --security-class CLASS
+                        Security classification (default: U)
+  --product-version VER
+                        Product version string (default: 01)
+  --resample ALG        Resampling: auto|optimize|bilinear|cubic|cubicspline|a
+                        verage|lanczos|near (default: auto = average when
+                        downsampling, else bilinear; optimize = measure
+                        Nearest/Bilinear/Cubic against the source DEM and use
+                        whichever reconstructs it most accurately -- slower
+                        than auto, skipped in favor of Nearest automatically
+                        for angular/circular-looking sources)
+  --source-vertical EPSG
+                        Source vertical EPSG (e.g. 5773=EGM96, 3855=EGM2008).
+                        If given and != 3855, a real geoid transform to
+                        EGM2008 is applied; otherwise heights are assumed
+                        already EGM2008 (label only).
+  --org CODE            Producer organisation/nation code (STANAG 1059)
+                        embedded in filenames and metadata (default: none)
+  --abs-hacc METRES     Absolute horizontal accuracy (CE90) written to the
+                        metadata quality report (default: auto = DGED spec
+                        Table 5 goal value for the level)
+  --abs-vacc METRES     Absolute vertical accuracy (LE90) written to the
+                        metadata quality report (default: auto = DGED spec
+                        Table 6 goal value for the level)
+  --lineage TEXT        Lineage statement written to the metadata (default:
+                        generated from the source file name and processing
+                        parameters)
+  --verbose             Show extra output
+  --debug               Enable debug-level logging output
+  --quiet               Suppress info messages, only show warnings and errors
+  --no-validate         Skip the automatic validation report generated after
+                        conversion
+  --skip-sanity-check   Proceed even if the input raster's value range and
+                        filename look like non-elevation data (e.g. an
+                        aspect/direction layer)
+  --version             show program's version number and exit
+
+Product levels and approx ground sample distance
+-------------------------------------------------
+  0  ->  ~1000 m   |   5  ->  ~2 m
+  1  ->  ~100 m    |   6  ->  ~1 m
+  2  ->  ~30 m     |   7  ->  ~0.5 m
+  3  ->  ~12 m     |   8  ->  ~0.25 m
+  4b ->  ~5 m      |   9  ->  ~0.125 m
+  4  ->  ~4 m      |
+
+Requirements: GDAL (gdalwarp) must be on PATH.
+Install via:  conda install -c conda-forge gdal
+
+==========================================================================
+dem2dged_geo --help   (rc=0)
+==========================================================================
+
+==========================================================================
+dem2dged_utm --help   (rc=0)
+==========================================================================
+
+==========================================================================
+dem2dged_validate --version   (rc=0)
+==========================================================================
+dem2dged_validate v0.41
+
+==========================================================================
+dem2dged_validate --help   (rc=0)
+==========================================================================
+usage: dem2dged_validate [-h] [-src SOURCE_DEM] [-report FILE]
+                         [-html-report FILE] [-max-diff METRES]
+                         [-resample ALG] [-verbose] [--version]
+                         tile_folder
+
+Automated validator for DGED tile sets produced by dem2dged.
+
+positional arguments:
+  tile_folder           Folder containing generated .tif/.xml DGED tiles
+
+options:
+  -h, --help            show this help message and exit
+  -src SOURCE_DEM, --src SOURCE_DEM
+                        Original input DEM: enables coverage, statistics and
+                        sample-window difference checks against the source
+  -report FILE, --report FILE
+                        Also write the full report to a text file
+  -html-report FILE, --html-report FILE
+                        Also write a styled HTML report to this file
+  -max-diff METRES, --max-diff METRES
+                        Tolerance for the sample-window comparison vs the
+                        source (default 5.0 m; some difference from resampling
+                        is expected and normal)
+  -resample ALG, --resample ALG
+                        Resampling algorithm the tiles being validated were
+                        actually produced with
+                        (near|bilinear|cubic|cubicspline|average|lanczos|...)
+                        -- must match the -resample value (or the GUI's
+                        Resampling Method choice) used for the conversion, so
+                        the section H/H2 source comparison re-warps the source
+                        the same way the tiles were made (default: bilinear,
+                        the tool's long-standing default resampler)
+  -verbose, --verbose   Print every per-tile detail, not just problems
+  --version             show program's version number and exit

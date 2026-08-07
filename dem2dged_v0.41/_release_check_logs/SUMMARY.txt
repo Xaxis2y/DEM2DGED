@@ -1,0 +1,19 @@
+dem2dged v0.41 release check  -  2026-08-07 11:31:43
+Python: 3.10.20
+==========================================================================
+
+PASS   00 environment               GDAL importable
+PASS   01 byte-compile              23 modules
+PASS   02 audit_pure.py             RESULT: 0 problem(s)
+FAIL   03 pytest                    ======================= 23 failed, 189 passed in 1.39s ========================
+PASS   04 CLI surface               6 entry points
+PASS   05 conversion                GEO: 2 tile(s)
+PASS   06 validation                GEO: RESULT: PASS
+PASS   07 conversion                UTM: 2 tile(s)
+PASS   08 validation                UTM: RESULT: PASS
+PASS   09 tile inspection           all tiles conform
+SKIP   10 run_verification          no rasters under DEM\
+
+==========================================================================
+1 step(s) FAILED
+==========================================================================

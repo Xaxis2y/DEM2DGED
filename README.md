@@ -3,7 +3,7 @@
 **SPDX-License-Identifier: GPL-2.0-or-later**  
 **Copyright (c) 2026 Eui Soo SON**
 
-**Current version: v0.40**
+**Current version: v0.41**
 
 Convert raster Digital Elevation Models (DEMs) to military-standard **DGED** (Defense Gridded Elevation Data) tiles.
 
@@ -24,6 +24,8 @@ DGED is a DGIWG product profile for packaging elevation data for military use. I
 | `dem2dged_validate.py` | **Automated validator** — checks tiles for DGED compliance and data integrity |
 | `DGED_GEO_TEMPLATE.xml` | ISO 19115-2 metadata sidecar template — GEO tiles |
 | `DGED_UTM_TEMPLATE.xml` | ISO 19115-2 metadata sidecar template — UTM tiles |
+| `dem2dged_anaconda_environment.py` | **Automated environment setup** (recommended) — creates `dem2dged_anaconda_environment` with GDAL and all dependencies |
+| `dem2dged_anaconda_environment.bat` | Windows batch version of the environment setup script |
 | `install.bat` | Windows one-click conda installer |
 | `install.sh` | Linux / macOS one-click conda installer |
 | `build_exe.bat` | Build a standalone `dem2dged.exe` (no Python needed on target machine) |
@@ -65,28 +67,36 @@ The GUI processes all files sequentially, shows live progress per file, and writ
 
 ### Installation (one time)
 
-**Windows:**
+**Automated setup (recommended):**
+```bash
+python dem2dged_anaconda_environment.py
 ```
+This creates a dedicated environment named `dem2dged_anaconda_environment` with GDAL and all dependencies pre-installed. Supports `--verify` and `--remove` options.
+
+**Alternative: Windows batch installer:**
+```batch
+dem2dged_anaconda_environment.bat
+```
+
+**Manual setup (if you prefer):**
+```bash
+conda create --name dem2dged_anaconda_environment --channel conda-forge gdal python=3.11 -y
+conda activate dem2dged_anaconda_environment
+```
+
+Legacy installers (create environment named `DGED`):
+```batch
+# Windows
 install.bat
-```
 
-**Linux / macOS:**
-```bash
+# Linux / macOS
 bash install.sh
-```
-
-Both scripts create a conda environment called `DGED` with GDAL pre-installed.
-
-Or manually:
-```bash
-conda create --name DGED --channel conda-forge gdal python=3.10 -y
-conda activate DGED
 ```
 
 ### Quickstart
 
 ```bash
-conda activate DGED
+conda activate dem2dged_anaconda_environment
 cd path/to/DEM2DGED
 
 # GEO output (WGS-84), default level 5 ≈ 2 m GSD
@@ -358,9 +368,9 @@ The tool tags each tile with the EGM2008 vertical datum (`EPSG:3855`) per the DG
 **Symptom:** `ERROR: GDAL cannot open: ...` or `ModuleNotFoundError: No module named 'osgeo'`
 
 **Solution:**
-- Ensure the DGED conda environment is activated: `conda activate DGED`
-- If the environment doesn't exist, create it: `conda install -c conda-forge gdal python=3.10 -y`
-- For Windows EXE: the GDAL/PROJ data should be bundled. If still failing, rebuild the EXE using `build_exe.bat` after activating the DGED environment.
+- Ensure the environment is activated: `conda activate dem2dged_anaconda_environment`
+- If the environment doesn't exist, set it up: `python dem2dged_anaconda_environment.py`
+- For Windows EXE: the GDAL/PROJ data should be bundled. If still failing, rebuild the EXE using `build_exe.bat` after activating the environment.
 
 ### GDAL_DATA or PROJ_LIB not found
 
@@ -368,7 +378,7 @@ The tool tags each tile with the EGM2008 vertical datum (`EPSG:3855`) per the DG
 
 **Solution:**
 - These environment variables are automatically set by `dem2dged.exe` and the Python scripts.
-- If manually running `dem2dged.py` outside the DGED environment, ensure you have activated it: `conda activate DGED`
+- If manually running `dem2dged.py` outside the environment, ensure you have activated it: `conda activate dem2dged_anaconda_environment`
 - Check paths: `python -c "import os, osgeo; print(os.path.dirname(osgeo.__file__))"`
 
 ### Geoid transformation fails (EGM96, EGM2008, etc.)
@@ -379,7 +389,7 @@ The tool tags each tile with the EGM2008 vertical datum (`EPSG:3855`) per the DG
 - The geoid transformation (--source-vertical option) requires PROJ grid files (e.g., `egm08_25.gtx`).
 - These are not bundled in the EXE by default. Download them:
   ```bash
-  conda activate DGED
+  conda activate dem2dged_anaconda_environment
   projsync --all
   ```
 - Alternatively, omit `--source-vertical` and the tool will assume your input heights are already in the target datum (EGM2008 by default) and only apply the label.
@@ -483,6 +493,7 @@ The project version lives in **one place**: `VERSION` at the top of `dem2dged_li
 
 | Version | Change |
 |---|---|
+| v0.41 (2026-08-07) | **Repair release — v0.40 did not work as shipped.** **Blocker: `dem2dged_validate.py` did not byte-compile.** An entire block was missing between the end of the module docstring and the body of `overall_result()`: the docstring's closing `"""`, *every* import (`os`, `sys`, `re`, `glob`, `math`, `argparse`, `numpy`, `xml.etree`, `osgeo.gdal`/`osr` and the names taken from `dem2dged_lib`), the `NODATA` / `ELEV_MIN_SANE` / `ELEV_MAX_SANE` constants, `_STATUS_ORDER`, the `GEO_RE` / `UTM_RE` filename patterns, and the `def overall_result(...)` line itself. Python therefore read the module docstring as running on into `overall_result()`'s own docstring and stopped at `IndentationError: unexpected indent (line 247)`. Everything downstream degraded *silently*: `dem2dged.py`'s post-conversion auto-validation logged "could not import dem2dged_validate" and wrote no `DGED_Validation_Report.txt`/`.html`, the GUI's "Validate after conversion" checkbox was permanently disabled, `audit_pure.py` aborted on import so the project's own self-audit could not run, and `dem2dged_validate.exe` could not be built. The block is restored; `GEO_RE` / `UTM_RE` were rebuilt from spec 12.1 and re-verified against `geo_tile_basename()` / `utm_tile_basename()` output for every product level, both hemispheres, all UTM zone forms, with and without the optional organisation code, plus the pre-v0.34 short-northing and pre-v0.27 `Gt<letter>` legacy forms, negative cases and GEO/UTM cross-matching. **Version audit was checking nothing.** The `# Version:` header comment v0.32 introduced was absent from all seven modules that mirror `dem2dged_lib.VERSION`, and `audit_pure.py`'s pattern required `Version:` in column 0 — impossible in a `.py` file outside a string — so it could never have matched a header comment. The "clean version audit" claimed for v0.40 was not real. Both sides fixed. **`tests/` was missing entirely** while `pytest.ini` still pointed `testpaths` at it, so `pytest` failed immediately with "file or directory not found: tests"; the suite is restored (185 unit tests + 22 GDAL integration tests), including the v0.38 per-test `tempfile.mkdtemp()` `output_dir` fixture. **Robustness:** `check_tile()` wrapped `gdal.Open()` in a `try`/`except`, but `UseExceptions()` is not enabled in this module, so a corrupt tile returned `None` and killed the whole run with an `AttributeError` on the next line instead of failing that one tile — now an explicit FAIL. **Housekeeping:** unused imports/locals removed (pyflakes clean project-wide), stale `build/`, `dist/` and `__pycache__` artefacts cleared. No change to the DGED tables, tile geometry, filenames, metadata, resampling or any spec-compliance check — a v0.39/v0.40 delivery does not need regenerating. |
 | v0.38 (2026-07-20) | **Two real bugs found by actually running the real CLI and pytest suite** — the previous v0.37 release had only been verified by manual code review plus a GDAL-free reimplementation testbed, since GDAL wasn't available in that environment; this is the first time either the real tool or the real test suite had run end to end. **Bug 1 (validator silently dropped both report files):** `dem2dged_validate.py`'s `Report._emit()` unconditionally `print()`ed every report line, including the box-drawing section headers (`section()`), straight to the console. On Windows with stdout redirected to a file under a legacy console code page (cp1252), that `print()` raised `UnicodeEncodeError`, which propagated up through `run_validation()` into `dem2dged.py`'s auto-validation `try`/`except` — silently skipping *both* `DGED_Validation_Report.txt` and `.html` even though every check had already completed successfully. `_emit()` now falls back to a best-effort re-encode of just the console echo on that error; the report content itself (`self.lines`, what actually gets written to disk) was never affected. **Bug 2 (flaky test):** `tests/conftest.py`'s `output_dir` fixture always resolved to the same session-wide `output` subdirectory for every test that requested it, so a test's leftover tiles were still sitting there — never cleaned up — when the next test ran its own conversion into the "same" folder and globbed `*.tif` expecting only its own output. That's why `test_utm_names_are_zero_padded` could fail on a leftover *GEO*-named tile left behind by an earlier `TestGeoConverter` test; the UTM zero-padding logic itself was never wrong. Every test now gets a fresh `tempfile.mkdtemp()`. **Independent re-verification of v0.37's Findings 1 and 3**, this time directly against real GDAL-produced tiles instead of a reimplementation testbed: shared-edge `max\|diff\|` = 0.0000 m on the real-terrain dataset across all three resampling methods (was up to 1.6 m), and Cubic Convolution tiles' min/max now land exactly on the two test rasters' true source ranges — 0..255 and 6..255 — instead of overshooting to -41..285 / -44..313. **Bug 3 (validator-side false FAIL on cubic runs):** with Bug 1 fixed and reports actually being written, both real cubic-convolution runs FAILED Section H (global min/max) on a validator-side artifact, not a real defect. `check_source()`'s H/H2 checks build their own internal re-warp of the source using the tiles' actual resample algorithm (v0.37 Finding 2) as a like-for-like comparison baseline — but that re-warp was never clamped the way the real delivered tiles are (v0.37 Finding 3), so a correctly-clamped tile (e.g. ACAIPGTM: 0.00..255.00 m) was compared against a still-overshooting baseline (-18.33..274.21 m) and flagged as an 18–19 m "defect" that was really just clamped-vs-unclamped. `check_source()` now computes the same clamp range the converters use (`dem2dged_lib.compute_tile_stats()` on the source) and applies it to both H's global-stats re-warp and H2's per-window re-warp. |
 | v0.37 (2026-07-20) | **All five findings of an independent code review fixed** (`DGED_Conversion_Review.md`, an audit of a 9-run/42-tile DGIWG test-data conversion batch). **Finding 1 (real defect, real-terrain delivery):** adjacent DGED tiles are warped by independent `gdalwarp` calls, so nothing guaranteed they agreed on the single post row/column the spec requires them to share — confirmed as a 1.6 m seam on a 5 m-post real-terrain tile pair (Nearest Neighbor; 12–13 cm for Bilinear/Cubic on the same pair, same root cause). Warp extents are now rounded to a fixed coordinate precision, and a new post-warp pass, `dem2dged_lib.reconcile_tile_edges()`, copies each tile's shared edge pixels onto its neighbour so the two files are bit-identical along that edge regardless of what either individual `gdalwarp` call did internally — verified against the actual DGIWG test tiles that showed the seam, for all three resampling methods, and applied to both CLI converters and the GUI. **Finding 2 (validator bug):** the validator's source-comparison sections (H/H2) re-warped the source DEM as Bilinear unconditionally, regardless of what the tiles were actually made with, despite a code comment claiming otherwise — so Nearest Neighbor/Cubic runs partly failed on "how different is this from Bilinear," not "how wrong is this tile." The actual resampling algorithm is now threaded through from the converters and GUI into `dem2dged_validate.check_source()`/`run_validation()`, with a new `-resample`/`--resample` validator CLI flag for standalone use. **Finding 3 (real, expected, now handled):** cubic-family resamplers (cubic, cubicspline, lanczos) can overshoot the source's true min/max at sharp discontinuities — confirmed on two 8-bit, hard-step-edge DGIWG test rasters, with Cubic Convolution tiles as low as -44 m against a true source minimum of 0–6 m. Tiles made with one of these resamplers are now clamped back into the source's exact range right after warping (`dem2dged_lib.clamp_tile_to_range()`); resamplers dem2dged picks automatically (average, bilinear) never overshoot and are unaffected. **Finding 4 (cosmetic, but confusing):** the text report's `RESULT:` line used a 2-tier PASS/FAIL rule while the HTML badge and GUI comparison badge each used a 3-tier FAIL > WARN > PASS rule, so identical PASS=/WARN=/FAIL= counts for the same run could read differently across reports. All of them now call one shared `dem2dged_validate.overall_result()`. **Optional polish:** the validator's H2 sample-window placement is now coverage-aware, nudging a fixed window to the nearest spot with actual data instead of routinely warning "no overlapping valid data" on deliveries whose footprint doesn't fill its bounding box evenly. |
 | v0.36 (2026-07-20) | **Pre-flight elevation sanity check + auto-optimize resampling**, prompted by a real validation-failure report: an aspect/direction raster fed into the tool as if it were elevation, which produced huge, confusing RMSE/tolerance failures because nothing about a GeoTIFF says "these numbers are heights." (1) **New pre-flight check** (`dem2dged_lib.sanity_check_elevation_source()`) inspects the source's filename (`aspect`, `direction`, `curvature`, `orientation`, `bearing`, `azimuth`, `hillshade`, `flow_dir`/`flow_acc`, `slope_class`) and its actual value range (`quick_raster_range()`, a fast approximate `ComputeStatistics()` call) for signs it is a terrain *derivative* rather than elevation. Blocks by default only when **both** a filename hint and a 0–360-degree-like range are present; warns but proceeds on either signal alone, so real elevation data with an unusual filename or range is never falsely blocked. New CLI flag `-skip_sanity_check` / `--skip-sanity-check` and GUI checkbox "Skip elevation sanity check" override it. (2) **New `-resample optimize` mode** (`dem2dged_lib.resolve_resampler()`): instead of `-resample auto`'s fixed source/target-GSD-ratio rule of thumb, it measures Nearest Neighbor / Bilinear / Cubic Convolution against the source DEM itself — reusing the Resampling Comparison Test's hold-out cross-validation (`dem2dged_compare.pick_best_resampling()`), but writing no tiles or report — and uses whichever reconstructs it most accurately for that specific file. New GUI dropdown entry "Optimize." The two features are linked: for a source that the sanity check flags as angular/circular data, RMSE is not a meaningful accuracy measure across the 0/360 wraparound seam (averaging 1° and 359° gives 180°, the compass direction opposite both real values), so `optimize` mode skips the comparison entirely and uses Nearest Neighbor directly rather than ranking methods by a number that would not mean anything. Both features' classification/selection logic is unit tested GDAL-free — `audit_pure.py` sections 8–9 and `tests/test_lib.py`'s `TestSanityCheck` / `TestAutoOptimizeResampling` — by monkeypatching the one function in each that actually touches a raster, rather than mocking GDAL's dataset object graph. |

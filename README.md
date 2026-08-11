@@ -3,7 +3,7 @@
 **SPDX-License-Identifier: GPL-2.0-or-later**  
 **Copyright (c) 2026 Eui Soo SON**
 
-**Current version: v0.41**
+**Current version: v0.45**
 
 Convert raster Digital Elevation Models (DEMs) to military-standard **DGED** (Defense Gridded Elevation Data) tiles.
 
@@ -15,15 +15,26 @@ DGED is a DGIWG product profile for packaging elevation data for military use. I
 
 ## What's in this folder
 
+### Application
+
 | File | Purpose |
+|---|---|
 | `dem2dged_gui.py` | **GUI application** — point-and-click converter, supports multiple DEMs |
 | `dem2dged.py` | Unified command-line entry point (GEO and UTM modes) |
 | `dem2dged_geo.py` | GEO mode converter (WGS-84 / EPSG:4326) |
 | `dem2dged_utm.py` | UTM mode converter (auto-detects zone) |
-| `dem2dged_lib.py` | Shared library (DGED tables, GDAL helpers) |
+| `dem2dged_lib.py` | Shared library (DGED tables, GDAL helpers, pre-flight guards) — holds `VERSION`, the single source of truth |
 | `dem2dged_validate.py` | **Automated validator** — checks tiles for DGED compliance and data integrity |
+| `dem2dged_compare.py` | Resampling comparison test — ranks Nearest / Bilinear / Cubic against the source and writes an HTML report |
+| `dem2dged_logging.py` | Shared logging setup (`--quiet` / `--debug`) |
+| `dem2dged_env.py` | **Environment diagnostic** (v0.45) — dependency-free; run `python dem2dged_env.py` when an import fails. See [Troubleshooting](#wrong-python-interpreter-modulenotfounderror-inside-an-activated-environment) |
 | `DGED_GEO_TEMPLATE.xml` | ISO 19115-2 metadata sidecar template — GEO tiles |
 | `DGED_UTM_TEMPLATE.xml` | ISO 19115-2 metadata sidecar template — UTM tiles |
+
+### Setup and build
+
+| File | Purpose |
+|---|---|
 | `dem2dged_anaconda_environment.py` | **Automated environment setup** (recommended) — creates `dem2dged_anaconda_environment` with GDAL and all dependencies |
 | `dem2dged_anaconda_environment.bat` | Windows batch version of the environment setup script |
 | `install.bat` | Windows one-click conda installer |
@@ -32,7 +43,34 @@ DGED is a DGIWG product profile for packaging elevation data for military use. I
 | `rebuild_exe.bat` | Re-run PyInstaller using the existing `dem2dged.spec` |
 | `build_validate_exe.bat` | Build a standalone `dem2dged_validate.exe` (console tool, no Python needed) |
 | `rebuild_validate_exe.bat` | Re-run PyInstaller using the existing `dem2dged_validate.spec` |
+| `dem2dged.spec` / `dem2dged_validate.spec` | Curated PyInstaller specs — the authoritative build recipe; see [`BUILD_SCRIPTS_GUIDE.md`](BUILD_SCRIPTS_GUIDE.md) |
+
+### Test, audit and release
+
+| File | Purpose |
+|---|---|
+| `tests/` | pytest suite — `conftest.py`, `test_lib.py`, `test_validator.py`, `test_converters.py`. Run with `pytest` from the project root |
+| `audit_pure.py` | GDAL-free self-audit (naming, tables, version consistency) — `python audit_pure.py` |
+| `run_verification.py` | End-to-end verification run against real GDAL |
+| `RELEASE_CHECK_v0.45.py` | **Release gate** — full pre-release run: audit, pytest, real conversions, validation, ASCII-console check, PyInstaller build |
+| `PACKAGE_v0.45.py` | Builds the release zips (full tool + validator-only bundle) |
+| `dem2dged_package.py` / `dem2dged_validate_package.py` | The two packagers the release script drives |
+| `BUILD_AND_PACKAGE.py` | Convenience wrapper — build the exes, then package |
+| `selftest_resampling_comparison.py` | End-to-end self-test of the resampling comparison feature |
+
+### Documentation
+
+| File | Purpose |
+|---|---|
+| `START_HERE.md` | One-page orientation — read this first |
 | `QUICKSTART.html` | Visual quick-start guide — open in any browser |
+| `DEM2DGED_User_Manual.docx` | Full user manual |
+| `VERSION.txt` / `VALIDATOR_VERSION.txt` | Maintained changelogs. **Hand-maintained below the header** — the packagers rewrite only the three header lines |
+| `MANIFEST.md` | What ships in each release zip |
+| `DGIWG_STANDARDS_TRACKING.md` | Spec-currency check against DGIWG's published standards |
+| `DEM_SOURCES_GUIDE.md` | Where to get suitable source DEMs |
+| `REBUILD_GUIDE.md` / `BUILD_SCRIPTS_GUIDE.md` | Rebuilding the exes; what each build script actually does |
+| `CODE_REVIEW_*.md` | Findings behind the v0.34 / v0.39 / v0.41 / v0.42–v0.43 releases |
 
 ---
 
@@ -92,6 +130,18 @@ install.bat
 # Linux / macOS
 bash install.sh
 ```
+
+> **Always work inside the dedicated environment.** Installing GDAL into conda's `base` environment is the most common source of dependency conflicts and runtime failures on this project. Activate first, every session.
+
+### Checking your environment
+
+If anything fails to import, run the diagnostic before changing anything:
+
+```bash
+python dem2dged_env.py
+```
+
+It reports which interpreter is actually running (`sys.executable`), which environment the shell *thinks* is active (`CONDA_PREFIX`), and whether those two agree — which is the failure the tool's older error messages got wrong. See [Troubleshooting](#wrong-python-interpreter-modulenotfounderror-inside-an-activated-environment). It imports nothing beyond the standard library, so it runs even when GDAL and numpy are unreachable.
 
 ### Quickstart
 
@@ -363,11 +413,73 @@ The tool tags each tile with the EGM2008 vertical datum (`EPSG:3855`) per the DG
 
 ## Troubleshooting
 
+### Wrong Python interpreter (`ModuleNotFoundError` inside an activated environment)
+
+**Symptom:** an import fails for a package you know is installed, and the prompt shows the environment is active:
+
+```
+(dem2dged_anaconda_environment) C:\...\dem2dged>audit_pure.py
+ModuleNotFoundError: No module named 'numpy'
+
+(dem2dged_anaconda_environment) C:\...\dem2dged>PACKAGE_v0.45.py
+ERROR: cannot import dem2dged_lib (No module named 'osgeo').
+```
+
+**Cause:** the command form, not the environment. Typed as `script.py` rather than `python script.py`, Windows resolves the `.py` file association and runs a **different interpreter** — usually a system-wide Python that has none of your packages. `conda activate` changes `PATH`; it does not change the file association. So the prompt still reads `(dem2dged_anaconda_environment)` while the script runs somewhere else entirely.
+
+**Solution:**
+- Always prefix with `python`: `python audit_pure.py`, not `audit_pure.py`.
+- To confirm which interpreter you are actually on: `python dem2dged_env.py` prints `sys.executable`, `CONDA_PREFIX`, and whether the two agree.
+
+> Reinstalling packages will not help here — they were never missing. This was misdiagnosed twice before v0.45 added `dem2dged_env.py`, which is now wired into `audit_pure.py`, the packager, the release gate and the validator's `osgeo` guard.
+
+### `UnicodeEncodeError` on a non-UTF-8 console (cp949, cp932, cp936)
+
+**Symptom:** a script dies partway through printing, typically during packaging or verification:
+
+```
+UnicodeEncodeError: 'cp949' codec can't encode character '\u2713'
+```
+
+**Cause:** a character that the console's code page cannot represent. As of v0.44 every console-facing script prints pure ASCII (`[OK]` / `[FAIL]` / `[WARN]`), so decorative glyphs are no longer a trigger. What remains is an **interpolated value** — a Korean or accented directory name in a path is enough.
+
+**Solution:**
+- Update to v0.44 or later; `dem2dged_lib.safe_print()` re-encodes through the console's own codec and degrades to ASCII rather than raising.
+- Or force a UTF-8 console before running: `chcp 65001` (Windows), or set `PYTHONIOENCODING=utf-8`.
+- To reproduce the strictest case yourself: `set PYTHONIOENCODING=ascii:strict` — ASCII is stricter than any national code page, so a clean run implies all of them. This is what release-gate step 01c does.
+
+### `-resample` value rejected, or no tiles produced
+
+**Symptom (pre-v0.42):** one gdalwarp error per tile — 150 error lines on a 150-tile job — followed by `All done!`, exit code 0, and an empty output folder.
+
+**Solution:** as of v0.42 an unrecognised resampler is rejected once, up front, by `dem2dged_lib.validate_resampler()`, and a run that produces no tiles is a hard error rather than a success. Valid values are `auto`, `optimize`, `near`, `bilinear`, `cubic`, `cubicspline`, `lanczos`, `average`, `mode`, `min`, `max`, `med`, `q1`, `q3`.
+
+### `gdalwarp` not found
+
+**Symptom (pre-v0.42):** a bare `FileNotFoundError` on the first tile.
+
+**Solution:** as of v0.42 `dem2dged_lib.require_gdalwarp()` checks once before any work starts and prints the conda command to fix it. If you hit this, `gdalwarp` is not on `PATH` — activate the environment, or `conda install -c conda-forge gdal`.
+
+### Source CRS has no EPSG code
+
+**Symptom:** `ERROR: cannot determine the EPSG code of <file>` — or, before v0.42, a `TypeError` on `int(None)` naming neither the file nor the problem.
+
+**Cause:** the source raster's CRS carries no EPSG `AUTHORITY` code — a bare ESRI WKT, a local/engineering CRS, a plain `.asc` grid, or no projection at all.
+
+**Solution:** tag the source with a real EPSG code first, then re-run:
+
+```bash
+python -m osgeo_utils.gdal_edit -a_srs EPSG:4326 my_dem.tif
+```
+
+> Use the module form. On a standard conda Windows install the GDAL utilities ship as modules, not console scripts, so `gdal_edit.py` is often not on `PATH`.
+
 ### GDAL / PROJ initialization errors
 
 **Symptom:** `ERROR: GDAL cannot open: ...` or `ModuleNotFoundError: No module named 'osgeo'`
 
 **Solution:**
+- First rule out the wrong-interpreter case above — it produces an identical message: `python dem2dged_env.py`
 - Ensure the environment is activated: `conda activate dem2dged_anaconda_environment`
 - If the environment doesn't exist, set it up: `python dem2dged_anaconda_environment.py`
 - For Windows EXE: the GDAL/PROJ data should be bundled. If still failing, rebuild the EXE using `build_exe.bat` after activating the environment.
@@ -480,20 +592,29 @@ This is expected behavior due to the DGED "one-cell overlap" rule (adjacent tile
 - Vertical datum tag: **EGM2008** (EPSG:3855) — metadata only, no height transform
 - Horizontal CRS: WGS-84 geographic (GEO) or UTM (auto-detected or user-specified)
 - No-data value: **−32767**
-- Resampling: **bilinear**
+- Resampling: **`auto` by default** — `average` when downsampling (a mean, so it never overshoots the source min/max), `bilinear` when up-sampling or near-equal. Override with `-resample`, or use `optimize` to measure the candidates against the source and pick the most accurate. Cubic-family resamplers are clamped back into the source's true range after warping
+- Shared tile edges are reconciled post-warp (`reconcile_tile_edges()`), so adjacent tiles are bit-identical along the post row/column the spec requires them to share
 - Sidecar metadata: **ISO 19115-2 / DGIWG DMF 2.0** XML
 
 ---
 
 ## Versioning
 
-The project version lives in **one place**: `VERSION` at the top of `dem2dged_lib.py`. On every update, bump that value and add a row to the changelog below. The version is displayed in the CLI banner (`python dem2dged.py --version`), the GUI title bar, and the release zip filename (`dem2dged_vX.XX.zip`).
+The project version lives in **one place**: `VERSION` at the top of `dem2dged_lib.py`. On every update, bump that value and add a row to the changelog below. The version is displayed in the CLI banner (`python dem2dged.py --version`), the GUI title bar, and the release zip filename (`dem2dged_vX.XX.zip`). `python audit_pure.py` enforces that all 12 declarations agree.
+
+`VERSION.txt` (and `VALIDATOR_VERSION.txt`) carry the same history in full prose. They are **hand-maintained documents**: as of v0.45 the packagers rewrite only the three header lines and preserve everything from the first `Changes in` line onward, so entries can no longer be packaged away.
 
 ## Changelog
 
 | Version | Change |
 |---|---|
+| v0.45 (2026-08-10) | **Fixed the packaging script's habit of deleting `VERSION.txt`'s contents.** `create_version_file()` wrote the file from a hardcoded f-string whose changelog was frozen at "Changes in v0.40", so every packaging run silently overwrote the maintained file with that stale copy — it printed `[OK] Created VERSION.txt` and wrote a correct header, so nothing looked wrong unless you read the body. This is why the v0.41 release notes exist nowhere: they were written, then packaged away. Found when a test packaging run wiped the v0.42/0.43/0.44 entries that had just been written. Both version files are now treated as maintained documents — only the three header lines are rewritten, everything from the first `Changes in` line onward is preserved byte for byte. **New `dem2dged_env.py`**, a dependency-free module that diagnoses the wrong-interpreter problem — reported twice in one session, and misdiagnosed both times by the tool's own error messages. Running `script.py` instead of `python script.py` makes Windows resolve the `.py` file association and launch a completely different interpreter; `conda activate` changes `PATH`, not the file association, so the prompt still reads `(DGED)` while the script runs elsewhere. The old message asserted the environment was wrong — the one thing the operator could see was false — and pointed at reinstalling packages that were never missing. `dem2dged_env` compares `sys.executable` against `CONDA_PREFIX`, says which of the two situations it is, and prints the exact command that would have worked; wired into `audit_pure.py`, the packager, release-gate step 00 and the validator's `osgeo` guard. **Packaging:** the "does this archive contain `tests/`" check matched `name.startswith("dem2dged_v")`, which also matches `dem2dged_validate_v0.44.zip` (`dem2dged_` + `v`alidate), so the validator-only bundle — correctly six files and no tests — was reported as broken; it now matches the exact filename. Both packagers create their output directory instead of surfacing a bare `FileNotFoundError` naming the `.zip` rather than the directory. |
+| v0.44 (2026-08-10) | **Fixed a release blocker reported from a Korean Windows console (cp949)** that the v0.43 release gate had passed clean minutes earlier: `UnicodeEncodeError: 'cp949' codec can't encode character '✓'`. Two defects in one traceback. (1) `dem2dged_package.py`, `dem2dged_validate_package.py`, `BUILD_AND_PACKAGE.py`, `dem2dged_anaconda_environment.py` and `run_verification.py` printed decorative U+2713 / U+2717 / U+274C and box-drawing characters to the console — fine under UTF-8, impossible under cp949, cp932, cp936 or plain ASCII, which is a large share of the machines this tool runs on. Release packaging died on a tick mark. All console output in those scripts is now pure ASCII (`[OK]` / `[FAIL]` / `[WARN]`), which removes the failure mode rather than handling it. `dem2dged_gui.py` (Tkinter labels) and `dem2dged_validate.py` (report content, written UTF-8) are deliberately untouched. (2) **The `except` handler itself printed a glyph**, so it raised a second `UnicodeEncodeError` and destroyed the message from the first — whatever `verify_source()` was really complaining about was never shown. Both packagers' top-level handlers are now ASCII-only and print the traceback. **New `dem2dged_lib.safe_print()`:** re-encodes through the console's own codec with `errors="replace"`, then falls back to ASCII. The realistic trigger is not a decorative glyph but an interpolated value — a Korean or accented directory name in a path is enough. **New release-gate step 01c:** every console-facing script, including both packagers run for real into a throwaway directory, is re-executed with `PYTHONIOENCODING=ascii:strict` and the log checked for `UnicodeEncodeError`. ASCII is stricter than cp949, so a pass implies every national code page. The gate could not have caught this before — step 11 *read* `dem2dged_package.py`'s constants without ever executing it, and every other step ran under a UTF-8-capable console. |
+| v0.43 (2026-08-10) | **Closed the one WARN from the v0.42 release-gate run — a real coverage hole, not a fixture quirk.** `reconcile_tile_edges()` has two passes (pass 1 copies each south tile's top row onto its north neighbour's bottom row; pass 2 does the same for west/east columns) and **pass 1 had never executed in any test**: both edge fixtures produced tiles that were side by side only, so every edge assertion exercised the column pass. New fixture `geo_grid_source` produces a 2×2 tile grid at level 0 — 121×81 posts against 4001×6001 at level 5 — covering both passes, the shared corner post that the pass *order* exists to protect, and (level 0 being Int16) the only edge-reconciliation test on the integer path. `tests/test_converters.py`'s GEO edge test ended in `pytest.skip("no vertically adjacent pair in this fixture")` and **always** took that branch, reporting a skip forever while reading as though it covered row seams; it now asserts. **Release gate:** new step 09b counts row and column seams separately and WARNs when either is zero — which immediately earned its keep, since the first v0.43 run still reported "0 row + 2 column" (the fix had gone into the pytest fixtures, while 09b measures the tiles the *gate* produces). New steps 08b/08c convert and validate a 2×2 level-0 grid, covering Int16 output and the levels 0–3 short filename form. **New step 12 (PyInstaller):** builds both exes from their curated `.spec` files and then *runs* the frozen validator against real tiles — building alone proves little, because the characteristic PyInstaller failure is missing **data** (the GDAL/PROJ dirs and the two DGED XML templates), which only surfaces when the exe touches a raster. `dem2dged.exe` is a Tkinter app and cannot be launched headlessly, so step 12b WARNs that it must be launched by hand once. **Also:** `require_epsg()`'s remedy text offered only `gdal_edit.py -a_srs`, which the v0.42 environment log recorded as not on PATH on a standard conda Windows install (the GDAL utilities ship as modules, not console scripts) — it now gives `python -m osgeo_utils.gdal_edit` first. |
+| v0.42 (2026-08-09) | **Release-gate pass over v0.41 — one blocker and five robustness fixes.** **Blocker (a regression of v0.41 finding 3):** `tests/` was missing from the package *again*, so `pytest` exited immediately with "file or directory not found: tests". Root cause found this time: `dem2dged_package.py`'s `EXCLUDE_DIRS` listed `"tests"` — twice — so packaging **stripped the test suite out of every release zip** while `pytest.ini` and `MANIFEST.md` shipped intact. Rebuilding the directory by hand could never stick. The entry is gone; the generated output directories it was meant to name are excluded explicitly instead. **A source raster whose CRS carries no EPSG code** — bare ESRI WKT, a local/engineering CRS, a plain `.asc` grid, or no projection at all — made `get_extent_and_srs_of_input_raster()` return `srs=None`, and the next call died on `int(None)` with a `TypeError` naming neither the file nor the problem; with `-source_vertical` it first built the meaningless `"EPSG:None+5773"`. New `require_epsg()` stops the run while the filename is still in scope, with the fix command. **An unknown `-resample` value** was handed straight to gdalwarp, which rejected it once *per tile*: 150 error lines on a 150-tile delivery, then "All done!" and exit code 0 over an empty folder — `validate_resampler()` now rejects it once, up front. **`gdalwarp` missing from PATH** raised a bare uncaught `FileNotFoundError` on the first tile; `require_gdalwarp()` checks once before any work and prints the conda commands. **Both converters reported success even when every tile failed to warp**, so `dem2dged.py` went on to auto-validate an empty folder — producing nothing is now a hard error, and a partial run states how many tiles are missing. **`dem2dged.py`'s two auto-validation failure paths logged at INFO** — exactly what a broken validator looked like for the whole of v0.40 — both are WARNING now and name the reports that were not written. |
 | v0.41 (2026-08-07) | **Repair release — v0.40 did not work as shipped.** **Blocker: `dem2dged_validate.py` did not byte-compile.** An entire block was missing between the end of the module docstring and the body of `overall_result()`: the docstring's closing `"""`, *every* import (`os`, `sys`, `re`, `glob`, `math`, `argparse`, `numpy`, `xml.etree`, `osgeo.gdal`/`osr` and the names taken from `dem2dged_lib`), the `NODATA` / `ELEV_MIN_SANE` / `ELEV_MAX_SANE` constants, `_STATUS_ORDER`, the `GEO_RE` / `UTM_RE` filename patterns, and the `def overall_result(...)` line itself. Python therefore read the module docstring as running on into `overall_result()`'s own docstring and stopped at `IndentationError: unexpected indent (line 247)`. Everything downstream degraded *silently*: `dem2dged.py`'s post-conversion auto-validation logged "could not import dem2dged_validate" and wrote no `DGED_Validation_Report.txt`/`.html`, the GUI's "Validate after conversion" checkbox was permanently disabled, `audit_pure.py` aborted on import so the project's own self-audit could not run, and `dem2dged_validate.exe` could not be built. The block is restored; `GEO_RE` / `UTM_RE` were rebuilt from spec 12.1 and re-verified against `geo_tile_basename()` / `utm_tile_basename()` output for every product level, both hemispheres, all UTM zone forms, with and without the optional organisation code, plus the pre-v0.34 short-northing and pre-v0.27 `Gt<letter>` legacy forms, negative cases and GEO/UTM cross-matching. **Version audit was checking nothing.** The `# Version:` header comment v0.32 introduced was absent from all seven modules that mirror `dem2dged_lib.VERSION`, and `audit_pure.py`'s pattern required `Version:` in column 0 — impossible in a `.py` file outside a string — so it could never have matched a header comment. The "clean version audit" claimed for v0.40 was not real. Both sides fixed. **`tests/` was missing entirely** while `pytest.ini` still pointed `testpaths` at it, so `pytest` failed immediately with "file or directory not found: tests"; the suite is restored (185 unit tests + 22 GDAL integration tests), including the v0.38 per-test `tempfile.mkdtemp()` `output_dir` fixture. **Robustness:** `check_tile()` wrapped `gdal.Open()` in a `try`/`except`, but `UseExceptions()` is not enabled in this module, so a corrupt tile returned `None` and killed the whole run with an `AttributeError` on the next line instead of failing that one tile — now an explicit FAIL. **Housekeeping:** unused imports/locals removed (pyflakes clean project-wide), stale `build/`, `dist/` and `__pycache__` artefacts cleared. No change to the DGED tables, tile geometry, filenames, metadata, resampling or any spec-compliance check — a v0.39/v0.40 delivery does not need regenerating. |
+| v0.40-beta (2026-07-23) | **Verified re-cut of v0.39-beta** — 19/19 end-to-end checks passed, QUICKSTART and user manual refreshed. No functional change. (The verification was less complete than it read: see v0.41, which found that `dem2dged_validate.py` did not byte-compile in this cut.) |
+| v0.39-beta (2026-07-23) | **First public beta.** Data-type-aware GeoTIFF predictor (`PREDICTOR=3` for Float32, `2` for Int16); warnings on reserved source-type codes; UTM negative-northing clamp near the equator; validator Section H no longer mistakes the EGM2008 geoid height for an error; logging format fix. |
 | v0.38 (2026-07-20) | **Two real bugs found by actually running the real CLI and pytest suite** — the previous v0.37 release had only been verified by manual code review plus a GDAL-free reimplementation testbed, since GDAL wasn't available in that environment; this is the first time either the real tool or the real test suite had run end to end. **Bug 1 (validator silently dropped both report files):** `dem2dged_validate.py`'s `Report._emit()` unconditionally `print()`ed every report line, including the box-drawing section headers (`section()`), straight to the console. On Windows with stdout redirected to a file under a legacy console code page (cp1252), that `print()` raised `UnicodeEncodeError`, which propagated up through `run_validation()` into `dem2dged.py`'s auto-validation `try`/`except` — silently skipping *both* `DGED_Validation_Report.txt` and `.html` even though every check had already completed successfully. `_emit()` now falls back to a best-effort re-encode of just the console echo on that error; the report content itself (`self.lines`, what actually gets written to disk) was never affected. **Bug 2 (flaky test):** `tests/conftest.py`'s `output_dir` fixture always resolved to the same session-wide `output` subdirectory for every test that requested it, so a test's leftover tiles were still sitting there — never cleaned up — when the next test ran its own conversion into the "same" folder and globbed `*.tif` expecting only its own output. That's why `test_utm_names_are_zero_padded` could fail on a leftover *GEO*-named tile left behind by an earlier `TestGeoConverter` test; the UTM zero-padding logic itself was never wrong. Every test now gets a fresh `tempfile.mkdtemp()`. **Independent re-verification of v0.37's Findings 1 and 3**, this time directly against real GDAL-produced tiles instead of a reimplementation testbed: shared-edge `max\|diff\|` = 0.0000 m on the real-terrain dataset across all three resampling methods (was up to 1.6 m), and Cubic Convolution tiles' min/max now land exactly on the two test rasters' true source ranges — 0..255 and 6..255 — instead of overshooting to -41..285 / -44..313. **Bug 3 (validator-side false FAIL on cubic runs):** with Bug 1 fixed and reports actually being written, both real cubic-convolution runs FAILED Section H (global min/max) on a validator-side artifact, not a real defect. `check_source()`'s H/H2 checks build their own internal re-warp of the source using the tiles' actual resample algorithm (v0.37 Finding 2) as a like-for-like comparison baseline — but that re-warp was never clamped the way the real delivered tiles are (v0.37 Finding 3), so a correctly-clamped tile (e.g. ACAIPGTM: 0.00..255.00 m) was compared against a still-overshooting baseline (-18.33..274.21 m) and flagged as an 18–19 m "defect" that was really just clamped-vs-unclamped. `check_source()` now computes the same clamp range the converters use (`dem2dged_lib.compute_tile_stats()` on the source) and applies it to both H's global-stats re-warp and H2's per-window re-warp. |
 | v0.37 (2026-07-20) | **All five findings of an independent code review fixed** (`DGED_Conversion_Review.md`, an audit of a 9-run/42-tile DGIWG test-data conversion batch). **Finding 1 (real defect, real-terrain delivery):** adjacent DGED tiles are warped by independent `gdalwarp` calls, so nothing guaranteed they agreed on the single post row/column the spec requires them to share — confirmed as a 1.6 m seam on a 5 m-post real-terrain tile pair (Nearest Neighbor; 12–13 cm for Bilinear/Cubic on the same pair, same root cause). Warp extents are now rounded to a fixed coordinate precision, and a new post-warp pass, `dem2dged_lib.reconcile_tile_edges()`, copies each tile's shared edge pixels onto its neighbour so the two files are bit-identical along that edge regardless of what either individual `gdalwarp` call did internally — verified against the actual DGIWG test tiles that showed the seam, for all three resampling methods, and applied to both CLI converters and the GUI. **Finding 2 (validator bug):** the validator's source-comparison sections (H/H2) re-warped the source DEM as Bilinear unconditionally, regardless of what the tiles were actually made with, despite a code comment claiming otherwise — so Nearest Neighbor/Cubic runs partly failed on "how different is this from Bilinear," not "how wrong is this tile." The actual resampling algorithm is now threaded through from the converters and GUI into `dem2dged_validate.check_source()`/`run_validation()`, with a new `-resample`/`--resample` validator CLI flag for standalone use. **Finding 3 (real, expected, now handled):** cubic-family resamplers (cubic, cubicspline, lanczos) can overshoot the source's true min/max at sharp discontinuities — confirmed on two 8-bit, hard-step-edge DGIWG test rasters, with Cubic Convolution tiles as low as -44 m against a true source minimum of 0–6 m. Tiles made with one of these resamplers are now clamped back into the source's exact range right after warping (`dem2dged_lib.clamp_tile_to_range()`); resamplers dem2dged picks automatically (average, bilinear) never overshoot and are unaffected. **Finding 4 (cosmetic, but confusing):** the text report's `RESULT:` line used a 2-tier PASS/FAIL rule while the HTML badge and GUI comparison badge each used a 3-tier FAIL > WARN > PASS rule, so identical PASS=/WARN=/FAIL= counts for the same run could read differently across reports. All of them now call one shared `dem2dged_validate.overall_result()`. **Optional polish:** the validator's H2 sample-window placement is now coverage-aware, nudging a fixed window to the nearest spot with actual data instead of routinely warning "no overlapping valid data" on deliveries whose footprint doesn't fill its bounding box evenly. |
 | v0.36 (2026-07-20) | **Pre-flight elevation sanity check + auto-optimize resampling**, prompted by a real validation-failure report: an aspect/direction raster fed into the tool as if it were elevation, which produced huge, confusing RMSE/tolerance failures because nothing about a GeoTIFF says "these numbers are heights." (1) **New pre-flight check** (`dem2dged_lib.sanity_check_elevation_source()`) inspects the source's filename (`aspect`, `direction`, `curvature`, `orientation`, `bearing`, `azimuth`, `hillshade`, `flow_dir`/`flow_acc`, `slope_class`) and its actual value range (`quick_raster_range()`, a fast approximate `ComputeStatistics()` call) for signs it is a terrain *derivative* rather than elevation. Blocks by default only when **both** a filename hint and a 0–360-degree-like range are present; warns but proceeds on either signal alone, so real elevation data with an unusual filename or range is never falsely blocked. New CLI flag `-skip_sanity_check` / `--skip-sanity-check` and GUI checkbox "Skip elevation sanity check" override it. (2) **New `-resample optimize` mode** (`dem2dged_lib.resolve_resampler()`): instead of `-resample auto`'s fixed source/target-GSD-ratio rule of thumb, it measures Nearest Neighbor / Bilinear / Cubic Convolution against the source DEM itself — reusing the Resampling Comparison Test's hold-out cross-validation (`dem2dged_compare.pick_best_resampling()`), but writing no tiles or report — and uses whichever reconstructs it most accurately for that specific file. New GUI dropdown entry "Optimize." The two features are linked: for a source that the sanity check flags as angular/circular data, RMSE is not a meaningful accuracy measure across the 0/360 wraparound seam (averaging 1° and 359° gives 180°, the compass direction opposite both real values), so `optimize` mode skips the comparison entirely and uses Nearest Neighbor directly rather than ranking methods by a number that would not mean anything. Both features' classification/selection logic is unit tested GDAL-free — `audit_pure.py` sections 8–9 and `tests/test_lib.py`'s `TestSanityCheck` / `TestAutoOptimizeResampling` — by monkeypatching the one function in each that actually touches a raster, rather than mocking GDAL's dataset object graph. |

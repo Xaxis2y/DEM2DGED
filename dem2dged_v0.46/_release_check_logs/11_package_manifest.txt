@@ -1,0 +1,67 @@
+dem2dged_package.py exclusion rules
+  EXCLUDE_FILE_SUFFIXES = ('.zip', '.pdf', '.jpg', '.jpeg', '.tmp', '.log', '.bak')
+
+WOULD BE INCLUDED (59 files, 1.1 MB)
+==========================================================================
+     8346  BUILD_AND_PACKAGE.py
+     6227  BUILD_SCRIPTS_GUIDE.md
+    12141  CODE_REVIEW_v0.34.md
+    10934  CODE_REVIEW_v0.39.md
+    18855  CODE_REVIEW_v0.41.md
+    15623  CODE_REVIEW_v0.42_43.md
+    35461  DEM2DGED_User_Manual.docx
+    10838  DEM_SOURCES_GUIDE.md
+    10699  DGED_Conversion_Review.md
+    18310  DGED_GEO_TEMPLATE.xml
+    18301  DGED_UTM_TEMPLATE.xml
+     5714  DGIWG_STANDARDS_TRACKING.md
+    18031  LICENSE
+     7083  MANIFEST.md
+     7585  PACKAGE_v0.45.py
+    37080  QUICKSTART.html
+    71968  README.md
+     6374  REBUILD_GUIDE.md
+    57547  RELEASE_CHECK_v0.45.py
+     5139  START_HERE.md
+    11968  VALIDATOR_VERSION.txt
+    31316  VERSION.txt
+    23480  audit_pure.py
+     6554  build_exe.bat
+     6409  build_validate_exe.bat
+    11793  dem2dged.py
+     3894  dem2dged.spec
+     2462  dem2dged_anaconda_environment.bat
+     5256  dem2dged_anaconda_environment.py
+    24606  dem2dged_compare.py
+     7618  dem2dged_env.py
+     6225  dem2dged_essential_package.py
+    19535  dem2dged_geo.py
+    88818  dem2dged_gui.py
+   105111  dem2dged_lib.py
+     4878  dem2dged_logging.py
+    12678  dem2dged_package.py
+    22558  dem2dged_utm.py
+    97890  dem2dged_validate.py
+     2892  dem2dged_validate.spec
+     7777  dem2dged_validate_package.py
+      777  install.bat
+      713  install.sh
+     9786  make_version_info.py
+      456  pytest.ini
+     3696  rebuild_exe.bat
+     3806  rebuild_validate_exe.bat
+    28175  run_verification.py
+     4638  selftest_resampling_comparison.py
+    16709  update_manual_v0.45.py
+     2031  verify.bat
+     3297  verify_v037.bat
+     1118  version_info_gui.txt
+     1141  version_info_validate.txt
+     3569  tests\README.md
+    10452  tests\conftest.py
+    27323  tests\test_converters.py
+    36889  tests\test_lib.py
+    18192  tests\test_validator.py
+
+EXCLUDED BY RULE (0)
+==========================================================================

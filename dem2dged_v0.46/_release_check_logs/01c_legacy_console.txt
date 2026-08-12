@@ -1,0 +1,269 @@
+==========================================================================
+audit_pure.py   (rc=0, UnicodeEncodeError=False)
+==========================================================================
+==============================================================================
+1) GEO filename -> validator regex -> coordinate round trip
+==============================================================================
+   done
+
+==============================================================================
+2) GEO raster dimensions: converter warp extent vs validator expectation
+==============================================================================
+   done
+
+==============================================================================
+3) UTM filename -> validator regex -> coordinate round trip
+==============================================================================
+   done
+
+==============================================================================
+4) UTM raster dimensions + tile-grid alignment check
+==============================================================================
+   done
+
+==============================================================================
+5) Sidecar placeholder coverage: template keys vs code keys
+==============================================================================
+  ok    DGED_GEO_TEMPLATE.xml: well-formed after substitution (18 placeholders)
+  ok    DGED_UTM_TEMPLATE.xml: well-formed after substitution (18 placeholders)
+
+==============================================================================
+6) Misc consistency
+==============================================================================
+
+==============================================================================
+7) v0.34 regression checks
+==============================================================================
+   checked 12 version declarations against dl.VERSION=0.45
+
+==============================================================================
+8) Elevation sanity check heuristics (v0.36)
+==============================================================================
+   checked 9 sanity-check scenarios
+
+==============================================================================
+9) Auto-optimize resampling selection (v0.36)
+==============================================================================
+   checked auto-optimize dispatch + selection logic
+
+==============================================================================
+RESULT: 0 problem(s)
+==============================================================================
+
+==========================================================================
+dem2dged --version   (rc=0, UnicodeEncodeError=False)
+==========================================================================
+dem2dged v0.45
+
+==========================================================================
+dem2dged --help   (rc=0, UnicodeEncodeError=False)
+==========================================================================
+usage: dem2dged [-h] [--mode {geo,utm}] [--level LEVEL] [--zone ZONE]
+                [--source-type LETTER] [--security-class CLASS]
+                [--product-version VER] [--resample ALG]
+                [--source-vertical EPSG] [--org CODE] [--abs-hacc METRES]
+                [--abs-vacc METRES] [--lineage TEXT] [--verbose] [--debug]
+                [--quiet] [--no-validate] [--skip-sanity-check] [--version]
+                input_raster output_folder
+
+Convert a raster DEM to DGED tiles (GEO or UTM).
+
+positional arguments:
+  input_raster          Input elevation raster (GeoTIFF, VRT, ...)
+  output_folder         Output directory (will be created if absent)
+
+options:
+  -h, --help            show this help message and exit
+  --mode {geo,utm}      Output projection mode (default: geo)
+  --level LEVEL         DGED product level (default: 5)
+  --zone ZONE           UTM zone e.g. 32N (UTM mode only; auto-detect if
+                        omitted)
+  --source-type LETTER  Source-type code (default: A)
+  --security-class CLASS
+                        Security classification (default: U)
+  --product-version VER
+                        Product version string (default: 01)
+  --resample ALG        Resampling: auto|optimize|bilinear|cubic|cubicspline|a
+                        verage|lanczos|near (default: auto = average when
+                        downsampling, else bilinear; optimize = measure
+                        Nearest/Bilinear/Cubic against the source DEM and use
+                        whichever reconstructs it most accurately -- slower
+                        than auto, skipped in favor of Nearest automatically
+                        for angular/circular-looking sources)
+  --source-vertical EPSG
+                        Source vertical EPSG (e.g. 5773=EGM96, 3855=EGM2008).
+                        If given and != 3855, a real geoid transform to
+                        EGM2008 is applied; otherwise heights are assumed
+                        already EGM2008 (label only).
+  --org CODE            Producer organisation/nation code (STANAG 1059)
+                        embedded in filenames and metadata (default: none)
+  --abs-hacc METRES     Absolute horizontal accuracy (CE90) written to the
+                        metadata quality report (default: auto = DGED spec
+                        Table 5 goal value for the level)
+  --abs-vacc METRES     Absolute vertical accuracy (LE90) written to the
+                        metadata quality report (default: auto = DGED spec
+                        Table 6 goal value for the level)
+  --lineage TEXT        Lineage statement written to the metadata (default:
+                        generated from the source file name and processing
+                        parameters)
+  --verbose             Show extra output
+  --debug               Enable debug-level logging output
+  --quiet               Suppress info messages, only show warnings and errors
+  --no-validate         Skip the automatic validation report generated after
+                        conversion
+  --skip-sanity-check   Proceed even if the input raster's value range and
+                        filename look like non-elevation data (e.g. an
+                        aspect/direction layer)
+  --version             show program's version number and exit
+
+Product levels and approx ground sample distance
+-------------------------------------------------
+  0  ->  ~1000 m   |   5  ->  ~2 m
+  1  ->  ~100 m    |   6  ->  ~1 m
+  2  ->  ~30 m     |   7  ->  ~0.5 m
+  3  ->  ~12 m     |   8  ->  ~0.25 m
+  4b ->  ~5 m      |   9  ->  ~0.125 m
+  4  ->  ~4 m      |
+
+Requirements: GDAL (gdalwarp) must be on PATH.
+Install via:  conda install -c conda-forge gdal
+
+==========================================================================
+dem2dged_validate --version   (rc=0, UnicodeEncodeError=False)
+==========================================================================
+dem2dged_validate v0.45
+
+==========================================================================
+dem2dged_geo --help   (rc=0, UnicodeEncodeError=False)
+==========================================================================
+
+==========================================================================
+dem2dged_utm --help   (rc=0, UnicodeEncodeError=False)
+==========================================================================
+
+==========================================================================
+dem2dged_package.py   (rc=0, UnicodeEncodeError=False)
+==========================================================================
+
+============================================================
+DEM2DGED v0.45 - Automated Packaging
+============================================================
+
+[1/4] Verifying source directory...
+[OK] Source directory verified (58 items)
+
+[2/4] Creating version file...
+[OK] Refreshed VERSION.txt header (changelog preserved: 492 lines)
+
+[3/4] Creating package zip...
+  + audit_pure.py
+  + BUILD_AND_PACKAGE.py
+  + build_exe.bat
+  + BUILD_SCRIPTS_GUIDE.md
+  + build_validate_exe.bat
+  + CODE_REVIEW_v0.34.md
+  + CODE_REVIEW_v0.39.md
+  + CODE_REVIEW_v0.41.md
+  + CODE_REVIEW_v0.42_43.md
+  + dem2dged.py
+  + dem2dged.spec
+  + dem2dged_anaconda_environment.bat
+  + dem2dged_anaconda_environment.py
+  + dem2dged_compare.py
+  + dem2dged_env.py
+  + dem2dged_essential_package.py
+  + dem2dged_geo.py
+  + dem2dged_gui.py
+  + dem2dged_lib.py
+  + dem2dged_logging.py
+  + dem2dged_package.py
+  + DEM2DGED_User_Manual.docx
+  + dem2dged_utm.py
+  + dem2dged_validate.py
+  + dem2dged_validate.spec
+  + dem2dged_validate_package.py
+  + DEM_SOURCES_GUIDE.md
+  + DGED_Conversion_Review.md
+  + DGED_GEO_TEMPLATE.xml
+  + DGED_UTM_TEMPLATE.xml
+  + DGIWG_STANDARDS_TRACKING.md
+  + install.bat
+  + install.sh
+  + LICENSE
+  + make_version_info.py
+  + MANIFEST.md
+  + PACKAGE_v0.45.py
+  + pytest.ini
+  + QUICKSTART.html
+  + README.md
+  + rebuild_exe.bat
+  + REBUILD_GUIDE.md
+  + rebuild_validate_exe.bat
+  + RELEASE_CHECK_v0.45.py
+  + run_verification.py
+  + selftest_resampling_comparison.py
+  + START_HERE.md
+  + update_manual_v0.45.py
+  + VALIDATOR_VERSION.txt
+  + verify.bat
+  + verify_v037.bat
+  + VERSION.txt
+  + version_info_gui.txt
+  + version_info_validate.txt
+  + tests\conftest.py
+  + tests\README.md
+  + tests\test_converters.py
+  + tests\test_lib.py
+  + tests\test_validator.py
+[OK] Created dem2dged_v0.45.zip (0.38 MB)
+
+[4/4] Packaging complete!
+
+============================================================
+Package Location: C:\Users\Son\AppData\Local\Temp\dem2dged_pkgtest_xz_1kdyo\dem2dged_v0.45.zip
+Package Name: dem2dged_v0.45.zip
+Version: 0.45
+============================================================
+
+Next Steps:
+1. Extract the zip file
+2. Run rebuild_exe.bat to compile
+3. Test dem2dged.exe
+
+
+==========================================================================
+dem2dged_validate_package.py   (rc=0, UnicodeEncodeError=False)
+==========================================================================
+
+============================================================
+DEM2DGED Validator v0.45 - Automated Packaging
+============================================================
+
+[1/4] Verifying source directory...
+[OK] Source directory verified
+
+[2/4] Creating validator version file...
+[OK] Refreshed VALIDATOR_VERSION.txt header (changelog preserved: 215 lines)
+
+[3/4] Creating validator package...
+[OK] Created dem2dged_validate_v0.45.zip (0.14 MB)
+
+[4/4] Packaging complete!
+
+============================================================
+Package Location: C:\Users\Son\AppData\Local\Temp\dem2dged_pkgtest_xz_1kdyo\dem2dged_validate_v0.45.zip
+Package Name: dem2dged_validate_v0.45.zip
+Version: 0.45
+============================================================
+
+Next Steps:
+1. Extract the zip file
+2. Run rebuild_validate_exe.bat to compile
+3. Test dem2dged_validate.exe with sample tiles
+
+
+==========================================================================
+dem2dged_lib.safe_print() under ascii:strict  (rc=0)
+==========================================================================
+glyphs: ? ? ? ? done
+SAFE_PRINT_SURVIVED

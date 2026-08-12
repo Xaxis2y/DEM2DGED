@@ -1,0 +1,235 @@
+PyInstaller 6.22.0   python 3.10.20
+
+==========================================================================
+BUILD dem2dged_validate.spec -> dem2dged_validate   (rc=0, built=True, 241.8 MB)
+==========================================================================
+ocal\pyinstaller
+1631 INFO: Module search paths (PYTHONPATH):
+['C:\\Users\\Son\\Documents\\Claude\\dem2dged\\dem2dged_v0.45',
+ 'C:\\ProgramData\\anaconda3\\envs\\DGED\\python310.zip',
+ 'C:\\ProgramData\\anaconda3\\envs\\DGED\\DLLs',
+ 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib',
+ 'C:\\ProgramData\\anaconda3\\envs\\DGED',
+ 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages',
+ 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\win32',
+ 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\win32\\lib',
+ 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\pythonwin',
+ 'C:\\Users\\Son\\Documents\\Claude\\dem2dged\\dem2dged_v0.45']
+2479 INFO: Appending 'datas' from .spec
+2494 INFO: checking Analysis
+2494 INFO: Building Analysis because Analysis-00.toc is non existent
+2494 INFO: Looking for Python shared library...
+2494 INFO: Using Python shared library: C:\ProgramData\anaconda3\envs\DGED\python310.dll
+2494 INFO: Running Analysis Analysis-00.toc
+2494 INFO: Target bytecode optimization level: 0
+2495 INFO: Initializing module dependency graph...
+2496 INFO: Initializing module graph hook caches...
+2532 INFO: Analyzing modules for base_library.zip ...
+4028 INFO: Processing standard module hook 'hook-heapq.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+4286 INFO: Processing standard module hook 'hook-encodings.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+5362 INFO: Processing standard module hook 'hook-math.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+6322 INFO: Processing standard module hook 'hook-pickle.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+7829 INFO: Caching module dependency graph...
+7881 INFO: Analyzing C:\Users\Son\Documents\Claude\dem2dged\dem2dged_v0.45\dem2dged_validate.py
+7991 INFO: Processing standard module hook 'hook-xml.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+8014 INFO: Processing standard module hook 'hook-xml.etree.cElementTree.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+8031 INFO: Processing standard module hook 'hook-numpy.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+8138 WARNING: Conda distribution '__win', dependency of 'numpy', was not found. If you installed this distribution with pip then you may ignore this warning.
+8572 INFO: Processing standard module hook 'hook-platform.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+8742 INFO: Processing standard module hook 'hook-sysconfig.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+9199 INFO: Processing standard module hook 'hook-webbrowser.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+10070 INFO: Processing standard module hook 'hook-difflib.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+10298 INFO: Processing standard module hook 'hook-multiprocessing.util.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+10628 INFO: Processing standard module hook 'hook-_ctypes.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+11959 INFO: Processing pre-safe-import-module hook 'hook-typing_extensions.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+11961 INFO: SetuptoolsInfo: initializing cached setuptools info...
+14104 INFO: Processing standard module hook 'hook-osgeo.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+14586 INFO: Analyzing hidden import 'osgeo.gdal_fsspec'
+14594 INFO: Analyzing hidden import 'osgeo.gdalnumeric'
+14596 INFO: Processing module hooks (post-graph stage)...
+14661 INFO: Performing binary vs. data reclassification (340 entries)
+15333 INFO: Looking for ctypes DLLs
+15344 INFO: Analyzing run-time hooks ...
+15347 INFO: Including run-time hook 'pyi_rth_inspect.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+15351 INFO: Including run-time hook 'pyi_rth_pkgutil.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+15355 INFO: Including run-time hook 'pyi_rth_multiprocessing.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+15358 INFO: Including run-time hook 'pyi_rth_osgeo.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\_pyinstaller_hooks_contrib\\rthooks'
+15378 INFO: Creating base_library.zip...
+15401 INFO: Looking for dynamic libraries
+15973 INFO: Extra DLL search directories (AddDllDirectory): ['C:\\ProgramData\\anaconda3\\envs\\DGED\\Library\\bin']
+15973 INFO: Extra DLL search directories (PATH): []
+19284 WARNING: Library not found: could not resolve 'mkl_rt.dll', dependency of 'C:\\ProgramData\\anaconda3\\envs\\DGED\\Library\\bin\\libblas.dll'.
+19284 WARNING: Library not found: could not resolve 'mkl_rt.dll', dependency of 'C:\\ProgramData\\anaconda3\\envs\\DGED\\Library\\bin\\libcblas.dll'.
+19285 WARNING: Library not found: could not resolve 'impi.dll', dependency of 'C:\\ProgramData\\anaconda3\\envs\\DGED\\Library\\bin\\mkl_blacs_intelmpi_lp64.2.dll'.
+19285 WARNING: Library not found: could not resolve 'msmpi.dll', dependency of 'C:\\ProgramData\\anaconda3\\envs\\DGED\\Library\\bin\\mkl_blacs_msmpi_ilp64.2.dll'.
+19286 WARNING: Library not found: could not resolve 'mkl_rt.dll', dependency of 'C:\\ProgramData\\anaconda3\\envs\\DGED\\Library\\bin\\liblapack.dll'.
+19286 WARNING: Library not found: could not resolve 'impi.dll', dependency of 'C:\\ProgramData\\anaconda3\\envs\\DGED\\Library\\bin\\mkl_blacs_intelmpi_ilp64.2.dll'.
+19287 WARNING: Library not found: could not resolve 'msmpi.dll', dependency of 'C:\\ProgramData\\anaconda3\\envs\\DGED\\Library\\bin\\mkl_blacs_msmpi_lp64.2.dll'.
+19351 INFO: Warnings written to C:\Users\Son\Documents\Claude\dem2dged\dem2dged_v0.45\build\dem2dged_validate\warn-dem2dged_validate.txt
+19439 INFO: Graph cross-reference written to C:\Users\Son\Documents\Claude\dem2dged\dem2dged_v0.45\build\dem2dged_validate\xref-dem2dged_validate.html
+19490 INFO: checking PYZ
+19490 INFO: Building PYZ because PYZ-00.toc is non existent
+19490 INFO: Building PYZ (ZlibArchive) C:\Users\Son\Documents\Claude\dem2dged\dem2dged_v0.45\build\dem2dged_validate\PYZ-00.pyz
+19850 INFO: Building PYZ (ZlibArchive) C:\Users\Son\Documents\Claude\dem2dged\dem2dged_v0.45\build\dem2dged_validate\PYZ-00.pyz completed successfully.
+19877 INFO: checking PKG
+19877 INFO: Building PKG because PKG-00.toc is non existent
+19877 INFO: Building PKG (CArchive) dem2dged_validate.pkg
+83816 INFO: Building PKG (CArchive) dem2dged_validate.pkg completed successfully.
+83831 INFO: Bootloader C:\ProgramData\anaconda3\envs\DGED\lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\run.exe
+83831 INFO: checking EXE
+83831 INFO: Building EXE because EXE-00.toc is non existent
+83831 INFO: Building EXE from EXE-00.toc
+83831 INFO: Copying bootloader EXE to C:\Users\Son\Documents\Claude\dem2dged\dem2dged_v0.45\dist\dem2dged_validate.exe
+83892 INFO: Copying icon to EXE
+83914 INFO: Copying version information to EXE
+83937 INFO: Copying 0 resources to EXE
+83937 INFO: Embedding manifest in EXE
+83959 INFO: Appending PKG archive to EXE
+84154 INFO: Fixing EXE headers
+85479 INFO: Building EXE from EXE-00.toc completed successfully.
+85491 INFO: Build complete! The results are available in: C:\Users\Son\Documents\Claude\dem2dged\dem2dged_v0.45\dist
+DEBUG: version_file = C:\Users\Son\Documents\Claude\dem2dged\dem2dged_v0.45\version_info_validate.txt
+
+==========================================================================
+BUILD dem2dged.spec -> dem2dged   (rc=0, built=True, 243.2 MB)
+==========================================================================
+dule dependency graph...
+2223 INFO: Initializing module graph hook caches...
+2246 INFO: Analyzing modules for base_library.zip ...
+3833 INFO: Processing standard module hook 'hook-encodings.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+4784 INFO: Processing standard module hook 'hook-math.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+5602 INFO: Processing standard module hook 'hook-pickle.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+6463 INFO: Processing standard module hook 'hook-heapq.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+6783 INFO: Caching module dependency graph...
+6833 INFO: Analyzing C:\Users\Son\Documents\Claude\dem2dged\dem2dged_v0.45\dem2dged_gui.py
+6890 INFO: Processing standard module hook 'hook-osgeo.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+7348 INFO: Processing standard module hook 'hook-numpy.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+7450 WARNING: Conda distribution '__win', dependency of 'numpy', was not found. If you installed this distribution with pip then you may ignore this warning.
+7814 INFO: Processing standard module hook 'hook-platform.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+7935 INFO: Processing standard module hook 'hook-sysconfig.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+8235 INFO: Processing standard module hook 'hook-webbrowser.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+8910 INFO: Processing standard module hook 'hook-difflib.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+9052 INFO: Processing standard module hook 'hook-multiprocessing.util.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+9179 INFO: Processing standard module hook 'hook-xml.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+9344 INFO: Processing standard module hook 'hook-_ctypes.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+10240 INFO: Processing pre-safe-import-module hook 'hook-typing_extensions.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+10242 INFO: SetuptoolsInfo: initializing cached setuptools info...
+12097 INFO: Processing pre-find-module-path hook 'hook-tkinter.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks\\pre_find_module_path'
+12100 INFO: TclTkInfo: initializing cached Tcl/Tk info...
+12402 INFO: Processing standard module hook 'hook-_tkinter.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+12584 INFO: Processing standard module hook 'hook-xml.etree.cElementTree.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+12588 INFO: Analyzing hidden import 'osgeo.gdal_fsspec'
+12594 INFO: Analyzing hidden import 'osgeo.gdalnumeric'
+12595 INFO: Processing module hooks (post-graph stage)...
+12634 INFO: Processing standard module hook 'hook-_tkinter.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks'
+12654 INFO: Performing binary vs. data reclassification (1266 entries)
+14538 INFO: Looking for ctypes DLLs
+14549 INFO: Analyzing run-time hooks ...
+14551 INFO: Including run-time hook 'pyi_rth_inspect.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+14553 INFO: Including run-time hook 'pyi_rth_pkgutil.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+14555 INFO: Including run-time hook 'pyi_rth_multiprocessing.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+14557 INFO: Including run-time hook 'pyi_rth__tkinter.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+14559 INFO: Including run-time hook 'pyi_rth_osgeo.py' from 'C:\\ProgramData\\anaconda3\\envs\\DGED\\lib\\site-packages\\_pyinstaller_hooks_contrib\\rthooks'
+14614 INFO: Creating base_library.zip...
+14636 INFO: Looking for dynamic libraries
+15121 INFO: Extra DLL search directories (AddDllDirectory): ['C:\\ProgramData\\anaconda3\\envs\\DGED\\Library\\bin']
+15122 INFO: Extra DLL search directories (PATH): []
+18304 WARNING: Library not found: could not resolve 'msmpi.dll', dependency of 'C:\\ProgramData\\anaconda3\\envs\\DGED\\Library\\bin\\mkl_blacs_msmpi_ilp64.2.dll'.
+18304 WARNING: Library not found: could not resolve 'msmpi.dll', dependency of 'C:\\ProgramData\\anaconda3\\envs\\DGED\\Library\\bin\\mkl_blacs_msmpi_lp64.2.dll'.
+18304 WARNING: Library not found: could not resolve 'mkl_rt.dll', dependency of 'C:\\ProgramData\\anaconda3\\envs\\DGED\\Library\\bin\\libblas.dll'.
+18305 WARNING: Library not found: could not resolve 'mkl_rt.dll', dependency of 'C:\\ProgramData\\anaconda3\\envs\\DGED\\Library\\bin\\libcblas.dll'.
+18305 WARNING: Library not found: could not resolve 'mkl_rt.dll', dependency of 'C:\\ProgramData\\anaconda3\\envs\\DGED\\Library\\bin\\liblapack.dll'.
+18307 WARNING: Library not found: could not resolve 'impi.dll', dependency of 'C:\\ProgramData\\anaconda3\\envs\\DGED\\Library\\bin\\mkl_blacs_intelmpi_lp64.2.dll'.
+18308 WARNING: Library not found: could not resolve 'impi.dll', dependency of 'C:\\ProgramData\\anaconda3\\envs\\DGED\\Library\\bin\\mkl_blacs_intelmpi_ilp64.2.dll'.
+18472 INFO: Warnings written to C:\Users\Son\Documents\Claude\dem2dged\dem2dged_v0.45\build\dem2dged\warn-dem2dged.txt
+18542 INFO: Graph cross-reference written to C:\Users\Son\Documents\Claude\dem2dged\dem2dged_v0.45\build\dem2dged\xref-dem2dged.html
+18622 INFO: checking PYZ
+18622 INFO: Building PYZ because PYZ-00.toc is non existent
+18622 INFO: Building PYZ (ZlibArchive) C:\Users\Son\Documents\Claude\dem2dged\dem2dged_v0.45\build\dem2dged\PYZ-00.pyz
+19018 INFO: Building PYZ (ZlibArchive) C:\Users\Son\Documents\Claude\dem2dged\dem2dged_v0.45\build\dem2dged\PYZ-00.pyz completed successfully.
+19065 INFO: checking PKG
+19066 INFO: Building PKG because PKG-00.toc is non existent
+19066 INFO: Building PKG (CArchive) dem2dged.pkg
+84448 INFO: Building PKG (CArchive) dem2dged.pkg completed successfully.
+84503 INFO: Bootloader C:\ProgramData\anaconda3\envs\DGED\lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\run.exe
+84503 INFO: checking EXE
+84503 INFO: Building EXE because EXE-00.toc is non existent
+84503 INFO: Building EXE from EXE-00.toc
+84503 INFO: Copying bootloader EXE to C:\Users\Son\Documents\Claude\dem2dged\dem2dged_v0.45\dist\dem2dged.exe
+84538 INFO: Copying icon to EXE
+84562 INFO: Copying version information to EXE
+84593 INFO: Copying 0 resources to EXE
+84593 INFO: Embedding manifest in EXE
+84619 INFO: Appending PKG archive to EXE
+84823 INFO: Fixing EXE headers
+86253 INFO: Building EXE from EXE-00.toc completed successfully.
+86295 INFO: Build complete! The results are available in: C:\Users\Son\Documents\Claude\dem2dged\dem2dged_v0.45\dist
+DEBUG: spec_dir = C:\Users\Son\Documents\Claude\dem2dged\dem2dged_v0.45
+DEBUG: geo_template = C:\Users\Son\Documents\Claude\dem2dged\dem2dged_v0.45\DGED_GEO_TEMPLATE.xml (exists: True)
+DEBUG: utm_template = C:\Users\Son\Documents\Claude\dem2dged\dem2dged_v0.45\DGED_UTM_TEMPLATE.xml (exists: True)
+DEBUG: version_file = C:\Users\Son\Documents\Claude\dem2dged\dem2dged_v0.45\version_info_gui.txt
+DEBUG: gdal_data_dir = C:\ProgramData\anaconda3\envs\DGED\Library\share\gdal (exists: True)
+DEBUG: proj_data_dir = C:\ProgramData\anaconda3\envs\DGED\Library\share\proj (exists: True)
+
+==========================================================================
+dem2dged_validate.exe --version  (rc=0)
+==========================================================================
+dem2dged_validate v0.45
+
+==========================================================================
+dem2dged_validate.exe against real tiles  (rc=0)
+folder: C:\Users\Son\AppData\Local\Temp\dem2dged_relcheck_xxgyu6k3\geo_tiles
+==========================================================================
+dem2dged_validate v0.45
+Tile folder: C:\Users\Son\AppData\Local\Temp\dem2dged_relcheck_xxgyu6k3\geo_tiles
+
+?? A. File pairing (.tif <-> .xml) ???????????????????????????????????
+  PASS  all 2 tile(s) paired (.tif + .xml)
+
+?? B-F. Per-tile checks (naming, header, grid, XML, statistics) ??????
+  PASS  DGEDL5GtD_5524N01200E_A_U_01: filename OK
+  PASS  DGEDL5GtD_5524N01200E_A_U_01: Float32 (correct for level 5)
+  PASS  DGEDL5GtD_5524N01200E_A_U_01: NoData=-32767
+  PASS  DGEDL5GtD_5524N01200E_A_U_01: AREA_OR_POINT=Point
+  PASS  DGEDL5GtD_5524N01200E_A_U_01: LZW compression
+  PASS  DGEDL5GtD_5524N01200E_A_U_01: EGM2008 vertical CRS tag present
+  PASS  DGEDL5GtD_5524N01200E_A_U_01: pixel size matches level 5
+  PASS  DGEDL5GtD_5524N01200E_A_U_01: filename coordinates match georeferencing
+  PASS  DGEDL5GtD_5524N01200E_A_U_01: aligned to tile grid
+  PASS  DGEDL5GtD_5524N01200E_A_U_01: dimensions 4001�6001
+  PASS  DGEDL5GtD_5524N01200E_A_U_01.xml: well-formed, placeholders replaced
+  PASS  DGEDL5GtD_5524N01200E_A_U_01: elevation range [97.3, 433.5] m
+  PASS  DGEDL5GtD_5524N01206E_A_U_01: filename OK
+  PASS  DGEDL5GtD_5524N01206E_A_U_01: Float32 (correct for level 5)
+  PASS  DGEDL5GtD_5524N01206E_A_U_01: NoData=-32767
+  PASS  DGEDL5GtD_5524N01206E_A_U_01: AREA_OR_POINT=Point
+  PASS  DGEDL5GtD_5524N01206E_A_U_01: LZW compression
+  PASS  DGEDL5GtD_5524N01206E_A_U_01: EGM2008 vertical CRS tag present
+  PASS  DGEDL5GtD_5524N01206E_A_U_01: pixel size matches level 5
+  PASS  DGEDL5GtD_5524N01206E_A_U_01: filename coordinates match georeferencing
+  PASS  DGEDL5GtD_5524N01206E_A_U_01: aligned to tile grid
+  PASS  DGEDL5GtD_5524N01206E_A_U_01: dimensions 4001�6001
+  PASS  DGEDL5GtD_5524N01206E_A_U_01.xml: well-formed, placeholders replaced
+  PASS  DGEDL5GtD_5524N01206E_A_U_01: elevation range [315.5, 451.8] m
+
+?? G. Edge-overlap consistency between adjacent tiles ????????????????
+  PASS  DGEDL5GtD_5524N01200E_A_U_01 ? DGEDL5GtD_5524N01206E_A_U_01: shared column identical
+
+?? Summary ???????????????????????????????????????????????????????????
+PASS=26  WARN=0  FAIL=0
+RESULT: PASS
+
+==========================================================================
+MANUAL STEP -- dem2dged.exe
+==========================================================================
+dem2dged.exe is built from dem2dged_gui.py, a Tkinter application with no
+command-line interface, so it cannot be launched by this script without
+opening a window and blocking. It was built (True, 243.2 MB) and its size was
+checked, which is as far as automation can honestly go.
+
+Launch it once by hand before releasing an executable build, and confirm:
+  1. the window opens and the console behind it shows no GDAL import error
+  2. a small conversion runs to completion
+  3. 'Validate after conversion' is ENABLED -- if it is greyed out, the
+     frozen build cannot import dem2dged_validate, which is exactly how the
+     v0.40 blocker presented itself

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>dem2dged Validation Report</title>
+<style>
+  :root{
+    --green:#1e8e3e; --green-bg:#e6f4ea;
+    --red:#c5221f; --red-bg:#fce8e6;
+    --yellow:#b06000; --yellow-bg:#fef7e0;
+    --gray:#5f6368; --gray-bg:#f1f3f4;
+    --border:#dadce0; --text:#202124;
+  }
+  *{box-sizing:border-box;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    color:var(--text); background:#fafafa; margin:0; padding:32px 20px 80px;
+    line-height:1.5;
+  }
+  .wrap{max-width:920px;margin:0 auto;}
+  h1{font-size:26px;margin:0 0 4px;}
+  .subtitle{color:var(--gray);font-size:14px;margin-bottom:28px;}
+  h2{font-size:19px;margin:40px 0 14px;border-bottom:2px solid var(--border);padding-bottom:8px;}
+  h3{font-size:15px;margin:22px 0 8px;}
+  table{width:100%;border-collapse:collapse;margin-bottom:18px;background:#fff;border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+  th,td{padding:9px 12px;text-align:left;font-size:13.5px;border-bottom:1px solid var(--border);}
+  th{background:#f8f9fa;font-weight:600;color:var(--gray);}
+  tr:last-child td{border-bottom:none;}
+  .badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:.3px;}
+  .b-pass{background:var(--green-bg);color:var(--green);}
+  .b-fail{background:var(--red-bg);color:var(--red);}
+  .b-warn{background:var(--yellow-bg);color:var(--yellow);}
+  .b-na{background:var(--gray-bg);color:var(--gray);}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle;}
+  .dot-green{background:var(--green);} .dot-red{background:var(--red);} .dot-yellow{background:var(--yellow);} .dot-gray{background:var(--gray);}
+  .card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:20px 22px;margin-bottom:22px;}
+  .card-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px;}
+  .card-head .name{font-size:16.5px;font-weight:700;}
+  .meta{color:var(--gray);font-size:12.5px;margin-bottom:14px;}
+  .stat-row{display:flex;gap:10px;margin:12px 0 16px;flex-wrap:wrap;}
+  .stat{flex:1;min-width:110px;background:var(--gray-bg);border-radius:8px;padding:10px 12px;text-align:center;}
+  .stat .num{font-size:20px;font-weight:700;}
+  .stat.pass .num{color:var(--green);} .stat.fail .num{color:var(--red);} .stat.warn .num{color:var(--yellow);}
+  .stat .lbl{font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:.4px;}
+  .finding{border-left:3px solid var(--border);padding:8px 12px;margin:6px 0;font-size:13.5px;border-radius:0 6px 6px 0;}
+  .finding.red{border-color:var(--red);background:var(--red-bg);}
+  .finding.yellow{border-color:var(--yellow);background:var(--yellow-bg);}
+  .finding.green{border-color:var(--green);background:var(--green-bg);}
+  .finding.gray{border-color:var(--gray);background:var(--gray-bg);}
+  .explain{margin-top:6px;font-size:12.5px;line-height:1.45;color:#3c4043;background:rgba(255,255,255,.55);border-radius:6px;padding:7px 10px;}
+  .explain b{color:var(--text);}
+  .sec-intro{font-size:13px;color:var(--gray);margin:0 0 10px;line-height:1.45;}
+  code{background:#f1f3f4;padding:1px 5px;border-radius:4px;font-size:12.5px;}
+  .legend{font-size:12.5px;color:var(--gray);margin-top:6px;}
+  .note{background:#fff8e1;border:1px solid #ffe08a;border-radius:8px;padding:14px 16px;font-size:13.5px;margin:18px 0;}
+  .summary-top{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:8px;}
+  .summary-top .pill{flex:1;min-width:150px;border-radius:10px;padding:14px 16px;color:#fff;}
+  .pill.g{background:var(--green);} .pill.r{background:var(--red);} .pill.gy{background:var(--gray);}
+  .pill .n{font-size:24px;font-weight:800;} .pill .l{font-size:12px;opacity:.9;}
+  footer{color:var(--gray);font-size:12px;margin-top:50px;border-top:1px solid var(--border);padding-top:14px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>dem2dged Validation Report</h1>
+  <div class="subtitle">Generated 2026-08-11 &nbsp;·&nbsp; dem2dged_validate.py v0.45 &nbsp;·&nbsp; 1 tile set(s) checked</div>
+
+  <div class="summary-top">
+    <div class="pill g"><div class="n">1 / 1</div><div class="l">dataset(s) fully PASS</div></div>
+    <div class="pill g"><div class="n">37 / 37</div><div class="l">individual checks passed overall</div></div>
+  </div>
+
+  <h2>What DGED requires (and what the validator checks)</h2>
+  <table>
+    <tr><th style="width:26px">#</th><th>Requirement</th><th>What's checked</th></tr>
+    <tr><td>A</td><td>File pairing</td><td>Every <code>.tif</code> has a matching <code>.xml</code> sidecar and vice versa</td></tr>
+    <tr><td>B</td><td>Filename convention</td><td>Name parses per DGED spec; tile letter matches the product level; UTM northing/easting subfields zero-padded to the spec 12.1 widths (<code>nnnn</code>/<code>eee</code> for levels 4b-6, <code>nnnnmmm</code>/<code>eeemmm</code> for levels 7-9)</td></tr>
+    <tr><td>C</td><td>GeoTIFF header</td><td>Correct data type for the level (Int16 for levels 0-2, Float32 for level 3+), NoData = -32767, <code>AREA_OR_POINT=Point</code>, LZW compression, EGM2008 (EPSG:3855) CRS tag</td></tr>
+    <tr><td>D</td><td>Grid geometry</td><td>Pixel size matches the level's GSD; raster dimensions match expected posts (incl. the required 1-pixel overlap); origin aligned to the DGED tile grid; filename coordinates match the actual georeferencing</td></tr>
+    <tr><td>E</td><td>XML sidecar</td><td>Well-formed XML, no leftover <code>{{PLACEHOLDER}}</code> text, basename/level consistent with the tile</td></tr>
+    <tr><td>F</td><td>Statistics / NoData</td><td>Elevation values are within a sane range; NoData isn't leaking into valid data</td></tr>
+    <tr><td>G</td><td>Edge overlap</td><td>The shared row/column between north-south and east-west neighbouring tiles must be pixel-identical</td></tr>
+    <tr><td>H</td><td>Source comparison</td><td>(only if a source DEM is supplied) tile mosaic covers the source extent; min/max/mean within tolerance; pixel-level differences in sample windows</td></tr>
+  </table>
+  <div class="legend"><span class="dot dot-green"></span>PASS &nbsp; <span class="dot dot-yellow"></span>WARN (worth a look, not a failure) &nbsp; <span class="dot dot-red"></span>FAIL &nbsp; <span class="dot dot-gray"></span>could not be checked</div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="name">utm_tiles</div>
+      <span class="badge b-pass">PASS</span>
+    </div>
+    <div class="meta">2 tile(s) &nbsp;·&nbsp; mode UTM &nbsp;·&nbsp; level 5 &nbsp;·&nbsp; compared against <code>utm_source.tif</code></div>
+    <div class="stat-row">
+      <div class="stat pass"><div class="num">37</div><div class="lbl">Passed</div></div>
+      <div class="stat warn"><div class="num">0</div><div class="lbl">Warnings</div></div>
+      <div class="stat fail"><div class="num">0</div><div class="lbl">Failed</div></div>
+    </div>
+
+    <h3>Detailed Per-Tile Results</h3>
+    <p class="sec-intro">One row per tile, one column per DGED criterion — see "What DGED requires" above for what each check verifies.</p>
+    <table>
+      <tr><th>Tile Name</th><th>Filename</th><th>GSD</th><th>Bounds</th><th>NoData</th><th>CRS / Vertical</th><th>Data Type</th><th>Metadata</th><th>Overall</th></tr>
+    <tr><td>DGEDL5UtD_32N6140_500_A_U_01</td><td><span class="badge b-pass">✓</span></td><td><span class="badge b-pass">✓</span></td><td><span class="badge b-pass">✓</span></td><td><span class="badge b-pass">✓</span></td><td><span class="badge b-pass">✓</span></td><td><span class="badge b-pass">✓</span></td><td><span class="badge b-pass">✓</span></td><td><span class="badge b-pass">✓</span></td></tr>
+    <tr><td>DGEDL5UtD_32N6140_510_A_U_01</td><td><span class="badge b-pass">✓</span></td><td><span class="badge b-pass">✓</span></td><td><span class="badge b-pass">✓</span></td><td><span class="badge b-pass">✓</span></td><td><span class="badge b-pass">✓</span></td><td><span class="badge b-pass">✓</span></td><td><span class="badge b-pass">✓</span></td><td><span class="badge b-pass">✓</span></td></tr>
+    </table>
+    <h3>H2. Sample-window pixel difference (tiles vs re-warped source)</h3>
+    <p class="sec-intro">Spot-checks a few 512-pixel windows, comparing each tile pixel against the source re-sampled the same way, to measure the actual elevation difference in metres.</p>
+    <div class="finding gray"><span class="dot dot-gray"></span>Pixel-level sample window: max difference 0.00 m</div>
+
+  </div>
+  <footer>
+    dem2dged v0.45 &nbsp;·&nbsp; Report reflects checks A-H per dem2dged_validate.py &nbsp;·&nbsp; generated automatically after conversion.
+  </footer>
+
+</div>
+</body>
+</html>

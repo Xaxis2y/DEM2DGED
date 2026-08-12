@@ -1,0 +1,7 @@
+SKIPPED -- no rasters found under C:\Users\Son\Documents\Claude\dem2dged\dem2dged_v0.45\DEM
+
+Drop one or more real source DEMs there and re-run to exercise the full
+19-step harness against real terrain. That harness is the only thing that
+covers the EGM96 -> EGM2008 vertical transform, which needs PROJ vertical
+grids AND a source with a declared vertical datum -- neither of which a
+synthetic fixture can provide.

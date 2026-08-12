@@ -1,0 +1,17 @@
+dem2dged_validate v0.45
+Tile folder: C:\Users\Son\AppData\Local\Temp\dem2dged_relcheck_xxgyu6k3\utm_tiles
+
+── A. File pairing (.tif <-> .xml) ───────────────────────────────────
+
+── B-F. Per-tile checks (naming, header, grid, XML, statistics) ──────
+
+── G. Edge-overlap consistency between adjacent tiles ────────────────
+
+── H. Comparison against source DEM ──────────────────────────────────
+
+── H2. Sample-window pixel difference (tiles vs re-warped source) ────
+  Pixel-level sample window: max difference 0.00 m
+
+── Summary ───────────────────────────────────────────────────────────
+PASS=37  WARN=0  FAIL=0
+RESULT: PASS

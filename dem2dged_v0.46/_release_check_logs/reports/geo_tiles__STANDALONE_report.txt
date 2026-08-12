@@ -1,0 +1,50 @@
+dem2dged_validate v0.45
+Tile folder: C:\Users\Son\AppData\Local\Temp\dem2dged_relcheck_xxgyu6k3\geo_tiles
+
+── A. File pairing (.tif <-> .xml) ───────────────────────────────────
+  PASS  all 2 tile(s) paired (.tif + .xml)
+
+── B-F. Per-tile checks (naming, header, grid, XML, statistics) ──────
+  PASS  DGEDL5GtD_5524N01200E_A_U_01: filename OK
+  PASS  DGEDL5GtD_5524N01200E_A_U_01: Float32 (correct for level 5)
+  PASS  DGEDL5GtD_5524N01200E_A_U_01: NoData=-32767
+  PASS  DGEDL5GtD_5524N01200E_A_U_01: AREA_OR_POINT=Point
+  PASS  DGEDL5GtD_5524N01200E_A_U_01: LZW compression
+  PASS  DGEDL5GtD_5524N01200E_A_U_01: EGM2008 vertical CRS tag present
+  PASS  DGEDL5GtD_5524N01200E_A_U_01: pixel size matches level 5
+  PASS  DGEDL5GtD_5524N01200E_A_U_01: filename coordinates match georeferencing
+  PASS  DGEDL5GtD_5524N01200E_A_U_01: aligned to tile grid
+  PASS  DGEDL5GtD_5524N01200E_A_U_01: dimensions 4001×6001
+  PASS  DGEDL5GtD_5524N01200E_A_U_01.xml: well-formed, placeholders replaced
+  PASS  DGEDL5GtD_5524N01200E_A_U_01: elevation range [97.3, 433.5] m
+  PASS  DGEDL5GtD_5524N01206E_A_U_01: filename OK
+  PASS  DGEDL5GtD_5524N01206E_A_U_01: Float32 (correct for level 5)
+  PASS  DGEDL5GtD_5524N01206E_A_U_01: NoData=-32767
+  PASS  DGEDL5GtD_5524N01206E_A_U_01: AREA_OR_POINT=Point
+  PASS  DGEDL5GtD_5524N01206E_A_U_01: LZW compression
+  PASS  DGEDL5GtD_5524N01206E_A_U_01: EGM2008 vertical CRS tag present
+  PASS  DGEDL5GtD_5524N01206E_A_U_01: pixel size matches level 5
+  PASS  DGEDL5GtD_5524N01206E_A_U_01: filename coordinates match georeferencing
+  PASS  DGEDL5GtD_5524N01206E_A_U_01: aligned to tile grid
+  PASS  DGEDL5GtD_5524N01206E_A_U_01: dimensions 4001×6001
+  PASS  DGEDL5GtD_5524N01206E_A_U_01.xml: well-formed, placeholders replaced
+  PASS  DGEDL5GtD_5524N01206E_A_U_01: elevation range [315.5, 451.8] m
+
+── G. Edge-overlap consistency between adjacent tiles ────────────────
+  PASS  DGEDL5GtD_5524N01200E_A_U_01 ↔ DGEDL5GtD_5524N01206E_A_U_01: shared column identical
+
+── H. Comparison against source DEM ──────────────────────────────────
+  PASS  tile mosaic fully covers the source extent
+  PASS  min: source 97.33 m vs tiles 97.33 m (|Δ|=0.00)
+  PASS  max: source 451.78 m vs tiles 451.78 m (|Δ|=0.00)
+  PASS  mean: source 271.99 m vs tiles 272.04 m (|Δ|=0.05)
+
+── H2. Sample-window pixel difference (tiles vs re-warped source) ────
+  PASS  sample window (3744,2744): max |diff| 0.000 m
+  PASS  sample window (2000,1500): max |diff| 0.000 m
+  PASS  sample window (4150,4479): max |diff| 0.000 m
+  Pixel-level sample window: max difference 0.00 m
+
+── Summary ───────────────────────────────────────────────────────────
+PASS=33  WARN=0  FAIL=0
+RESULT: PASS

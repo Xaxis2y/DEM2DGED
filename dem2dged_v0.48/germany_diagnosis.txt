@@ -1,0 +1,299 @@
+DIAGNOSE_SECTION_H v0.11
+Source     : C:\Users\Son\Downloads\DEM\OpenDEM\srtm_germany_dtm.TIF
+Tile folder: C:\Users\Son\Downloads\DEM\output\srtm_germany_dtm_dged_output\test_2_bilinear_interpolation
+Resample   : bilinear
+Max diff   : 10.000 m  (v0.46 default is 10.0 m; v0.45 and earlier used a fixed 5.0 m -- pass --max-diff 5.0 to reproduce that)
+GDAL       : 3.12.4
+Python     : 3.11.15
+Executable : C:\ProgramData\anaconda3\envs\dem2dged_anaconda_environment\python.exe
+CONDA_PREFIX: C:\ProgramData\anaconda3\envs\dem2dged_anaconda_environment
+
+==============================================================================
+[1] SOURCE RASTER PROPERTIES
+==============================================================================
+  size            : 13201 x 10801
+  data type       : Int16
+  declared NoData : None
+  geotransform    : (4.9995833333, 0.0008333333, 0.0000000000, 56.0004166667, 0.0000000000, -0.0008333333)
+  source CRS:            WGS 84
+  compound (has vertical): no
+  authority:             EPSG:4326
+
+==============================================================================
+[2] SOURCE STATISTICS -- FULL RESOLUTION (ground truth)
+==============================================================================
+  source, every valid post:
+    min      : 0.0000 m
+    max      : 3730.0000 m
+    mean     : 263.5624 m
+    n valid  : 142,584,001
+    n nodata : 0
+
+  NOTE: these are the source's TRUE extremes. Compare them to the
+        tile statistics in [5]. If the tile range sits INSIDE this
+        range, the tiles did not invent any value and the Section H
+        min/max FAIL is a measurement artifact, not a defect.
+
+==============================================================================
+[4] UNDECLARED NoData SENTINEL SCAN
+==============================================================================
+  Values below are counted ONLY where the pixel currently passes
+  the declared-NoData filter. A large count for a sentinel-looking
+  value means the source very likely uses it as NoData WITHOUT
+  declaring it -- which drags the comparison baseline's mean and
+  min down while the converter may have excluded it.
+
+    value 0.0        :     25,252,823 px  (17.711% of valid)
+    (no strongly suspicious undeclared sentinel found)
+
+==============================================================================
+[5] DELIVERED TILES
+==============================================================================
+  tile count : 143
+  tile CRS:              WGS 84 + EGM2008 height
+  compound (has vertical): YES
+  vertical CS:           EGM2008 height
+  authority:             EPSG:9518
+  mosaic size    : 11836 x 13201
+  mosaic pixel   : 0.001098484848 x 0.000833333333
+
+  Per-tile statistics (full resolution, as check_tile computes them):
+    DGEDL1_46N004E_A_U_01.tif                      min=   201.000  max=   201.000  mean=   201.000  n=1
+    DGEDL1_46N005E_A_U_01.tif                      min=   167.000  max=   618.000  mean=   246.278  n=1,201
+    DGEDL1_46N006E_A_U_01.tif                      min=   363.000  max=  1289.000  mean=   857.435  n=1,201
+    DGEDL1_46N007E_A_U_01.tif                      min=   422.000  max=  1302.000  mean=   713.986  n=1,201
+    DGEDL1_46N008E_A_U_01.tif                      min=   431.000  max=  2854.000  mean=  1065.322  n=1,201
+    DGEDL1_46N009E_A_U_01.tif                      min=   501.000  max=  2834.000  mean=  1517.366  n=1,201
+    DGEDL1_46N010E_A_U_01.tif                      min=   915.000  max=  3270.000  mean=  2192.433  n=1,201
+    DGEDL1_46N011E_A_U_01.tif                      min=  1065.000  max=  3206.000  mean=  2259.654  n=1,201
+    DGEDL1_46N012E_A_U_01.tif                      min=   939.000  max=  2999.000  mean=  2037.095  n=1,201
+    DGEDL1_46N013E_A_U_01.tif                      min=   879.000  max=  2916.000  mean=  1975.691  n=1,201
+    DGEDL1_46N014E_A_U_01.tif                      min=   677.000  max=  2020.000  mean=  1278.142  n=1,201
+    DGEDL1_46N015E_A_U_01.tif                      min=   281.000  max=   990.000  mean=   444.743  n=1,201
+    DGEDL1_46N016E_A_U_01.tif                      min=   284.000  max=   284.000  mean=   284.000  n=1
+    DGEDL1_47N004E_A_U_01.tif                      min=   184.000  max=   520.000  mean=   334.366  n=1,201
+    DGEDL1_47N005E_A_U_01.tif                      min=   167.000  max=   641.000  mean=   279.456  n=1,442,401
+    DGEDL1_47N006E_A_U_01.tif                      min=   200.000  max=  1426.000  mean=   515.683  n=1,442,401
+    DGEDL1_47N007E_A_U_01.tif                      min=   178.000  max=  1597.000  mean=   539.147  n=1,442,401
+    DGEDL1_47N008E_A_U_01.tif                      min=   289.000  max=  2854.000  mean=   647.906  n=1,442,401
+    DGEDL1_47N009E_A_U_01.tif                      min=   383.000  max=  2938.000  mean=   807.014  n=1,442,401
+    DGEDL1_47N010E_A_U_01.tif                      min=   569.000  max=  3370.000  mean=  1264.078  n=1,442,401
+    DGEDL1_47N011E_A_U_01.tif                      min=   466.000  max=  3461.000  mean=  1238.970  n=1,442,401
+    DGEDL1_47N012E_A_U_01.tif                      min=   372.000  max=  3730.000  mean=  1269.929  n=1,442,401
+    DGEDL1_47N013E_A_U_01.tif                      min=   391.000  max=  3328.000  mean=  1249.450  n=1,442,401
+    DGEDL1_47N014E_A_U_01.tif                      min=   295.000  max=  2568.000  mean=  1117.036  n=1,442,401
+    DGEDL1_47N015E_A_U_01.tif                      min=   261.000  max=  2262.000  mean=   844.078  n=1,442,401
+    DGEDL1_47N016E_A_U_01.tif                      min=   262.000  max=  1310.000  mean=   574.074  n=1,201
+    DGEDL1_48N004E_A_U_01.tif                      min=   139.000  max=   390.000  mean=   240.127  n=1,201
+    DGEDL1_48N005E_A_U_01.tif                      min=   139.000  max=   504.000  mean=   314.065  n=1,442,401
+    DGEDL1_48N006E_A_U_01.tif                      min=   164.000  max=  1345.000  mean=   335.086  n=1,442,401
+    DGEDL1_48N007E_A_U_01.tif                      min=    99.000  max=  1350.000  mean=   307.167  n=1,442,401
+    DGEDL1_48N008E_A_U_01.tif                      min=    85.000  max=  1232.000  mean=   538.218  n=1,442,401
+    DGEDL1_48N009E_A_U_01.tif                      min=   173.000  max=   970.000  mean=   541.701  n=1,442,401
+    DGEDL1_48N010E_A_U_01.tif                      min=   368.000  max=   737.000  mean=   516.100  n=1,442,401
+    DGEDL1_48N011E_A_U_01.tif                      min=   330.000  max=   713.000  mean=   477.811  n=1,442,401
+    DGEDL1_48N012E_A_U_01.tif                      min=   290.000  max=  1084.000  mean=   437.164  n=1,442,401
+    DGEDL1_48N013E_A_U_01.tif                      min=   252.000  max=  1433.000  mean=   541.407  n=1,442,401
+    DGEDL1_48N014E_A_U_01.tif                      min=   216.000  max=  1235.000  mean=   556.216  n=1,442,401
+    DGEDL1_48N015E_A_U_01.tif                      min=   165.000  max=  1099.000  mean=   459.232  n=1,442,401
+    DGEDL1_48N016E_A_U_01.tif                      min=   167.000  max=   669.000  mean=   307.343  n=1,201
+    DGEDL1_49N004E_A_U_01.tif                      min=   137.000  max=   436.000  mean=   253.425  n=1,201
+    DGEDL1_49N005E_A_U_01.tif                      min=   137.000  max=   581.000  mean=   307.621  n=1,442,401
+    DGEDL1_49N006E_A_U_01.tif                      min=   100.000  max=   717.000  mean=   289.893  n=1,442,401
+    DGEDL1_49N007E_A_U_01.tif                      min=    70.000  max=   817.000  mean=   340.937  n=1,442,401
+    DGEDL1_49N008E_A_U_01.tif                      min=    20.000  max=   669.000  mean=   184.330  n=1,442,401
+    DGEDL1_49N009E_A_U_01.tif                      min=    95.000  max=   621.000  mean=   323.413  n=1,442,401
+    DGEDL1_49N010E_A_U_01.tif                      min=   172.000  max=   681.000  mean=   371.995  n=1,442,401
+    DGEDL1_49N011E_A_U_01.tif                      min=   234.000  max=   912.000  mean=   455.060  n=1,442,401
+    DGEDL1_49N012E_A_U_01.tif                      min=   313.000  max=  1110.000  mean=   519.621  n=1,442,401
+    DGEDL1_49N013E_A_U_01.tif                      min=   237.000  max=  1437.000  mean=   556.186  n=1,442,401
+    DGEDL1_49N014E_A_U_01.tif                      min=   186.000  max=   829.000  mean=   449.936  n=1,442,401
+    DGEDL1_49N015E_A_U_01.tif                      min=   195.000  max=   851.000  mean=   508.608  n=1,442,401
+    DGEDL1_49N016E_A_U_01.tif                      min=   235.000  max=   809.000  mean=   504.407  n=1,201
+    DGEDL1_50N004E_A_U_01.tif                      min=    17.000  max=   447.000  mean=   163.710  n=1,201
+    DGEDL1_50N005E_A_U_01.tif                      min=    15.000  max=   661.000  mean=   239.177  n=962,001
+    DGEDL1_50N006E_A_U_01.tif                      min=     1.000  max=   711.000  mean=   355.705  n=962,001
+    DGEDL1_50N007E_A_U_01.tif                      min=    29.000  max=   712.000  mean=   282.269  n=962,001
+    DGEDL1_50N008E_A_U_01.tif                      min=    64.000  max=   880.000  mean=   286.480  n=962,001
+    DGEDL1_50N009E_A_U_01.tif                      min=    94.000  max=   947.000  mean=   354.246  n=962,001
+    DGEDL1_50N010E_A_U_01.tif                      min=   186.000  max=   974.000  mean=   400.217  n=962,001
+    DGEDL1_50N011E_A_U_01.tif                      min=   129.000  max=  1034.000  mean=   451.815  n=962,001
+    DGEDL1_50N012E_A_U_01.tif                      min=   160.000  max=  1241.000  mean=   496.156  n=962,001
+    DGEDL1_50N013E_A_U_01.tif                      min=    49.000  max=  1083.000  mean=   456.184  n=962,001
+    DGEDL1_50N014E_A_U_01.tif                      min=    34.000  max=   989.000  mean=   305.235  n=962,001
+    DGEDL1_50N015E_A_U_01.tif                      min=   179.000  max=  1586.000  mean=   413.290  n=962,001
+    DGEDL1_50N016E_A_U_01.tif                      min=   232.000  max=   837.000  mean=   406.644  n=1,201
+    DGEDL1_51N004E_A_U_01.tif                      min=     1.000  max=    36.000  mean=    12.976  n=1,201
+    DGEDL1_51N005E_A_U_01.tif                      min=     1.000  max=   155.000  mean=    22.213  n=962,001
+    DGEDL1_51N006E_A_U_01.tif                      min=     1.000  max=   205.000  mean=    40.949  n=962,001
+    DGEDL1_51N007E_A_U_01.tif                      min=    11.000  max=   664.000  mean=   172.049  n=962,001
+    DGEDL1_51N008E_A_U_01.tif                      min=    48.000  max=   846.000  mean=   301.541  n=962,001
+    DGEDL1_51N009E_A_U_01.tif                      min=    67.000  max=   759.000  mean=   265.135  n=962,001
+    DGEDL1_51N010E_A_U_01.tif                      min=    94.000  max=  1140.000  mean=   316.574  n=962,001
+    DGEDL1_51N011E_A_U_01.tif                      min=    19.000  max=   586.000  mean=   175.404  n=962,001
+    DGEDL1_51N012E_A_U_01.tif                      min=    40.000  max=   340.000  mean=   122.201  n=962,001
+    DGEDL1_51N013E_A_U_01.tif                      min=    35.000  max=   401.000  mean=   129.969  n=962,001
+    DGEDL1_51N014E_A_U_01.tif                      min=     2.000  max=   583.000  mean=   149.867  n=962,001
+    DGEDL1_51N015E_A_U_01.tif                      min=    44.000  max=   490.000  mean=   161.975  n=962,001
+    DGEDL1_51N016E_A_U_01.tif                      min=    56.000  max=   452.000  mean=   151.585  n=1,201
+    DGEDL1_52N004E_A_U_01.tif                      min=     0.000  max=     9.000  mean=     1.025  n=1,201
+    DGEDL1_52N005E_A_U_01.tif                      min=     0.000  max=   117.000  mean=     7.570  n=962,001
+    DGEDL1_52N006E_A_U_01.tif                      min=     1.000  max=   111.000  mean=    13.898  n=962,001
+    DGEDL1_52N007E_A_U_01.tif                      min=     1.000  max=   240.000  mean=    39.237  n=962,001
+    DGEDL1_52N008E_A_U_01.tif                      min=     2.000  max=   357.000  mean=    63.968  n=962,001
+    DGEDL1_52N009E_A_U_01.tif                      min=     2.000  max=   440.000  mean=    76.799  n=962,001
+    DGEDL1_52N010E_A_U_01.tif                      min=    15.000  max=   327.000  mean=    84.558  n=962,001
+    DGEDL1_52N011E_A_U_01.tif                      min=     8.000  max=   218.000  mean=    59.406  n=962,001
+    DGEDL1_52N012E_A_U_01.tif                      min=    11.000  max=   201.000  mean=    51.055  n=962,001
+    DGEDL1_52N013E_A_U_01.tif                      min=     1.000  max=   171.000  mean=    51.794  n=962,001
+    DGEDL1_52N014E_A_U_01.tif                      min=     1.000  max=   166.000  mean=    52.220  n=962,001
+    DGEDL1_52N015E_A_U_01.tif                      min=     9.000  max=   233.000  mean=    70.339  n=962,001
+    DGEDL1_52N016E_A_U_01.tif                      min=    26.000  max=   111.000  mean=    66.243  n=1,201
+    DGEDL1_53N004E_A_U_01.tif                      min=     0.000  max=     5.000  mean=     0.038  n=1,201
+    DGEDL1_53N005E_A_U_01.tif                      min=     0.000  max=    39.000  mean=     0.280  n=962,001
+    DGEDL1_53N006E_A_U_01.tif                      min=     0.000  max=    29.000  mean=     0.934  n=962,001
+    DGEDL1_53N007E_A_U_01.tif                      min=     0.000  max=    46.000  mean=     2.024  n=962,001
+    DGEDL1_53N008E_A_U_01.tif                      min=     0.000  max=    60.000  mean=     4.812  n=962,001
+    DGEDL1_53N009E_A_U_01.tif                      min=     0.000  max=   167.000  mean=    23.497  n=962,001
+    DGEDL1_53N010E_A_U_01.tif                      min=     0.000  max=   142.000  mean=    38.548  n=962,001
+    DGEDL1_53N011E_A_U_01.tif                      min=     0.000  max=   168.000  mean=    39.221  n=962,001
+    DGEDL1_53N012E_A_U_01.tif                      min=     1.000  max=   150.000  mean=    57.802  n=962,001
+    DGEDL1_53N013E_A_U_01.tif                      min=     0.000  max=   171.000  mean=    49.125  n=962,001
+    DGEDL1_53N014E_A_U_01.tif                      min=     0.000  max=   162.000  mean=    24.017  n=962,001
+    DGEDL1_53N015E_A_U_01.tif                      min=     2.000  max=   202.000  mean=    75.786  n=962,001
+    DGEDL1_53N016E_A_U_01.tif                      min=    20.000  max=   199.000  mean=   111.437  n=1,201
+    DGEDL1_54N004E_A_U_01.tif                      min=     0.000  max=     0.000  mean=     0.000  n=1,201
+    DGEDL1_54N005E_A_U_01.tif                      min=     0.000  max=     0.000  mean=     0.000  n=962,001
+    DGEDL1_54N006E_A_U_01.tif                      min=     0.000  max=     0.000  mean=     0.000  n=962,001
+    DGEDL1_54N007E_A_U_01.tif                      min=     0.000  max=    49.000  mean=     0.003  n=962,001
+    DGEDL1_54N008E_A_U_01.tif                      min=     0.000  max=    44.000  mean=     0.728  n=962,001
+    DGEDL1_54N009E_A_U_01.tif                      min=     0.000  max=   108.000  mean=    16.957  n=962,001
+    DGEDL1_54N010E_A_U_01.tif                      min=     0.000  max=   163.000  mean=    13.318  n=962,001
+    DGEDL1_54N011E_A_U_01.tif                      min=     0.000  max=   131.000  mean=     4.030  n=962,001
+    DGEDL1_54N012E_A_U_01.tif                      min=     0.000  max=   140.000  mean=     6.391  n=962,001
+    DGEDL1_54N013E_A_U_01.tif                      min=     0.000  max=   164.000  mean=     4.818  n=962,001
+    DGEDL1_54N014E_A_U_01.tif                      min=     0.000  max=    54.000  mean=     0.104  n=962,001
+    DGEDL1_54N015E_A_U_01.tif                      min=     0.000  max=    83.000  mean=     3.375  n=962,001
+    DGEDL1_54N016E_A_U_01.tif                      min=     0.000  max=    42.000  mean=     4.821  n=1,201
+    DGEDL1_55N004E_A_U_01.tif                      min=     0.000  max=     0.000  mean=     0.000  n=1,201
+    DGEDL1_55N005E_A_U_01.tif                      min=     0.000  max=     0.000  mean=     0.000  n=962,001
+    DGEDL1_55N006E_A_U_01.tif                      min=     0.000  max=     0.000  mean=     0.000  n=962,001
+    DGEDL1_55N007E_A_U_01.tif                      min=     0.000  max=     0.000  mean=     0.000  n=962,001
+    DGEDL1_55N008E_A_U_01.tif                      min=     0.000  max=    93.000  mean=    11.639  n=962,001
+    DGEDL1_55N009E_A_U_01.tif                      min=     0.000  max=   179.000  mean=    40.960  n=962,001
+    DGEDL1_55N010E_A_U_01.tif                      min=     0.000  max=   127.000  mean=    14.915  n=962,001
+    DGEDL1_55N011E_A_U_01.tif                      min=     0.000  max=   128.000  mean=    15.616  n=962,001
+    DGEDL1_55N012E_A_U_01.tif                      min=     0.000  max=   126.000  mean=    10.122  n=962,001
+    DGEDL1_55N013E_A_U_01.tif                      min=     0.000  max=   212.000  mean=    42.341  n=962,001
+    DGEDL1_55N014E_A_U_01.tif                      min=     0.000  max=   194.000  mean=    13.487  n=962,001
+    DGEDL1_55N015E_A_U_01.tif                      min=     0.000  max=   117.000  mean=     1.155  n=962,001
+    DGEDL1_55N016E_A_U_01.tif                      min=     0.000  max=     0.000  mean=     0.000  n=1,201
+    DGEDL1_56N004E_A_U_01.tif                      min=     0.000  max=     0.000  mean=     0.000  n=1
+    DGEDL1_56N005E_A_U_01.tif                      min=     0.000  max=     0.000  mean=     0.000  n=801
+    DGEDL1_56N006E_A_U_01.tif                      min=     0.000  max=     0.000  mean=     0.000  n=801
+    DGEDL1_56N007E_A_U_01.tif                      min=     0.000  max=     0.000  mean=     0.000  n=801
+    DGEDL1_56N008E_A_U_01.tif                      min=     0.000  max=    61.000  mean=    19.432  n=801
+    DGEDL1_56N009E_A_U_01.tif                      min=    23.000  max=   154.000  mean=    72.380  n=801
+    DGEDL1_56N010E_A_U_01.tif                      min=     0.000  max=   103.000  mean=    13.247  n=801
+    DGEDL1_56N011E_A_U_01.tif                      min=     0.000  max=    25.000  mean=     0.999  n=801
+    DGEDL1_56N012E_A_U_01.tif                      min=     0.000  max=    83.000  mean=    27.808  n=801
+    DGEDL1_56N013E_A_U_01.tif                      min=    51.000  max=   157.000  mean=   103.059  n=801
+    DGEDL1_56N014E_A_U_01.tif                      min=     0.000  max=    75.000  mean=     7.471  n=801
+    DGEDL1_56N015E_A_U_01.tif                      min=     0.000  max=     0.000  mean=     0.000  n=801
+    DGEDL1_56N016E_A_U_01.tif                      min=     0.000  max=     0.000  mean=     0.000  n=1
+
+  AGGREGATE over tiles (this is what Section H calls 'tiles'):
+    min      : 0.0000 m
+    max      : 3730.0000 m
+    mean     : 308.6150 m   (n-weighted)
+    n valid  : 111,134,943
+
+  NOTE: n valid SUMS the one-post overlap DGED tiles share with
+        their neighbours, so it slightly exceeds the number of
+        distinct posts. Too small to explain a large mean gap.
+
+==============================================================================
+[3] SOURCE AS SECTION H MEASURES IT (decimated)
+==============================================================================
+  Section H decimation factor 'scale' = 6
+  (scale = max(1, int(max(mosaicX, mosaicY) / 2000)))
+
+  decimated source min  : 0.0000 m
+  decimated source max  : 3526.0652 m
+  decimated source mean : 263.4839 m
+  decimated n valid     : 3,004,200
+
+  DECIMATION LOSS (full-resolution truth minus this sample):
+    max lost : 203.9348 m   (true 3730.0000  ->  sampled 3526.0652)
+    min lost : 0.0000 m   (true 0.0000  ->  sampled 0.0000)
+    mean shift: -0.0784 m  (true 263.5624  ->  sampled 263.4839)
+
+  INTERPRETATION: 'max lost' and 'min lost' are pure measurement
+  artifact -- subsampling cannot preserve isolated extremes. If
+  they account for the Section H max/min FAIL, the tiles are fine.
+  'mean shift' should be near zero; subsampling is unbiased for a
+  mean. If it is NOT near zero, the source's valid-pixel mask
+  differs between the two reads (see [4]).
+
+  SECTION H VERDICT (same thresholds check_source() uses):
+    min : source 0.00 m vs tiles 0.00 m  (|delta|=0.00, tolerance 20.00)  -> OK
+    max : source 3526.07 m vs tiles 3730.00 m  (|delta|=203.93, tolerance 20.00)  -> FAIL
+    mean: source 263.48 m vs tiles 308.61 m  (|delta|=45.13, tolerance 10.00)  -> FAIL
+
+==============================================================================
+[6] PAIRED COMPARISON (same grid, pixel by pixel)
+==============================================================================
+  Section H compares a DIFFERENCE OF MEANS over two separate pixel
+  populations. That cannot separate 'values are shifted' from 'the
+  two sides averaged different pixels'. The paired difference below
+  can. This uses the WHOLE decimated grid, not H2's three 512x512
+  windows specifically -- treat it as a broader version of the same
+  idea, not a literal re-run of H2's exact window placement.
+
+  pixels valid in SOURCE only : 0
+  pixels valid in TILES  only : 0
+  pixels valid in BOTH        : 3,004,200
+
+  bias  mean(tile - source) : +0.0660 m
+  median(tile - source)     : +0.0000 m
+  stddev of difference      : 10.2352 m
+  RMSE                      : 10.2355 m
+  max |difference|          : 278.3657 m
+
+    p1   of (tile - source) : -33.3422 m
+    p5   of (tile - source) : -12.7683 m
+    p25  of (tile - source) : -1.6895 m
+    p50  of (tile - source) : +0.0000 m
+    p75  of (tile - source) : +1.5341 m
+    p95  of (tile - source) : +13.2426 m
+    p99  of (tile - source) : +34.4822 m
+
+  Also, means restricted to the SAME pixels (paired):
+    source mean (paired) : 263.4839 m
+    tiles  mean (paired) : 263.5499 m
+
+  H2-STYLE VERDICT (same tolerance check_source() uses for its
+  per-window max|diff|, applied here to this whole-grid paired
+  comparison): max|diff| 278.366 m vs tolerance 10.00 m -> FAIL
+
+  HOW TO READ THIS:
+   * bias ~= a large constant AND stddev small
+       -> systematic vertical shift (geoid / -source_vertical
+          applied to the tiles but not to the baseline).
+   * bias ~= 0 AND stddev large
+       -> ordinary resampling difference; the Section H mean gap
+          then comes from the POPULATION difference, not values.
+   * paired means agree here but Section H's unpaired means did
+     not -> the mask/footprint differs; see the 'valid in X only'
+     counts above and the sentinel scan in [4].
+
+==============================================================================
+SUMMARY OF THE NUMBERS THAT MATTER
+==============================================================================
+  source TRUE min/max (full res) : 0.0000 .. 3730.0000 m
+  tiles      min/max (full res) : 0.0000 .. 3730.0000 m
+  tiles inside source range?     : YES -- no invented values; a Section H min/max FAIL is an artifact
+  Section H  (min/max/mean)      : FAIL
+  Section H2 (paired, whole grid): FAIL
+
+Log written to: C:\Users\Son\Documents\Claude\dem2dged\dem2dged_v0.47\germany_diagnosis.txt

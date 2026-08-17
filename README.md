@@ -3,7 +3,7 @@
 **SPDX-License-Identifier: GPL-2.0-or-later**  
 **Copyright (c) 2026 Eui Soo SON**
 
-**Current version: v0.50**
+**Current version: v0.50.1**
 
 Convert raster Digital Elevation Models (DEMs) to military-standard **DGED** (Defense Gridded Elevation Data) tiles.
 
@@ -53,8 +53,8 @@ DGED is a DGIWG product profile for packaging elevation data for military use. I
 | `tests/` | pytest suite — `conftest.py`, `test_lib.py`, `test_validator.py`, `test_converters.py`. Run with `pytest` from the project root |
 | `audit_pure.py` | GDAL-free self-audit (naming, tables, version consistency) — `python audit_pure.py` |
 | `run_verification.py` | End-to-end verification run against real GDAL |
-| `RELEASE_CHECK_v0.50.py` | **Release gate** — full pre-release run: audit, pytest, real conversions, validation, ASCII-console check, PyInstaller build |
-| `PACKAGE_v0.50.py` | Builds the release zips (full tool + validator-only bundle) |
+| `RELEASE_CHECK_v0.50.1.py` | **Release gate** — full pre-release run: audit, pytest, real conversions, validation, ASCII-console check, PyInstaller build |
+| `PACKAGE_v0.50.1.py` | Builds the release zips (full tool + validator-only bundle) |
 | `dem2dged_package.py` / `dem2dged_validate_package.py` | The two packagers the release script drives |
 | `BUILD_AND_PACKAGE.py` | Convenience wrapper — build the exes, then package |
 | `selftest_optimize_resampling.py` | (v0.47) Self-test of `-resample optimize`'s clamp-fairness fix on a synthetic cliff DEM |

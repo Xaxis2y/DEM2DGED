@@ -1,0 +1,24 @@
+{
+  "policy_version": "0.50-baseline",
+  "status": "project-baseline",
+  "note": "Thresholds are conservative project defaults. An approving authority must confirm or replace them for operational delivery.",
+  "profiles": {
+    "informational": {
+      "description": "Report terrain metrics without a numeric acceptance gate"
+    },
+    "standard": {
+      "description": "General production screening",
+      "max_bias": 2.0,
+      "max_rmse": 5.0,
+      "max_p95": 8.0,
+      "max_max": 20.0
+    },
+    "strict": {
+      "description": "Mountainous-terrain compliance screening",
+      "max_bias": 1.0,
+      "max_rmse": 3.0,
+      "max_p95": 5.0,
+      "max_max": 10.0
+    }
+  }
+}

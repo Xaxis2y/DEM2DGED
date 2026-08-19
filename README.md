@@ -3,7 +3,20 @@
 **SPDX-License-Identifier: GPL-2.0-or-later**  
 **Copyright (c) 2026 Eui Soo SON**
 
-**Current version: v0.50.1**
+**Current version: v0.54.0**
+
+**v0.54.0 release note:** compliance is now evidence-based. Source eligibility,
+source-to-output conversion fidelity, independent-reference accuracy and DGED
+structure are reported separately; missing independent evidence is
+`NOT_EVALUATED`, never a false `PASS`. The unified CLI and GUI block a target
+level finer than the source by default. The opt-in mountain QA mode adds >20%
+slope, peak/valley, P90/P99/maximum and +/-0.5-post checks without changing the
+normal conversion algorithm. Every conversion also writes a hash-based
+reproducibility manifest. Declared non-EGM2008 vertical conversion now has a
+strict PROJ/geoid-operation preflight, and independent-reference runs write a
+three-part source/conversion/final error budget plus consolidated
+`validation/statistics.json` and `validation/report.html`. See
+[`REQUIREMENTS_COMPLIANCE_V0.54.0.md`](REQUIREMENTS_COMPLIANCE_V0.54.0.md).
 
 Convert raster Digital Elevation Models (DEMs) to military-standard **DGED** (Defense Gridded Elevation Data) tiles.
 
@@ -27,7 +40,9 @@ DGED is a DGIWG product profile for packaging elevation data for military use. I
 | `dem2dged_validate.py` | **Automated validator** — checks tiles for DGED compliance and data integrity |
 | `dem2dged_compare.py` | Resampling comparison test — ranks Nearest / Bilinear / Cubic against the source and writes an HTML report |
 | `dem2dged_logging.py` | Shared logging setup (`--quiet` / `--debug`) |
-| `dem2dged_terrain.py` | Source inspection, terrain-fidelity metrics, slope/error analysis, offset sensitivity and compliance artifacts |
+| `dem2dged_terrain.py` | Source inspection, terrain-fidelity metrics, slope/error analysis, mountain/offset sensitivity and QA artifacts |
+| `dem2dged_compliance.py` | DGIWG level limits, source eligibility, independent-accuracy decisions, hashes and consolidated compliance reports |
+| `DGED_Loader/` | ArcGIS Pro toolbox and Script Tool source for loading a delivery's `DGEDL*` tiles; excludes source/QA rasters during recursive scans |
 | `dem2dged_env.py` | **Environment diagnostic** (v0.46) — dependency-free; run `python dem2dged_env.py` when an import fails. See [Troubleshooting](#wrong-python-interpreter-modulenotfounderror-inside-an-activated-environment) |
 | `DGED_GEO_TEMPLATE.xml` | ISO 19115-2 metadata sidecar template — GEO tiles |
 | `DGED_UTM_TEMPLATE.xml` | ISO 19115-2 metadata sidecar template — UTM tiles |
@@ -53,8 +68,8 @@ DGED is a DGIWG product profile for packaging elevation data for military use. I
 | `tests/` | pytest suite — `conftest.py`, `test_lib.py`, `test_validator.py`, `test_converters.py`. Run with `pytest` from the project root |
 | `audit_pure.py` | GDAL-free self-audit (naming, tables, version consistency) — `python audit_pure.py` |
 | `run_verification.py` | End-to-end verification run against real GDAL |
-| `RELEASE_CHECK_v0.50.1.py` | **Release gate** — full pre-release run: audit, pytest, real conversions, validation, ASCII-console check, PyInstaller build |
-| `PACKAGE_v0.50.1.py` | Builds the release zips (full tool + validator-only bundle) |
+| `RELEASE_CHECK_v0.54.0.py` | **Release gate** — full pre-release run: audit, pytest, real conversions, validation, ASCII-console check, PyInstaller build |
+| `PACKAGE_v0.54.0.py` | Builds the release zips (full tool + validator-only bundle) |
 | `dem2dged_package.py` / `dem2dged_validate_package.py` | The two packagers the release script drives |
 | `BUILD_AND_PACKAGE.py` | Convenience wrapper — build the exes, then package |
 | `selftest_optimize_resampling.py` | (v0.47) Self-test of `-resample optimize`'s clamp-fairness fix on a synthetic cliff DEM |
@@ -67,7 +82,8 @@ DGED is a DGIWG product profile for packaging elevation data for military use. I
 |---|---|
 | `START_HERE.md` | One-page orientation — read this first |
 | `QUICKSTART.html` | Visual quick-start guide — open in any browser |
-| `DEM2DGED_User_Manual.docx` | Full user manual |
+| `DEM2DGED_User_Manual.md` | Full v0.54.0 user manual |
+| `REQUIREMENTS_COMPLIANCE_V0.54.0.md` | Requirement-to-evidence matrix and the conditions for a defensible full PASS |
 | `VERSION.txt` / `VALIDATOR_VERSION.txt` | Maintained changelogs. **Hand-maintained below the header** — the packagers rewrite only the three header lines |
 | `MANIFEST.md` | What ships in each release zip |
 | `DGIWG_STANDARDS_TRACKING.md` | Spec-currency check against DGIWG's published standards |
@@ -98,7 +114,8 @@ Output: `dist\dem2dged.exe` (~300–500 MB, fully standalone)
 3. Choose an **Output Folder**
 4. Select mode (**GEO** or **UTM**) and **Product Level**
 5. Leave **"Validate after conversion and generate a report"** checked (on by default)
-6. Click **⚙ Convert**
+6. For mountainous data, optionally check **"Mountain terrain precision QA"**
+7. Click **⚙ Convert**
 
 The GUI processes all files sequentially, shows live progress per file, and writes each DEM's tiles into its own subfolder (optional). When validation is enabled, it automatically runs the same checks as `dem2dged_validate.py` against every converted file right after conversion, and writes one combined `DGED_Validation_Report.html` (+ `.txt`) into the output folder — no separate step needed. The completion dialog shows the report's path; open the `.html` file in any browser.
 
@@ -233,14 +250,33 @@ python dem2dged.py <input_raster> <output_folder> [OPTIONS]
 
 Additional mountain-terrain options are available on the unified CLI:
 
-* `--terrain-qa none|basic|full` writes `source_inspection.json`,
+* `--terrain-qa none|basic|full|mountain` writes `source_inspection.json`,
   `terrain_metrics.json`, `elevation_diff.tif` and `error_mask.tif`; `full`
-  adds the nine-position +/-0.5-pixel sensitivity test.
+  adds nine-position +/-0.5-post sensitivity, and `mountain` also checks
+  percent slope, >20% predominance, upper/lower extremes and local peaks/valleys.
 * `--strict-source` requires a source CRS and an explicit `--source-vertical`.
+* A target level finer than the source is blocked by default. The expert
+  `--allow-finer-than-source` override permits an interpolation test but the
+  compliance report keeps source eligibility at `FAIL`.
+* `--reference-dem` enables independent accuracy evaluation. Source-to-output
+  agreement alone is never reported as absolute terrain accuracy. When both
+  the original source and independent reference are available, the validator
+  writes `error_budget.json` and uses the exact error-vector/MSE decomposition;
+  it never subtracts MAE or RMSE.
 * `--compliance-profile informational|standard|strict` records the selected
-  policy in the terrain report.
+  policy in the terrain report. `standard` and `strict` load their thresholds
+  from `DEM2DGED_Compliance_Policy.json`; a threshold breach is a compliance
+  `FAIL` and causes `dem2dged_validate.py` to return exit code 1.
+* `--require-full-compliance` returns exit code 2 when required evidence is
+  still `NOT_EVALUATED`.
 
-`dem2dged.py` validates automatically after every conversion (unless `--no-validate` is passed): it runs the same checks as `dem2dged_validate.py` against the output it just produced, comparing back against your source DEM, and writes `DGED_Validation_Report.html` + `.txt` into `output_folder`. Basic terrain QA is also generated by default. This also works from `dem2dged.exe` once rebuilt — see "Automatic validation" below.
+Terrain comparison rasters use the DGED output grid. A Level 2 delivery, for
+example, yields approximately 30 m comparison pixels even when the source DEM
+is 2 m. In ArcGIS Pro use Bilinear/Cubic display resampling only to make the
+view smoother; it does not add measurement detail. The output-grid comparison
+is the authoritative DGED QA result.
+
+`dem2dged.py` validates automatically after every conversion (unless `--no-validate` is passed): it writes `DGED_Validation_Report.html` + `.txt`, `validation/terrain_metrics.json`, `validation/compliance_report.json` + `.txt`, `validation/statistics.json`, `validation/report.html`, and `DEM2DGED_Conversion_Manifest.json`. With `--reference-dem`, it also writes `validation/error_budget.json`. Basic terrain QA is generated by default. Without independent control data, the independent-accuracy section correctly remains `NOT_EVALUATED`.
 
 ### Pre-flight elevation sanity check
 
@@ -298,7 +334,7 @@ python dem2dged.py my_dem.tif output_folder --resample optimize
 
 Level 5 (default) is a good all-round choice for standard LiDAR or high-res satellite DEMs. Pick the level that matches your input data's native resolution — upsampling to a higher level won't add real detail.
 
-The accuracy columns are the DGED spec's own *predicted* goal values per level (Tables 5/6 — `dem2dged_lib.LEVEL_ABS_HACC` / `LEVEL_ABS_VACC`), the same numbers `dem2dged.py` writes into each tile's metadata quality report by default (`--abs-hacc` / `--abs-vacc` override them). They describe how well a *typical* delivery at that spacing represents the ground — not a guarantee for any specific file. The actual error on a real conversion depends heavily on how rugged the source terrain is and which resampling method built the tile; see below.
+The accuracy columns are DGIWG 250 absolute-accuracy *goal* values per level (Tables 5/6 — `dem2dged_lib.LEVEL_ABS_HACC` / `LEVEL_ABS_VACC`). They are not predicted or measured accuracy for a particular delivery. Tile metadata labels an automatic value explicitly as a goal; operator-supplied `--abs-hacc` / `--abs-vacc` values are labelled as supplied evidence. Actual accuracy requires independent control/reference data.
 
 ### Why mountainous terrain needs more care
 
@@ -458,6 +494,9 @@ converted in that run (one card per dataset); for the CLI, one report per
 # Full validation of a tile folder, comparing against the original DEM
 python dem2dged_validate.py output_folder -src my_dem.tif -report validation_report.txt -html-report validation_report.html
 
+# Mountain QA plus independent-reference evidence and strict completion gate
+python dem2dged_validate.py output_folder -src my_dem.tif --terrain-qa mountain --reference-dem control.tif --require-full-compliance
+
 # Quick spec-compliance check only (no source comparison)
 python dem2dged_validate.py output_folder
 ```
@@ -519,7 +558,13 @@ Confirm these in the output:
 Tiles load correctly into ArcGIS Pro. The compound CRS (`EPSG:4326+3855`) is written as a metadata tag — ArcGIS Pro reads the horizontal component for display and the EGM2008 vertical tag for datum-aware analysis.
 
 ### Vertical datum (EGM2008)
-The tool tags each tile with the EGM2008 vertical datum (`EPSG:3855`) per the DGED spec. It does **not** perform a physical height transformation from ellipsoidal to EGM2008 (which would require the `egm08_25.gtx` grid shift file). This matches the behaviour of most DGED converters — the elevation values from your input DEM are preserved as-is, and only the CRS metadata label is set to EGM2008. If your workflow requires a true vertical datum shift, pre-process your DEM with `gdalwarp -t_srs EPSG:3855` before converting.
+The tool tags each tile with EGM2008 (`EPSG:3855`). When `--source-vertical`
+is omitted, values are assumed to already be EGM2008 and only the CRS label is
+applied. When a different source vertical EPSG is declared, the tool performs
+a real vertical transformation and first requires PROJ to prove that a
+non-ballpark operation is available for the source area. Missing geoid grids
+are a hard preflight failure recorded in `vertical_operation_check.json`, so
+unchanged-height fallback cannot silently pass.
 
 ---
 

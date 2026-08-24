@@ -3,20 +3,15 @@
 **SPDX-License-Identifier: GPL-2.0-or-later**  
 **Copyright (c) 2026 Eui Soo SON**
 
-**Current version: v0.54.0**
+**Current version: v0.55.0**
 
-**v0.54.0 release note:** compliance is now evidence-based. Source eligibility,
-source-to-output conversion fidelity, independent-reference accuracy and DGED
-structure are reported separately; missing independent evidence is
-`NOT_EVALUATED`, never a false `PASS`. The unified CLI and GUI block a target
-level finer than the source by default. The opt-in mountain QA mode adds >20%
-slope, peak/valley, P90/P99/maximum and +/-0.5-post checks without changing the
-normal conversion algorithm. Every conversion also writes a hash-based
-reproducibility manifest. Declared non-EGM2008 vertical conversion now has a
-strict PROJ/geoid-operation preflight, and independent-reference runs write a
-three-part source/conversion/final error budget plus consolidated
-`validation/statistics.json` and `validation/report.html`. See
-[`REQUIREMENTS_COMPLIANCE_V0.54.0.md`](REQUIREMENTS_COMPLIANCE_V0.54.0.md).
+**v0.55.0 release note:** validation and resampling-comparison reports now
+identify the actual resampling method for every candidate. A sample-window
+FAIL explicitly applies only to that method and marks it as not recommended
+for delivery; it does not imply that Bilinear, Cubic, or another separately
+validated candidate failed. The comparison report now separates hold-out rank
+from the delivery recommendation and selects only a non-FAIL candidate.
+See [`REQUIREMENTS_COMPLIANCE_V0.55.0.md`](REQUIREMENTS_COMPLIANCE_V0.55.0.md).
 
 Convert raster Digital Elevation Models (DEMs) to military-standard **DGED** (Defense Gridded Elevation Data) tiles.
 
@@ -68,8 +63,8 @@ DGED is a DGIWG product profile for packaging elevation data for military use. I
 | `tests/` | pytest suite — `conftest.py`, `test_lib.py`, `test_validator.py`, `test_converters.py`. Run with `pytest` from the project root |
 | `audit_pure.py` | GDAL-free self-audit (naming, tables, version consistency) — `python audit_pure.py` |
 | `run_verification.py` | End-to-end verification run against real GDAL |
-| `RELEASE_CHECK_v0.54.0.py` | **Release gate** — full pre-release run: audit, pytest, real conversions, validation, ASCII-console check, PyInstaller build |
-| `PACKAGE_v0.54.0.py` | Builds the release zips (full tool + validator-only bundle) |
+| `RELEASE_CHECK_v0.55.0.py` | **Release gate** — full pre-release run: audit, pytest, real conversions, validation, ASCII-console check, PyInstaller build |
+| `PACKAGE_v0.55.0.py` | Builds the release zips (full tool + validator-only bundle) |
 | `dem2dged_package.py` / `dem2dged_validate_package.py` | The two packagers the release script drives |
 | `BUILD_AND_PACKAGE.py` | Convenience wrapper — build the exes, then package |
 | `selftest_optimize_resampling.py` | (v0.47) Self-test of `-resample optimize`'s clamp-fairness fix on a synthetic cliff DEM |
@@ -82,8 +77,8 @@ DGED is a DGIWG product profile for packaging elevation data for military use. I
 |---|---|
 | `START_HERE.md` | One-page orientation — read this first |
 | `QUICKSTART.html` | Visual quick-start guide — open in any browser |
-| `DEM2DGED_User_Manual.md` | Full v0.54.0 user manual |
-| `REQUIREMENTS_COMPLIANCE_V0.54.0.md` | Requirement-to-evidence matrix and the conditions for a defensible full PASS |
+| `DEM2DGED_User_Manual.md` | Full v0.55.0 user manual |
+| `REQUIREMENTS_COMPLIANCE_V0.55.0.md` | Requirement-to-evidence matrix and the conditions for a defensible full PASS |
 | `VERSION.txt` / `VALIDATOR_VERSION.txt` | Maintained changelogs. **Hand-maintained below the header** — the packagers rewrite only the three header lines |
 | `MANIFEST.md` | What ships in each release zip |
 | `DGIWG_STANDARDS_TRACKING.md` | Spec-currency check against DGIWG's published standards |

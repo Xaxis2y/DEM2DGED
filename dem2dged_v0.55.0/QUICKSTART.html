@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<!-- SPDX-License-Identifier: GPL-2.0-or-later -->
+<!-- Copyright (c) 2026 Eui Soo SON -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dem2dged v0.55.0 – Quick Start Guide</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f4f6f9;
+    color: #1a1a2e;
+    line-height: 1.7;
+  }
+
+  /* Header */
+  .hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+    color: white;
+    padding: 56px 40px 48px;
+    text-align: center;
+  }
+  .hero .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: 10px;
+  }
+  .hero h1 span { color: #e94560; }
+  .hero p {
+    font-size: 17px;
+    opacity: 0.75;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  /* Main layout */
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* Section */
+  .section {
+    background: white;
+    border-radius: 14px;
+    padding: 36px 40px;
+    margin-bottom: 28px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+  .section-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: #e94560;
+    color: white;
+    border-radius: 50%;
+    font-size: 15px;
+    font-weight: 700;
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 22px;
+  }
+  .section-header h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a2e;
+  }
+
+  /* Code blocks */
+  pre {
+    background: #1a1a2e;
+    color: #e2e8f0;
+    border-radius: 10px;
+    padding: 18px 22px;
+    font-size: 14px;
+    font-family: "Cascadia Code", "Fira Code", "Consolas", monospace;
+    overflow-x: auto;
+    margin: 14px 0;
+    line-height: 1.6;
+  }
+  .comment { color: #718096; }
+  .cmd     { color: #90cdf4; }
+  .arg     { color: #9ae6b4; }
+  .flag    { color: #fbd38d; }
+  code {
+    background: #eef0f5;
+    color: #c0392b;
+    border-radius: 5px;
+    padding: 2px 7px;
+    font-size: 13px;
+    font-family: "Cascadia Code", "Consolas", monospace;
+  }
+
+  /* Steps / lists */
+  .step-list { list-style: none; }
+  .step-list li {
+    padding: 10px 0 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .step-list li:last-child { border-bottom: none; }
+  .step-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step-list li strong { display: block; font-size: 15px; color: #1a1a2e; }
+  .step-list li span   { font-size: 14px; color: #555; }
+
+  /* Level table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-top: 16px;
+  }
+  th {
+    background: #1a1a2e;
+    color: white;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+  }
+  td { padding: 9px 14px; border-bottom: 1px solid #f0f0f0; }
+  tr:nth-child(even) td { background: #f9f9fb; }
+  tr.highlight td { background: #fff3cd; font-weight: 600; }
+  .pill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .pill-green  { background: #d4edda; color: #155724; }
+  .pill-blue   { background: #cce5ff; color: #004085; }
+  .pill-yellow { background: #fff3cd; color: #856404; }
+
+  /* Options table */
+  .opts-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 14px; }
+  .opts-table th { background: #f0f2f7; color: #1a1a2e; padding: 9px 14px; text-align: left; }
+  .opts-table td { padding: 9px 14px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+  .opts-table td:first-child { font-family: monospace; color: #c0392b; font-size: 13px; white-space: nowrap; }
+
+  /* Warning / tip boxes */
+  .box {
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-size: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .box-icon { font-size: 20px; flex-shrink: 0; }
+  .box-tip  { background: #e8f4fd; border-left: 4px solid #3498db; }
+  .box-warn { background: #fff8e1; border-left: 4px solid #f39c12; }
+  .box-ok   { background: #e8f8ef; border-left: 4px solid #27ae60; }
+
+  /* Concept cards */
+  .concept-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin: 18px 0 10px;
+  }
+  .concept-card {
+    border-radius: 12px;
+    padding: 22px 24px;
+  }
+  .concept-card.dem  { background: #eef6ff; border-left: 5px solid #3498db; }
+  .concept-card.dged { background: #fef0f0; border-left: 5px solid #e94560; }
+  .concept-card .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+  }
+  .concept-card.dem  .tag { background: #3498db; color: white; }
+  .concept-card.dged .tag { background: #e94560; color: white; }
+  .concept-card h3 { font-size: 16px; margin-bottom: 8px; color: #1a1a2e; }
+  .concept-card p  { font-size: 13.5px; color: #444; line-height: 1.65; }
+  .concept-card .example {
+    margin-top: 12px;
+    background: rgba(0,0,0,0.05);
+    border-radius: 7px;
+    padding: 9px 12px;
+    font-size: 12.5px;
+    color: #555;
+  }
+  .concept-card .example strong { color: #1a1a2e; }
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: #ccc;
+    margin: 4px 0;
+  }
+  .level-mini { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13px; }
+  .level-mini th { background: #1a1a2e; color: white; padding: 7px 12px; text-align: left; }
+  .level-mini td { padding: 7px 12px; border-bottom: 1px solid #f0f0f0; }
+  .level-mini tr:nth-child(even) td { background: #f9f9fb; }
+  .level-mini tr.hl td { background: #fff3cd; font-weight: 600; }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    font-size: 13px;
+    color: #aaa;
+    padding-top: 8px;
+  }
+  .footer a { color: #3498db; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ HERO ═══════════ -->
+<div class="hero">
+   <div class="badge">Quick Start Guide · v0.55.0</div>
+  <h1>dem<span>2</span>dged</h1>
+  <p>Convert any raster DEM to military-standard DGED tiles — point-and-click with the GUI, or scripted from the command line.</p>
+</div>
+
+<!-- ═══════════ CONTENT ═══════════ -->
+<div class="container">
+
+  <!-- ── WHAT'S NEW ── -->
+  <div class="section">
+    <div class="section-header">
+       <h2>✨ What's new in v0.55.0</h2>
+    </div>
+    <p style="font-size:14px;color:#555;margin-bottom:12px;">
+       <strong>v0.55.0</strong> makes report decisions clear during resampling
+       comparisons. Each validation result names the resampling method used; a
+       sample-window <code>FAIL</code> applies only to that method and excludes
+       that candidate from delivery. The report separately identifies the best
+       hold-out reconstruction and the recommended non-FAIL delivery candidate.
+       <br><br><strong>v0.49</strong> adds an <strong>opt-in Gaussian anti-alias
+      pre-filter</strong> (<code>--prefilter gaussian</code>) for high-relief sources
+      being downsampled. It is off by default, so v0.48 output is reproduced bit for
+      bit and an existing delivery does not need regenerating. It addresses
+      <em>aliasing</em> — a distinct error source from the interpolation error
+      v0.48 documented, and one no choice of resampler can fix after the fact. See the
+      <strong>&quot;Aliasing&quot;</strong> box under Product levels for the measured
+      numbers, including the terrain type where it makes things <em>worse</em>.
+      Before that, <strong>v0.48</strong> was a documentation-only release — no change to tile
+      geometry, resampling algorithms, filenames, or metadata. It explains
+      <strong>why elevation accuracy degrades faster on mountainous terrain</strong>
+      than on flat terrain at a fixed product level, adds the DGED spec's predicted
+      horizontal/vertical accuracy goals to the level table below, and recommends
+      <code>-resample optimize</code> for high-relief sources — see the
+      <strong>"Terrain relief and accuracy"</strong> box under Product levels. Before
+      that, v0.47 fixed a fairness bug in <code>-resample optimize</code>'s
+      accuracy measurement: cubic-family candidates were scored on their raw,
+      unclamped reconstruction, while delivered tiles are clamped into the source's
+      true range before being written — so a few overshoot pixels at sharp
+      discontinuities (never actually shipped) could make cubic-family methods look
+      less accurate than what you actually receive. Fixed, and <strong>Cubic
+      B-Spline</strong> is now a fourth measured candidate alongside Nearest/Bilinear/Cubic.
+      Tile generation, DGED tables and the <code>auto</code> default are unchanged from
+      v0.46. What changed before that is how the tool behaves when something goes
+      wrong: several failure modes that used to be silent, misleading, or fatal now
+      stop early and say what to do. Highlights:
+    </p>
+    <ul style="font-size:14px;color:#444;line-height:1.7;margin-left:4px;">
+      <li><strong>Evidence-based compliance</strong> (v0.54.0) — independent product accuracy is never inferred from agreement with the conversion source; absent control evidence remains <code>NOT_EVALUATED</code>.</li>
+      <li><strong>Mountain precision QA</strong> (v0.54.0) — opt-in slope, extrema and half-post checks; the converter's default output algorithm is unchanged.</li>
+      <li><strong>Reproducibility</strong> (v0.54.0) — source/output SHA-256 hashes, resolved resampler, vertical assumptions and GDAL/PROJ/Python versions are recorded.</li>
+      <li><strong>Vertical-operation preflight</strong> (v0.54.0) — a declared non-EGM2008 transform must have a real, non-ballpark PROJ operation; missing geoid grids stop the run and are recorded.</li>
+      <li><strong>Three-part error budget</strong> (v0.54.0) — with an independent reference, source error, conversion residual and final output error are measured on one DGED grid with an MSE cross term; MAE/RMSE are never subtracted.</li>
+      <li><strong>Anti-alias pre-filter for mountainous sources</strong> (v0.49) — <code>--prefilter gaussian</code> low-passes the source before warping so unrepresentable detail is removed cleanly instead of aliasing back in as false terrain. Measured &minus;82% error on very rough terrain and &minus;73.8% on mountainous, but <em>+72.9% (worse)</em> on near-planar ground — hence opt-in. NoData-safe, recorded in the sidecar lineage, and verified by the new <code>selftest_prefilter.py</code>.</li>
+      <li><strong>Terrain relief, level and accuracy explained</strong> (v0.48) — the level table now shows the DGED spec's predicted horizontal/vertical accuracy goal per level, not just GSD, and a new box explains why steep terrain needs a matching level <em>and</em> the right resampling method, not just a finer level. See "Product levels" below.</li>
+      <li><strong>Fairer <code>optimize</code> accuracy ranking + Cubic B-Spline candidate</strong> (v0.47) — cubic-family resamplers are now scored on the same source-range-clamped values a real delivery would actually contain, instead of their raw unclamped overshoot. See <code>selftest_optimize_resampling.py</code>.</li>
+      <li><strong>Configurable elevation tolerance</strong> (v0.46) — 5m (DGIWG strict) or 10m (standard, default) for Section H2, selectable in the GUI and via <code>-max-diff</code>.</li>
+      <li><strong>Environment diagnostic</strong> (v0.45) — run <code>python dem2dged_env.py</code> when an import fails. The classic <code>ModuleNotFoundError</code> inside an <em>activated</em> environment is almost always the command form: typing <code>script.py</code> instead of <code>python script.py</code> makes Windows launch a different interpreter entirely. The old message blamed the environment, which sent people reinstalling packages that were never missing.</li>
+      <li><strong>Works on non-UTF-8 consoles</strong> (v0.44) — packaging and verification used to die on a Korean/Japanese/Chinese console (<code>UnicodeEncodeError: 'cp949' codec…</code>) because the scripts printed decorative ✓/✗ glyphs. All console output is plain ASCII now, and paths containing non-Latin characters no longer crash it.</li>
+      <li><strong>Fails fast, once, with a fix</strong> (v0.42) — an unknown <code>-resample</code> value used to produce one gdalwarp error <em>per tile</em> and then report success over an empty folder. A missing <code>gdalwarp</code>, or a source raster with no EPSG code, died with a raw traceback naming neither the file nor the problem. All three are now checked before any work starts. A run that produces no tiles is a hard error.</li>
+      <li><strong>Seam coverage closed</strong> (v0.43) — half of the tile-edge reconciliation (the north/south row pass) had never been exercised by any test. Now covered, along with Int16 output and the level 0&ndash;3 filename form, and the release gate builds and <em>runs</em> the frozen exes.</li>
+      <li><strong>Data-type-aware compression</strong> — Float32 tiles (all UTM levels, GEO level 3+) use the floating-point LZW predictor; Int16 tiles keep the integer predictor. Smaller and more format-correct, still lossless (spec 13.1).</li>
+      <li><strong>Resampling control + comparison</strong> — pick Nearest / Bilinear / Cubic / Average, or <code>optimize</code> (measures which method reconstructs <em>your</em> DEM most accurately). A side-by-side Resampling Comparison Report ranks them.</li>
+      <li><strong>Elevation sanity check</strong> — catches an aspect / slope / direction raster fed in by mistake <em>before</em> any tiles are written.</li>
+      <li><strong>Seamless tile edges</strong> — adjacent tiles are made bit-identical along their shared post row/column (spec 13.2).</li>
+      <li><strong>Cubic overshoot clamp</strong> — cubic-family resamplers can no longer ship elevations outside the source's true min/max.</li>
+      <li><strong>Equatorial UTM fix</strong> — northings are zero-padded to the spec width and clamped to the valid [0, 10&nbsp;000&nbsp;000]&nbsp;m band (no more negative-northing names).</li>
+      <li><strong>Accurate validation</strong> — the source-comparison no longer mistakes the EGM2008 geoid height for an error on SRTM-style inputs.</li>
+    </ul>
+  </div>
+
+  <!-- ── BACKGROUND: DEM & DGED ── -->
+  <div class="section">
+    <div class="section-header">
+      <h2>🗺️ Background — What are DEM and DGED?</h2>
+    </div>
+    <p style="font-size:14px;color:#555;margin-bottom:18px;">
+      If you are already familiar with these terms, skip ahead to <strong>Step 1</strong>.
+      Otherwise, read on — it only takes two minutes.
+    </p>
+
+    <div class="concept-grid">
+
+      <!-- DEM -->
+      <div class="concept-card dem">
+        <div class="tag">DEM</div>
+        <h3>Digital Elevation Model</h3>
+        <p>
+          A <strong>DEM</strong> is simply a digital map of the Earth's surface height —
+          a grid of values where each cell stores the elevation (in metres) of that spot on the ground.
+        </p>
+        <p style="margin-top:8px;">
+          Think of it like a photograph, but instead of colour each pixel holds an altitude number.
+          DEMs are produced from satellites, aircraft LiDAR scanners, or radar systems.
+        </p>
+        <div class="example">
+          <strong>Common DEM sources:</strong><br>
+          SRTM (NASA, free, 30 m global) · Copernicus DEM (ESA, free, 30/10 m) ·
+          LiDAR surveys (very high resolution, often national) · TanDEM-X (12 m global)
+        </div>
+        <div class="example" style="margin-top:8px;">
+          <strong>Common file format:</strong> GeoTIFF (.tif) — a georeferenced image file
+        </div>
+      </div>
+
+      <!-- DGED -->
+      <div class="concept-card dged">
+        <div class="tag">DGED</div>
+        <h3>Defense Gridded Elevation Data</h3>
+        <p>
+          <strong>DGED</strong> is a <em>military packaging standard</em> for elevation data,
+          defined by <strong>DGIWG</strong> (NATO's Defense Geospatial Information Working Group).
+          It does not invent a new file format — it specifies exactly <em>how</em> a GeoTIFF
+          elevation file must be structured, named, and documented so that any military system
+          from any NATO nation can read it reliably.
+        </p>
+        <p style="margin-top:8px;">
+          DGED is the successor to the older <strong>DTED</strong> format and will eventually
+          replace it as the primary elevation exchange format across NATO forces.
+        </p>
+        <div class="example">
+          <strong>What DGED enforces:</strong><br>
+          • Vertical datum: EGM2008 (global gravity-based height reference)<br>
+          • Tile size: fixed per resolution level<br>
+          • File naming: encodes location, level, security class<br>
+          • Metadata: ISO 19115-2 XML sidecar file alongside every tile<br>
+          • Compression: LZW · No-data value: −32767
+        </div>
+      </div>
+    </div>
+
+    <!-- Flow diagram -->
+    <div style="text-align:center;margin:24px 0 8px;">
+      <div style="display:inline-flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center;">
+        <div style="background:#eef6ff;border:2px solid #3498db;border-radius:10px;padding:14px 22px;font-size:14px;">
+          <div style="font-weight:700;color:#3498db;">Your DEM file</div>
+          <div style="color:#666;font-size:12px;">terrain.tif — any source, any CRS</div>
+        </div>
+        <div style="font-size:26px;color:#ccc;">→</div>
+        <div style="background:#1a1a2e;border-radius:10px;padding:14px 22px;font-size:14px;">
+          <div style="font-weight:700;color:#e94560;">dem2dged</div>
+          <div style="color:#aaa;font-size:12px;">re-projects · tiles · names · writes XML</div>
+        </div>
+        <div style="font-size:26px;color:#ccc;">→</div>
+        <div style="background:#fef0f0;border:2px solid #e94560;border-radius:10px;padding:14px 22px;font-size:14px;">
+          <div style="font-weight:700;color:#e94560;">DGED tiles</div>
+          <div style="color:#666;font-size:12px;">DGEDL5GtD_5530N00930E_A_U_01.tif<br>+ matching .xml sidecar</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Level table -->
+    <p style="font-size:14px;font-weight:600;margin-top:20px;margin-bottom:4px;">DGED Resolution Levels</p>
+    <p style="font-size:13px;color:#666;margin-bottom:8px;">
+      DGED defines numbered levels — higher numbers mean finer detail.
+      Pick the level that matches your input data's native resolution.
+      Upsampling to a higher level than your data supports won't add real detail.
+    </p>
+    <table class="level-mini">
+      <tr><th>Level</th><th>Ground Resolution (approx.)</th><th>Typical data source</th><th>Use case</th></tr>
+      <tr><td>0</td><td>~1000 m</td><td>SRTM 30 arc-sec</td><td>Continental / global overview</td></tr>
+      <tr><td>1</td><td>~100 m</td><td>SRTM 3 arc-sec</td><td>Country-scale mapping</td></tr>
+      <tr><td>2</td><td>~30 m</td><td>SRTM 1 arc-sec, Copernicus 30</td><td>Regional terrain analysis</td></tr>
+      <tr><td>3</td><td>~12 m</td><td>TanDEM-X, Copernicus 10</td><td>Detailed regional work</td></tr>
+      <tr><td>4b / 4</td><td>~5 – 4 m</td><td>Dense LiDAR, high-res SAR</td><td>Operational planning</td></tr>
+      <tr class="hl"><td>5 ★</td><td>~2 m</td><td>Standard airborne LiDAR</td><td>Default — most common choice</td></tr>
+      <tr><td>6</td><td>~1 m</td><td>Dense LiDAR</td><td>High-detail tactical use</td></tr>
+      <tr><td>7 – 9</td><td>0.5 m and below</td><td>Ultra-dense LiDAR</td><td>Precision mission planning</td></tr>
+    </table>
+
+    <div class="box box-tip" style="margin-top:20px;">
+      <div class="box-icon">💡</div>
+      <div>
+        <strong>GEO vs UTM — which mode?</strong><br>
+        <strong>GEO</strong> (WGS-84 lat/lon) is the NATO standard and works everywhere on the globe — use this unless you have a specific reason not to.
+        <strong>UTM</strong> uses a metric grid tied to a specific zone — useful when downstream tools need metre-based coordinates.
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ── WHAT IS THIS? ── -->
+  <div class="section">
+    <div class="section-header">
+      <h2>What does this tool do?</h2>
+    </div>
+    <ul class="step-list">
+      <li>
+        <div class="step-icon">📥</div>
+        <div>
+          <strong>Takes any DEM as input</strong>
+          <span>GeoTIFF, VRT, SRTM HGT, or any raster GDAL can open</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-icon">🔧</div>
+        <div>
+          <strong>Re-projects, resamples and slices</strong>
+          <span>Applies the correct CRS, EGM2008 vertical datum, nodata, and LZW compression</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-icon">📦</div>
+        <div>
+          <strong>Outputs DGED-compliant tiles</strong>
+          <span>One <code>.tif</code> + one <code>.xml</code> sidecar per tile, named to spec</span>
+        </div>
+      </li>
+    </ul>
+
+    <div class="box box-tip">
+      <div class="box-icon">ℹ️</div>
+      <div><strong>Two output modes:</strong> <strong>GEO</strong> (WGS-84 lat/lon, used globally) and <strong>UTM</strong> (metric grid, good for local/regional work). GEO is the default.</div>
+    </div>
+  </div>
+
+
+  <!-- ── GUI (RECOMMENDED) ── -->
+  <div class="section">
+    <div class="section-header">
+      <h2>🖱️ Easiest way — the GUI (recommended)</h2>
+    </div>
+
+    <p style="font-size:14px;color:#555;margin-bottom:14px;">
+      No commands needed. Two ways to launch it:
+    </p>
+    <ul class="step-list">
+      <li>
+        <div class="step-icon">🚀</div>
+        <div>
+          <strong>Option A — double-click <code>dist\dem2dged.exe</code></strong>
+          <span>Fully standalone: no Python or GDAL installation required on the machine.</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-icon">🐍</div>
+        <div>
+          <strong>Option B — run <code>python dem2dged_gui.py</code></strong>
+          <span>From an activated <code>DGED</code> conda environment (see Step 1–2 below).</span>
+        </div>
+      </li>
+    </ul>
+
+    <p style="margin-top:18px;font-weight:600;">Using the GUI — six clicks:</p>
+    <ul class="step-list">
+      <li>
+        <div class="step-icon">1️⃣</div>
+        <div>
+          <strong>+ Add Files…</strong>
+          <span>Select one or more DEM files (hold Ctrl for multiple). Supported: .tif, .tiff, .vrt, .hgt, .img, .asc — anything GDAL reads.</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-icon">2️⃣</div>
+        <div>
+          <strong>Browse… — pick the output folder</strong>
+          <span>With "Create subfolder per file" checked (default), each DEM gets its own folder named <code>&lt;input name&gt;_dged_output</code> — e.g. <code>daejeon.tif → daejeon_dged_output\</code></span>
+        </div>
+      </li>
+      <li>
+        <div class="step-icon">3️⃣</div>
+        <div>
+          <strong>Choose the output mode</strong>
+          <span>GEO (WGS-84, NATO standard) or UTM (metric). In UTM mode the Zone box activates — leave AUTO or type e.g. <code>52N</code>.</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-icon">4️⃣</div>
+        <div>
+          <strong>Pick the product level</strong>
+          <span>The list adapts to the mode: GEO offers 0–9, UTM offers 4b–9. Level 5 (~2 m) is the default.</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-icon">5️⃣</div>
+        <div>
+          <strong>(Optional) Advanced settings</strong>
+          <span>Source type, security class and product version — written into tile filenames. The Source vertical field applies a real EGM2008 geoid transform if your input heights use a different datum (e.g. EGM96). Defaults are fine for most uses.</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-icon">6️⃣</div>
+        <div>
+          <strong>⚙ Convert</strong>
+          <span>Progress bar + live log per tile. ■ Stop halts after the current tile; re-running later resumes where it left off (completed tiles are skipped). A validation report is generated automatically when the batch finishes — see below.</span>
+        </div>
+      </li>
+    </ul>
+
+    <div class="box box-tip" style="margin-top:16px;">
+      <div class="box-icon">🔨</div>
+      <div>
+        <strong>Rebuilding the exe after a code update:</strong> open Anaconda Prompt, then
+        <code>conda activate DGED</code> → <code>cd path\to\dem2dged</code> → <code>build_exe.bat</code>.
+        The build scripts (v0.13+) verify GDAL is present and always use the active environment's Python, so the
+        "No module named 'osgeo'" build problem cannot recur. The GUI title bar shows the version it was built from.
+      </div>
+    </div>
+
+    <p style="margin-top:16px;font-size:14px;color:#555;">
+      Prefer scripting or automation? The command line does the same job — steps 1–3 below.
+    </p>
+  </div>
+
+
+  <!-- ── STEP 1: INSTALL ── -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>Install (one time only — for the command line / GUI Option B)</h2>
+    </div>
+
+    <p>The scripts need <strong>Python 3</strong> and <strong>GDAL</strong>. The easiest way is <a href="https://www.anaconda.com/products/individual" style="color:#3498db">Anaconda</a>. (Skip this entirely if you only use <code>dist\dem2dged.exe</code>.)</p>
+
+    <p style="margin-top:14px;font-weight:600;">Windows</p>
+    <p style="font-size:14px;color:#555;margin-bottom:6px;">Double-click <code>install.bat</code> in the DEM2DGED folder, or run in a terminal:</p>
+    <pre><span class="comment"># In Anaconda Prompt or Command Prompt</span>
+<span class="cmd">conda</span> <span class="arg">create</span> --name DGED --channel conda-forge gdal python=3.10 -y</pre>
+
+    <p style="margin-top:16px;font-weight:600;">Linux / macOS</p>
+    <pre><span class="cmd">bash</span> <span class="arg">install.sh</span>
+<span class="comment"># — or manually —</span>
+<span class="cmd">conda</span> <span class="arg">create</span> --name DGED --channel conda-forge gdal python=3.10 -y</pre>
+
+    <div class="box box-ok">
+      <div class="box-icon">✅</div>
+      <div>Once the environment is created you never need to reinstall. Just activate it each time you open a new terminal.</div>
+    </div>
+  </div>
+
+
+  <!-- ── STEP 2: ACTIVATE ── -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2>Activate the environment &amp; navigate to the folder</h2>
+    </div>
+
+    <p style="font-weight:600;">Windows (Anaconda Prompt)</p>
+    <pre><span class="cmd">conda</span> <span class="arg">activate</span> DGED
+<span class="cmd">cd</span> <span class="arg">path\to\dem2dged</span></pre>
+
+    <p style="margin-top:16px;font-weight:600;">Linux / macOS (Terminal)</p>
+    <pre><span class="cmd">conda</span> <span class="arg">activate</span> DGED
+<span class="cmd">cd</span> <span class="arg">~/dem2dged</span></pre>
+
+    <div class="box box-tip">
+      <div class="box-icon">💡</div>
+      <div>You'll know the environment is active when you see <code>(DGED)</code> at the start of your terminal prompt.</div>
+    </div>
+  </div>
+
+
+  <!-- ── STEP 3: RUN ── -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2>Run the conversion</h2>
+    </div>
+
+    <p>The main command is always:</p>
+    <pre><span class="cmd">python</span> <span class="arg">dem2dged.py</span>  &lt;input_file&gt;  &lt;output_folder&gt;  [options]</pre>
+
+    <p style="margin-top:20px;font-weight:600;font-size:15px;">▶ Simplest run (GEO, ~2 m resolution)</p>
+    <pre><span class="cmd">python</span> <span class="arg">dem2dged.py</span>  my_dem.tif  dged_output</pre>
+
+    <p style="margin-top:20px;font-weight:600;font-size:15px;">▶ UTM output, auto-detect zone</p>
+    <pre><span class="cmd">python</span> <span class="arg">dem2dged.py</span>  my_dem.tif  dged_output  <span class="flag">--mode</span> utm</pre>
+
+    <p style="margin-top:20px;font-weight:600;font-size:15px;">▶ UTM, specify zone, higher resolution</p>
+    <pre><span class="cmd">python</span> <span class="arg">dem2dged.py</span>  my_dem.tif  dged_output  <span class="flag">--mode</span> utm  <span class="flag">--zone</span> 32N  <span class="flag">--level</span> 6</pre>
+
+    <p style="margin-top:20px;font-weight:600;font-size:15px;">▶ See all options</p>
+    <pre><span class="cmd">python</span> <span class="arg">dem2dged.py</span>  <span class="flag">--help</span></pre>
+
+    <div class="box box-ok">
+      <div class="box-icon">✅</div>
+      <div>The output folder is created automatically if it doesn't exist. Progress is printed as a percentage. When done you'll see <strong>All done!</strong></div>
+    </div>
+
+    <div class="box box-warn">
+      <div class="box-icon">⚠️</div>
+      <div>If a run is interrupted, just re-run the same command — it skips tiles that are already complete. Delete the last tile first if it may be partially written.</div>
+    </div>
+  </div>
+
+
+  <!-- ── OPTIONS ── -->
+  <div class="section">
+    <div class="section-header">
+      <h2>All options at a glance</h2>
+    </div>
+    <table class="opts-table">
+      <tr>
+        <th>Option</th>
+        <th>What it does</th>
+        <th>Default</th>
+      </tr>
+      <tr>
+        <td>--mode geo|utm</td>
+        <td>Output projection: geographic (WGS-84) or UTM metric</td>
+        <td>geo</td>
+      </tr>
+      <tr>
+        <td>--level LEVEL</td>
+        <td>Product resolution level (see table below)</td>
+        <td>5</td>
+      </tr>
+      <tr>
+        <td>--zone ZONE</td>
+        <td>UTM zone e.g. <code>32N</code>, <code>09S</code> — UTM mode only</td>
+        <td>auto</td>
+      </tr>
+      <tr>
+        <td>--source-type X</td>
+        <td>One-letter source code per DGED spec (A = optical unedited)</td>
+        <td>A</td>
+      </tr>
+      <tr>
+        <td>--security-class X</td>
+        <td>T (Top Secret) / S / C / R / U (Unclassified)</td>
+        <td>U</td>
+      </tr>
+      <tr>
+        <td>--product-version NN</td>
+        <td>Two-digit version tag embedded in filename</td>
+        <td>01</td>
+      </tr>
+      <tr>
+        <td>--source-vertical EPSG</td>
+        <td>Source vertical datum (e.g. 5773=EGM96) — applies a real geoid transform to EGM2008 only after strict PROJ/geoid-grid preflight</td>
+        <td>none (assume EGM2008)</td>
+      </tr>
+      <tr>
+        <td>--org CODE</td>
+        <td>Producer organisation/nation code (STANAG 1059), embedded in filenames and metadata</td>
+        <td>none</td>
+      </tr>
+      <tr>
+        <td>--abs-hacc METRES</td>
+        <td>Absolute horizontal accuracy (CE90) written to the metadata quality report</td>
+        <td>auto (spec Table 5 goal)</td>
+      </tr>
+      <tr>
+        <td>--abs-vacc METRES</td>
+        <td>Absolute vertical accuracy (LE90) written to the metadata quality report</td>
+        <td>auto (spec Table 6 goal)</td>
+      </tr>
+      <tr>
+        <td>--lineage TEXT</td>
+        <td>Lineage statement written to the metadata</td>
+        <td>auto-generated</td>
+      </tr>
+      <tr>
+        <td>--resample ALG</td>
+        <td>auto | optimize | bilinear | cubic | cubicspline | average | lanczos | near — <code>optimize</code> measures Nearest/Bilinear/Cubic/Cubic B-Spline against your source DEM and picks the most accurate; recommended for high-relief terrain</td>
+        <td>auto</td>
+      </tr>
+      <tr>
+        <td>--prefilter MODE</td>
+        <td>none | gaussian &mdash; anti-alias low-pass applied to the <em>source</em> before warping, so terrain detail too short to survive the target post spacing is removed cleanly instead of folding back in as false structure. Opt-in; big win on rough terrain, measurably <em>harmful</em> on near-planar ground &mdash; see the &quot;Aliasing&quot; box below</td>
+        <td>none</td>
+      </tr>
+      <tr>
+        <td>--prefilter-sigma S</td>
+        <td>Gaussian sigma in <em>source pixels</em> for <code>--prefilter gaussian</code>; <code>auto</code> = (target GSD / source GSD &minus; 1) / 2, and 0 when not downsampling</td>
+        <td>auto</td>
+      </tr>
+      <tr>
+        <td>--terrain-qa LEVEL</td>
+        <td>none | basic | full | mountain &mdash; mountain adds &gt;20% slope, peaks/valleys and +/-0.5-post diagnostics</td>
+        <td>basic</td>
+      </tr>
+      <tr>
+        <td>--reference-dem FILE</td>
+        <td>Independent control surface for product-accuracy evidence; never replaced by the conversion source</td>
+        <td>none (accuracy NOT_EVALUATED)</td>
+      </tr>
+      <tr>
+        <td>--source-horizontal-accuracy / --source-vertical-accuracy</td>
+        <td>Independently established source CE90/LE90 used by the source-eligibility decision</td>
+        <td>not evaluated</td>
+      </tr>
+      <tr>
+        <td>--allow-finer-than-source</td>
+        <td>Expert interpolation override; output is produced but source eligibility remains FAIL</td>
+        <td>off (blocked)</td>
+      </tr>
+      <tr>
+        <td>--no-validate</td>
+        <td>Skip the automatic post-conversion validation report</td>
+        <td>off (validates)</td>
+      </tr>
+      <tr>
+        <td>--verbose</td>
+        <td>Print every GDAL command and debug detail</td>
+        <td>off</td>
+      </tr>
+    </table>
+  </div>
+
+
+  <!-- ── LEVELS ── -->
+  <div class="section">
+    <div class="section-header">
+      <h2>Product levels — which one should I pick?</h2>
+    </div>
+    <table>
+      <tr>
+        <th>Level</th>
+        <th>GSD (approx)</th>
+        <th>V. accuracy goal (LE90)</th>
+        <th>Good for</th>
+        <th></th>
+      </tr>
+      <tr>
+        <td>0</td><td>~1000 m</td><td>30 m</td><td>Continental / global overviews</td>
+        <td><span class="pill pill-blue">GEO only</span></td>
+      </tr>
+      <tr>
+        <td>1</td><td>~100 m</td><td>30 m</td><td>Country-scale datasets (SRTM 3 arc-sec)</td>
+        <td><span class="pill pill-blue">GEO only</span></td>
+      </tr>
+      <tr>
+        <td>2</td><td>~30 m</td><td>18 m</td><td>SRTM 1 arc-sec, Copernicus DEM 30</td>
+        <td><span class="pill pill-blue">GEO only</span></td>
+      </tr>
+      <tr>
+        <td>3</td><td>~12 m</td><td>12.4 m</td><td>TanDEM-X, Copernicus DEM 10</td>
+        <td><span class="pill pill-blue">GEO only</span></td>
+      </tr>
+      <tr>
+        <td>4b</td><td>~5 m</td><td>5 m</td><td>Dense LiDAR, high-res SAR</td>
+        <td><span class="pill pill-green">GEO + UTM</span></td>
+      </tr>
+      <tr>
+        <td>4</td><td>~4 m</td><td>4 m</td><td>High-res satellite stereo</td>
+        <td><span class="pill pill-green">GEO + UTM</span></td>
+      </tr>
+      <tr class="highlight">
+        <td>5 ★</td><td>~2 m</td><td>2 m</td><td>Standard LiDAR — most common choice</td>
+        <td><span class="pill pill-green">GEO + UTM</span></td>
+      </tr>
+      <tr>
+        <td>6</td><td>~1 m</td><td>1 m</td><td>Dense / high-quality LiDAR</td>
+        <td><span class="pill pill-green">GEO + UTM</span></td>
+      </tr>
+      <tr>
+        <td>7</td><td>~0.5 m</td><td>0.5 m</td><td>Very dense LiDAR</td>
+        <td><span class="pill pill-green">GEO + UTM</span></td>
+      </tr>
+      <tr>
+        <td>8</td><td>~0.25 m</td><td>0.25 m</td><td>Ultra-dense LiDAR</td>
+        <td><span class="pill pill-green">GEO + UTM</span></td>
+      </tr>
+      <tr>
+        <td>9</td><td>~0.125 m</td><td>0.12 m</td><td>Highest detail LiDAR</td>
+        <td><span class="pill pill-green">GEO + UTM</span></td>
+      </tr>
+    </table>
+    <p style="margin-top:12px;font-size:13px;color:#777;">★ Default. Pick a level that matches your input data's native resolution — upsampling doesn't add information. The accuracy column is the DGED spec's predicted <em>goal</em> for typical terrain at that level (Table 6 — also the <code>--abs-vacc</code> default), not a guarantee for any specific file; see below for why.</p>
+
+    <div class="box box-tip" style="margin-top:14px;">
+      <div class="box-icon">⛰️</div>
+      <div>
+        <strong>Terrain relief and accuracy.</strong> A level's GSD is the spacing
+        <em>between</em> measured posts — everything in between is filled in by
+        resampling, not measured. On flat terrain that's a safe approximation; on
+        steep terrain (ridgelines, canyon walls, cliff edges) elevation can change
+        tens of metres within a single post spacing, so the resampler is effectively
+        inventing values, not interpolating them. Measured proof: on steep real-world
+        terrain, Bilinear and Cubic Convolution showed 6–10&nbsp;m sample-window
+        error while Nearest Neighbor — which copies the nearest post instead of
+        blending across the slope — stayed near 0&nbsp;m on the same source. Two
+        things actually help: pick the level that matches your <em>source</em> data's
+        real resolution (a higher level cannot invent detail that was never there),
+        and use <code>--resample optimize</code> on rugged sources, which measures
+        Nearest / Bilinear / Cubic / Cubic B-Spline against your actual DEM and picks
+        whichever reconstructs it most accurately — instead of guessing, or converting
+        the same file three times by hand.
+      </div>
+    </div>
+
+    <div class="box box-tip" style="margin-top:14px;">
+      <div class="box-icon">🌊</div>
+      <div>
+        <strong>Aliasing — the third error source (new in v0.49).</strong>
+        Downsampling a DEM is <em>decimation</em>, and detail shorter than
+        <strong>twice</strong> the target post spacing cannot be represented at that
+        spacing by <em>any</em> resampler. It does not politely vanish — it
+        <strong>folds back</strong> into the product as false longer-wavelength
+        structure that looks like terrain but is not, and no later choice of
+        resampler removes it. Rough terrain carries far more of this
+        short-wavelength energy than flat terrain, which is why mountains are hit
+        hardest. The standard fix is to low-pass filter <em>before</em> decimating:
+        <code>--prefilter gaussian</code>.
+        <br><br>
+        <strong>Measured</strong> (<code>selftest_prefilter.py</code>, fractal
+        terrain, 2&nbsp;m&nbsp;&rarr;&nbsp;20&nbsp;m posts, scored against an ideal
+        band-limited reference): very rough &minus;82.0%, mountainous &minus;73.8%,
+        hilly &minus;63.4%, rolling &minus;51.0% error — but smooth terrain only
+        &minus;16.4%, and <strong>near-planar terrain gets 72.9% WORSE</strong>. That
+        is why it is off by default: where there is no short-wavelength energy there
+        is nothing to alias, so the filter can only blur real signal. It also
+        systematically clips real summits and fills real valleys — a
+        bias/variance trade. <strong>Convert both ways and compare the two validation
+        reports on your own data before shipping a delivery made with it.</strong>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ── OUTPUT ── -->
+  <div class="section">
+    <div class="section-header">
+      <h2>What does the output look like?</h2>
+    </div>
+    <p>For each tile the tool creates two files. Levels 4b and up use the full form; levels 0–3 (GEO only) use a shorter form with no product-type letter or tile-size indicator, since they're delivered by whole square degree:</p>
+    <pre style="margin-top:12px;"><span class="comment"># GEO example (level 4b+)</span>
+DGEDL5GtD_5530N00930E_A_U_01.tif    ← elevation raster
+DGEDL5GtD_5530N00930E_A_U_01.xml    ← ISO 19115-2 metadata sidecar
+
+<span class="comment"># GEO example (level 0-3, short form)</span>
+DGEDL2_27N056E_A_U_01.tif
+
+<span class="comment"># UTM example</span>
+DGEDL5UtD_32N6210_452_A_U_01.tif
+DGEDL5UtD_32N6210_452_A_U_01.xml</pre>
+    <p style="font-size:14px;color:#555;margin-top:8px;">Data type is <code>Int16</code> for levels 0–2, <code>Float32</code> for level 3 and up. An optional producer-organisation code (<code>--org</code>) can be embedded in any level's filename right before the coordinate.</p>
+
+    <p style="margin-top:14px;">Every run also writes two product-level files alongside the tiles: <code>TABLE_OF_CONTENTS.xml</code> (lists every file in the folder) and, when a run produces more than one tile, a <code>&lt;product&gt;_COLLECTION.xml</code> with collection-level metadata.</p>
+
+    <div class="box box-ok" style="margin-top:16px;">
+      <div class="box-icon">✅</div>
+      <div><strong>Validation runs automatically</strong> — both the GUI and the CLI write a <code>DGED_Validation_Report.html</code> (+ plain-text copy) to the output folder right after conversion, no extra step needed. Disable it with <code>--no-validate</code> / the GUI checkbox.</div>
+    </div>
+
+    <p style="margin-top:14px;">Run it manually any time (e.g. against tiles from an older run):</p>
+    <pre><span class="cmd">python</span> <span class="arg">dem2dged_validate.py</span>  dged_output  <span class="flag">-src</span> my_dem.tif</pre>
+    <p style="font-size:14px;color:#555;margin-top:8px;">Checks naming, headers, grid alignment, XML sidecars, NoData integrity, tile-edge consistency and (with <code>-src</code>) coverage + statistics against the original DEM. Prints <strong>RESULT: PASS</strong> or lists every problem found.</p>
+    <p style="margin-top:14px;">Or inspect a single tile manually:</p>
+    <pre><span class="cmd">gdalinfo</span> <span class="arg">DGEDL5GtD_5530N00930E_A_U_01.tif</span></pre>
+    <p style="font-size:14px;color:#555;margin-top:8px;">Look for <code>AREA_OR_POINT=Point</code> in the output — that confirms the header is correct.</p>
+  </div>
+
+
+  <!-- ── TROUBLESHOOTING ── -->
+  <div class="section">
+    <div class="section-header">
+      <h2>Troubleshooting</h2>
+    </div>
+    <ul class="step-list">
+      <li>
+        <div class="step-icon">❓</div>
+        <div>
+          <strong>"No module named 'numpy'" / "'osgeo'" — but the environment IS activated</strong>
+          <span>Almost always the command form, not the environment. Typed as <code>script.py</code> rather than <code>python script.py</code>, Windows follows the <code>.py</code> file association and runs a <em>different</em> interpreter — <code>conda activate</code> changes <code>PATH</code>, not the file association, so the prompt still shows the environment name while the script runs elsewhere. Always type <code>python</code> first. To confirm which interpreter you are on: <code>python dem2dged_env.py</code>. Do not reinstall the packages — they were never missing.</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-icon">❓</div>
+        <div>
+          <strong>"UnicodeEncodeError: 'cp949' codec can't encode character"</strong>
+          <span>A non-UTF-8 console (Korean cp949, Japanese cp932, Chinese cp936). Fixed in v0.44 — every script prints plain ASCII now, and non-Latin characters in a path no longer crash it. On an older copy, run <code>chcp 65001</code> first, or set <code>PYTHONIOENCODING=utf-8</code>.</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-icon">❓</div>
+        <div>
+          <strong>"cannot determine the EPSG code"</strong>
+          <span>The source raster's CRS has no EPSG code (a bare ESRI WKT, a local CRS, a plain <code>.asc</code> grid, or no projection at all). Tag it first, then re-run: <code>python -m osgeo_utils.gdal_edit -a_srs EPSG:4326 my_dem.tif</code>. Use the module form — on conda for Windows the GDAL utilities ship as modules, so <code>gdal_edit.py</code> is often not on <code>PATH</code>.</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-icon">❓</div>
+        <div>
+          <strong>"GDAL cannot open" error</strong>
+          <span>Check the path to your DEM. Use forward slashes or quote the path if it contains spaces.</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-icon">❓</div>
+        <div>
+          <strong>exe fails with "No module named 'osgeo'"</strong>
+          <span>The exe was built from a Python environment without GDAL. Rebuild it: <code>conda activate DGED</code> → <code>build_exe.bat</code>. Since v0.13 the build scripts detect this before building.</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-icon">❓</div>
+        <div>
+          <strong>"unknown UTM product level" for levels 0–3</strong>
+          <span>Levels 0–3 exist only in GEO mode. Switch to GEO or pick level 4b–9 (the GUI level list adapts automatically).</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-icon">❓</div>
+        <div>
+          <strong>Wrong UTM zone (Norway / Svalbard)</strong>
+          <span>Auto-detect is approximate. Override with <code>--zone 33N</code> (or whichever zone you need).</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-icon">❓</div>
+        <div>
+          <strong>Empty border tiles</strong>
+          <span>Normal — DGED requires a one-cell overlap at tile edges. Filter out tiles smaller than ~1 KB if unwanted.</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-icon">❓</div>
+        <div>
+          <strong>Run stopped halfway</strong>
+          <span>Delete the last (incomplete) tile, then re-run the same command. The tool skips tiles that already have a completed <code>.xml</code> sidecar.</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+
+  <div class="footer">
+    dem2dged v0.49 &nbsp;·&nbsp;
+    SPDX-License-Identifier: GPL-2.0-or-later &nbsp;·&nbsp;
+    Copyright (c) 2026 Eui Soo SON &nbsp;·&nbsp;
+    Based on <a href="https://github.com/lethorable/dem2dged">lethorable/dem2dged</a> (GPL-2.0-or-later) &nbsp;·&nbsp;
+    DGED spec: <a href="https://www.dgiwg.org/dgiwg-standards/250">DGIWG</a> &nbsp;·&nbsp;
+    Full details: DEM2DGED_User_Manual.docx
+  </div>
+
+</div>
+</body>
+</html>

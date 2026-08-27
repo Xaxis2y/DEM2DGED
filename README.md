@@ -3,7 +3,17 @@
 **SPDX-License-Identifier: GPL-2.0-or-later**  
 **Copyright (c) 2026 Eui Soo SON**
 
-**Current version: v0.55.0**
+**Current version: v0.56.0**
+
+**v0.56.0 release note:** a full-project review fixed seven correctness
+defects, six robustness gaps and five hygiene items -- see
+`Changes in v0.56.0` in `VERSION.txt`. Every one is covered by a test in
+`tests/test_v056_regressions.py` that fails on v0.55.0. Three are worth
+knowing about before you re-run an existing job: the direct-copy fast
+path shipped half-post-shifted coordinates, sidecar XML was neither
+escaped nor UTF-8 encoded, and wide high-latitude extents lost edge
+tiles. The GUI also gains the anti-alias pre-filter it has lacked since
+v0.49.
 
 **v0.55.0 release note:** validation and resampling-comparison reports now
 identify the actual resampling method for every candidate. A sample-window
@@ -11,7 +21,7 @@ FAIL explicitly applies only to that method and marks it as not recommended
 for delivery; it does not imply that Bilinear, Cubic, or another separately
 validated candidate failed. The comparison report now separates hold-out rank
 from the delivery recommendation and selects only a non-FAIL candidate.
-See [`REQUIREMENTS_COMPLIANCE_V0.55.0.md`](REQUIREMENTS_COMPLIANCE_V0.55.0.md).
+See [`REQUIREMENTS_COMPLIANCE_V0.56.0.md`](REQUIREMENTS_COMPLIANCE_V0.56.0.md).
 
 Convert raster Digital Elevation Models (DEMs) to military-standard **DGED** (Defense Gridded Elevation Data) tiles.
 
@@ -63,7 +73,9 @@ DGED is a DGIWG product profile for packaging elevation data for military use. I
 | `tests/` | pytest suite — `conftest.py`, `test_lib.py`, `test_validator.py`, `test_converters.py`. Run with `pytest` from the project root |
 | `audit_pure.py` | GDAL-free self-audit (naming, tables, version consistency) — `python audit_pure.py` |
 | `run_verification.py` | End-to-end verification run against real GDAL |
-| `RELEASE_CHECK_v0.55.0.py` | **Release gate** — full pre-release run: audit, pytest, real conversions, validation, ASCII-console check, PyInstaller build |
+| `RELEASE_GATE_v0.56.0.py` | **Release gate** — one command, ten stages: environment, byte-compile, audit, pytest, v0.55.0 regression harness, real GEO and UTM conversions with validation, pre-filter (CLI and GUI), resume behaviour, packaging |
+| `DIAG_dem2dged_v0.56.0.py` | Regression harness — one check per v0.55.0 review finding; a FAIL is a regression |
+| `RELEASE_CHECK_v0.55.0.py` | Older release gate: adds the PyInstaller .exe build |
 | `PACKAGE_v0.55.0.py` | Builds the release zips (full tool + validator-only bundle) |
 | `dem2dged_package.py` / `dem2dged_validate_package.py` | The two packagers the release script drives |
 | `BUILD_AND_PACKAGE.py` | Convenience wrapper — build the exes, then package |
@@ -77,8 +89,8 @@ DGED is a DGIWG product profile for packaging elevation data for military use. I
 |---|---|
 | `START_HERE.md` | One-page orientation — read this first |
 | `QUICKSTART.html` | Visual quick-start guide — open in any browser |
-| `DEM2DGED_User_Manual.md` | Full v0.55.0 user manual |
-| `REQUIREMENTS_COMPLIANCE_V0.55.0.md` | Requirement-to-evidence matrix and the conditions for a defensible full PASS |
+| `DEM2DGED_User_Manual.md` | Full v0.56.0 user manual |
+| `REQUIREMENTS_COMPLIANCE_V0.56.0.md` | Requirement-to-evidence matrix and the conditions for a defensible full PASS |
 | `VERSION.txt` / `VALIDATOR_VERSION.txt` | Maintained changelogs. **Hand-maintained below the header** — the packagers rewrite only the three header lines |
 | `MANIFEST.md` | What ships in each release zip |
 | `DGIWG_STANDARDS_TRACKING.md` | Spec-currency check against DGIWG's published standards |

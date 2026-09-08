@@ -1,0 +1,37 @@
+verify_mountain_terrain_v0.59.0
+==============================================================================
+timestamp      : 2026-09-08 11:44:44
+python         : 3.10.21 | packaged by conda-forge | (main, Aug 21 2026, 22:38:44) [MSC v.1944 64 bit (AMD64)]
+GDAL           : 3.13.3
+numpy          : 2.2.6
+dem2dged       : 0.59.0
+candidates     : near, bilinear, cubic, cubicspline, lanczos, average
+phases scored  : 6
+source size    : 384 x 384 posts
+
+OLD = hold-out reconstruction test (v0.58.1 and earlier)
+NEW = decimate-and-score           (v0.59.0)
+Both are ranked against an ORACLE that scores each candidate's real
+decimation against the analytic surface it was generated from.
+
+terrain   ratio  noise  seed | ORACLE best  OLD pick     NEW pick     | e_oracle    e_OLD    e_NEW
+--------------------------------------------------------------------------------------------------------
+alpine     16.0    0.0     3 | near         cubicspline  near         |   10.157   55.624   10.157
+alpine     16.0    2.0     3 | near         cubicspline  near         |   10.340   55.620   10.340
+alpine      8.0    0.0     3 | lanczos      cubicspline  lanczos      |    1.852   20.345    1.852
+alpine      8.0    2.0     3 | lanczos      cubicspline  lanczos      |    1.870   20.340    1.870
+alpine      2.0    0.0     3 | cubic        cubic        cubic        |    0.148    0.148    0.148
+ridged     16.0    0.0     3 | near         cubicspline  near         |   12.048   55.477   12.048
+--------------------------------------------------------------------------------------------------------
+cases                    : 6
+correct candidate chosen : OLD 1/6      NEW 6/6
+realised RMSE, summed    : ORACLE   36.42 m   OLD  207.55 m   NEW   36.42 m
+EXCESS OVER ORACLE       : OLD +171.14 m   NEW   +0.00 m
+                           -> 100.0% of the avoidable error removed
+
+Excess over oracle is the metric that matters: how many metres of
+AVOIDABLE error each ranking method's choices added up to. Counting
+correct picks alone would overstate the fix, because a wrong pick
+between near-tied candidates costs almost nothing.
+
+VERDICT: v0.59.0 IMPROVES ON v0.58.1 on this GDAL build.

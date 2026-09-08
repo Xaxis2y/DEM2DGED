@@ -1,0 +1,39 @@
+........ssssssssssssssssssssssssssssssssss.............................. [ 15%]
+........................................................................ [ 31%]
+........................................................................ [ 47%]
+........................................................................ [ 63%]
+................s....................................................... [ 79%]
+........................................................................ [ 95%]
+.....................                                                    [100%]
+=========================== short test summary info ===========================
+SKIPPED [1] tests\test_converters.py:89: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_converters.py:97: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_converters.py:107: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [2] tests\test_converters.py:118: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [2] tests\test_converters.py:134: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_converters.py:147: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_converters.py:164: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_converters.py:181: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_converters.py:206: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_converters.py:217: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_converters.py:272: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_converters.py:357: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_converters.py:373: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_converters.py:388: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_converters.py:399: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_converters.py:416: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_converters.py:421: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_converters.py:433: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_converters.py:445: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_converters.py:480: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_converters.py:501: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_converters.py:522: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_converters.py:540: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_converters.py:551: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_converters.py:564: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [4] tests\test_converters.py:571: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_converters.py:581: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_converters.py:592: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_converters.py:600: the gdalwarp EXECUTABLE is not on PATH -- dem2dged shells out to it for every tile, so a real conversion cannot be exercised here
+SKIPPED [1] tests\test_v056_regressions.py:623: the gdalwarp EXECUTABLE is not on PATH
+418 passed, 35 skipped in 1.92s

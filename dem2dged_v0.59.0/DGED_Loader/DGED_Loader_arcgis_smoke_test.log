@@ -1,0 +1,23 @@
+DGED Loader v0.58.0 ArcGIS Pro Smoke Test
+Generated UTC: 2026-09-08T14:15:17.918035+00:00
+Python: 3.13.13 | packaged by Anaconda, Inc. | (main, Apr 22 2026, 16:49:16) [MSC v.1938 64 bit (AMD64)]
+Platform: Windows-11-10.0.26200-SP0
+Toolbox: C:\Users\Son\Documents\ChatGPT\dem2dged\dem2dged_v0.58.0\DGED_Loader\DGED_Loader.pyt
+
+[FAIL] smoke test completed without an exception -- The Product License has not been initialized.
+Traceback (most recent call last):
+  File "C:\Users\Son\Documents\ChatGPT\dem2dged\dem2dged_v0.58.0\DGED_Loader\arcgis_pro_smoke_test.py", line 95, in run
+    import arcpy
+  File "C:\Program Files\ArcGIS\Pro\Resources\ArcPy\arcpy\__init__.py", line 81, in <module>
+    from arcpy.geoprocessing import gp
+  File "C:\Program Files\ArcGIS\Pro\Resources\ArcPy\arcpy\geoprocessing\__init__.py", line 14, in <module>
+    from ._base import *
+  File "C:\Program Files\ArcGIS\Pro\Resources\ArcPy\arcpy\geoprocessing\_base.py", line 14, in <module>
+    import arcgisscripting
+  File "C:\Program Files\ArcGIS\Pro\bin\Python\envs\arcgispro-py3\Lib\site-packages\arcgisscripting\__init__.py", line 131, in <module>
+    from ._arcgisscripting import *
+RuntimeError: The Product License has not been initialized.
+
+
+RESULT: FAIL (1 failed check(s))
+Log: C:\Users\Son\Documents\ChatGPT\dem2dged\dem2dged_v0.58.0\DGED_Loader\DGED_Loader_arcgis_smoke_test.log

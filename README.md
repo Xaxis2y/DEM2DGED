@@ -3,7 +3,58 @@
 **SPDX-License-Identifier: GPL-2.0-or-later**  
 **Copyright (c) 2026 Eui Soo SON**
 
-**Current version: v0.57.1**
+**Current version: v0.59.0**
+
+**v0.59.0 release note — the mountainous-terrain accuracy fix.**
+`-resample optimize` now measures every candidate on the operation it will
+actually perform. Through v0.58.1 it ranked them with a hold-out
+cross-validation: the source was point-sampled onto a sparse training grid,
+and each candidate was scored on how well it *reconstructed* the full grid
+from that. Reconstruction is upsampling; a DGED conversion is decimation. On
+steep terrain at 16x that produced an exactly **inverted** ranking — Cubic
+B-Spline first at a true RMSE of 55.6 m, Nearest Neighbor last at 10.2 m.
+Since v0.59.0 each candidate warps the source **down** to the requested post
+spacing, over six sub-pixel grid phases, and is scored against the best
+available estimate of the true terrain height at every target post. Measured
+against known ground truth over 32 controlled cases, the correct candidate is
+now chosen **28 times instead of 6**, and the avoidable error from a wrong
+choice falls from **+573.62 m to +0.53 m — 99.9% of it removed**
+(`verify_mountain_terrain_v0.59.0.py` reproduces this on your own GDAL
+build). `lanczos` joins the scored candidates, and the Resampling Comparison
+Test's report now ranks on the same measurement, so the report and `optimize`
+can no longer disagree. **Nothing else changes:** tile geometry, grid
+snapping, filenames, metadata, seam reconciliation and every compliance check
+are untouched, and `-resample auto` plus every explicit `-resample <alg>`
+behave exactly as before, bit for bit. A delivery not produced with
+`optimize` does not need regenerating. See
+[`REQUIREMENTS_COMPLIANCE_V0.59.0.md`](REQUIREMENTS_COMPLIANCE_V0.59.0.md).
+
+**v0.58.1 release note:** a documentation, version-consistency and
+release-tooling patch. No conversion, tiling, resampling, metadata or
+validation logic changed -- a v0.58.0 delivery does not need regenerating.
+This README is the headline item: v0.58.0 shipped with it overwritten by
+`DGED_Loader/README.md`, so the project's full reference was missing from the
+release. Also corrected here: the anti-alias pre-filter guidance below, which
+still recommended `--prefilter gaussian` for mountainous sources -- the exact
+advice v0.57.0 retracted in the CLI help and the GUI dropdown (see
+[Anti-alias pre-filtering](#anti-alias-pre-filtering-what-it-fixes-and-what-it-costs));
+`dem2dged_compare.py`'s import-fallback `VERSION`, stuck at `"0.45"` since
+v0.45; the `# Version:` headers of every file under `tests/`; and `MANIFEST.md`,
+which still described the v0.56.0 package. The single-use `BUMP_v*.py` and
+`UPDATE_VERSIONS.py` scripts are replaced by `BUMP_VERSION.py`, which is
+generic, idempotent and dry-run by default. See
+[`REQUIREMENTS_COMPLIANCE_V0.58.1.md`](REQUIREMENTS_COMPLIANCE_V0.58.1.md).
+
+**v0.58.0 release note:** the integrated ArcGIS Pro Python toolbox
+(`DGED_Loader/DGED_Loader.pyt`) gained a second tool, **Show DGED
+Differences**. It loads the converter's own
+`validation/elevation_diff.tif` (signed DGED minus resampled source),
+`validation/error_mask.tif`, the original source DEM (recovered from
+`DEM2DGED_Conversion_Manifest.json` or `terrain_metrics.json`) and the
+`DGEDL*` delivery tiles into one labelled comparison group, ready for
+Appearance > Swipe. It reads the artifacts DEM2DGED already wrote, so it
+introduces no second alignment or resampling step of its own. Neither tool
+needs Spatial Analyst, Image Analyst, or a Standard/Advanced license.
 
 **v0.57.1 release note:** a mountain-terrain accuracy investigation (see
 `dem2dged_v0.56.0_mountain_terrain_review.md`) found three issues affecting
@@ -64,7 +115,8 @@ DGED is a DGIWG product profile for packaging elevation data for military use. I
 | `dem2dged_logging.py` | Shared logging setup (`--quiet` / `--debug`) |
 | `dem2dged_terrain.py` | Source inspection, terrain-fidelity metrics, slope/error analysis, mountain/offset sensitivity and QA artifacts |
 | `dem2dged_compliance.py` | DGIWG level limits, source eligibility, independent-accuracy decisions, hashes and consolidated compliance reports |
-| `DGED_Loader/` | ArcGIS Pro toolbox and Script Tool source for loading a delivery's `DGEDL*` tiles; excludes source/QA rasters during recursive scans |
+| `DGED_Loader/` | ArcGIS Pro Python toolbox (`DGED_Loader.pyt`) and Script Tool source. Two tools: **Load DGED Tiles** (adds a delivery's `DGEDL*` tiles to the active map, excluding source and QA rasters) and **Show DGED Differences** (v0.58.0 — loads source, tiles, `elevation_diff.tif` and `error_mask.tif` into one comparison group). Base ArcGIS Pro only — no extension, no Standard/Advanced license |
+| `DGED_Loader.pyt` | Convenience copy of `DGED_Loader/DGED_Loader.pyt` at the project root, so the toolbox can be added without opening the subfolder. Byte-identical — `BUMP_VERSION.py` keeps both in sync; edit the copy under `DGED_Loader/` and mirror it |
 | `dem2dged_env.py` | **Environment diagnostic** (v0.46) — dependency-free; run `python dem2dged_env.py` when an import fails. See [Troubleshooting](#wrong-python-interpreter-modulenotfounderror-inside-an-activated-environment) |
 | `DGED_GEO_TEMPLATE.xml` | ISO 19115-2 metadata sidecar template — GEO tiles |
 | `DGED_UTM_TEMPLATE.xml` | ISO 19115-2 metadata sidecar template — UTM tiles |
@@ -87,9 +139,13 @@ DGED is a DGIWG product profile for packaging elevation data for military use. I
 
 | File | Purpose |
 |---|---|
-| `tests/` | pytest suite — `conftest.py`, `test_lib.py`, `test_validator.py`, `test_converters.py`. Run with `pytest` from the project root |
+| `tests/` | pytest suite — `conftest.py`, `test_lib.py`, `test_validator.py`, `test_converters.py`, `test_terrain.py`, `test_compliance.py`, `test_resampling_report.py`, `test_v056_regressions.py`, `test_v057_regressions.py`, `test_v059_regressions.py`, `test_dged_loader_harness.py`. Run with `pytest` from the project root (471 tests as of v0.59.0) |
 | `audit_pure.py` | GDAL-free self-audit (naming, tables, version consistency) — `python audit_pure.py` |
 | `run_verification.py` | End-to-end verification run against real GDAL |
+| `verify_mountain_terrain_v0.59.0.py` | **Ground-truth check of the v0.59.0 resampler-selection fix** — generates terrain from an analytic formula (so the true height is known everywhere), ranks every candidate three ways (oracle / old hold-out / new decimate-and-score) across 32 cases, and exits non-zero if v0.59.0 does not beat v0.58.1 on your GDAL build |
+| `BUMP_VERSION.py` | **Version bumper and auditor** (v0.58.1) — generic, idempotent, dry run by default. `--from/--to [--apply]` rewrites every version declaration in the tree; `--check <version>` audits without writing. Replaces the single-use `BUMP_v0.56.0.py` / `BUMP_v0.57.1.py` / `UPDATE_VERSIONS.py` scripts, each of which covered a different subset of files |
+| `UPDATE_VERSIONS.py` | **Retired** (v0.58.1) — now a guard that exits with an error pointing at `BUMP_VERSION.py`. It used to prepend a hardcoded v0.57.1 changelog block to `VERSION.txt` with no idempotence check |
+| `verify_mountain_terrain_v0.57.1.py` | Ground-truth mountain-terrain harness — builds synthetic terrain with known elevation at every post and measures the v0.57.0 fixes against it |
 | `RELEASE_GATE_v0.56.0.py` | **Release gate** — one command, ten stages: environment, byte-compile, audit, pytest, v0.55.0 regression harness, real GEO and UTM conversions with validation, pre-filter (CLI and GUI), resume behaviour, packaging |
 | `DIAG_dem2dged_v0.56.0.py` | Regression harness — one check per v0.55.0 review finding; a FAIL is a regression |
 | `RELEASE_CHECK_v0.55.0.py` | Older release gate: adds the PyInstaller .exe build |
@@ -106,14 +162,17 @@ DGED is a DGIWG product profile for packaging elevation data for military use. I
 |---|---|
 | `START_HERE.md` | One-page orientation — read this first |
 | `QUICKSTART.html` | Visual quick-start guide — open in any browser |
-| `DEM2DGED_User_Manual.md` | Full v0.57.1 user manual |
-| `REQUIREMENTS_COMPLIANCE_V0.57.1.md` | Requirement-to-evidence matrix and the conditions for a defensible full PASS |
+| `DEM2DGED_User_Manual.md` | Full v0.59.0 user manual |
+| `REQUIREMENTS_COMPLIANCE_V0.59.0.md` | Requirement-to-evidence matrix and the conditions for a defensible full PASS (current) |
+| `REQUIREMENTS_COMPLIANCE_V0.58.1.md` / `_V0.57.1.md` / `_V0.56.0.md` | Superseded matrices, kept for audit trail |
 | `VERSION.txt` / `VALIDATOR_VERSION.txt` | Maintained changelogs. **Hand-maintained below the header** — the packagers rewrite only the three header lines |
 | `MANIFEST.md` | What ships in each release zip |
 | `DGIWG_STANDARDS_TRACKING.md` | Spec-currency check against DGIWG's published standards |
 | `DEM_SOURCES_GUIDE.md` | Where to get suitable source DEMs |
 | `REBUILD_GUIDE.md` / `BUILD_SCRIPTS_GUIDE.md` | Rebuilding the exes; what each build script actually does |
-| `CODE_REVIEW_*.md` | Findings behind the v0.34 / v0.39 / v0.41 / v0.42–v0.43 releases |
+| `dem2dged_v0.56.0_mountain_terrain_review.md` | Controlled mountainous-terrain accuracy investigation — the three findings fixed in v0.57.0 |
+| `dem2dged_v0.57.1_mountain_terrain_recheck.md` | Independent ground-truth re-verification of those fixes, and the still-open `-resample optimize` hold-out limitation |
+| `DGED_Conversion_Review.md` | Review against the DGIWG test data set |
 
 ---
 
@@ -369,7 +428,15 @@ This isn't hypothetical: v0.46's own measurements (see the changelog below) foun
 Three levers actually reduce the gap between a converted tile and the true ground surface:
 
 1. **Pick the level that matches your source data's real resolution — not a higher one.** Level only controls *output* post spacing; it cannot add detail your source DEM never had. Converting a 30 m SRTM tile (level 2) up to level 5 does not recover 2 m accuracy — the "~2 m" GSD is delivered *spacing*, not delivered *accuracy*, and output can never be more accurate than its input.
-2. **Let `-resample optimize` pick the resampling method for you, especially on high-relief sources.** Since v0.36 (see "Picking a resampling method automatically" above) it measures Nearest Neighbor, Bilinear, Cubic Convolution and Cubic B-Spline directly against your source DEM — via hold-out cross-validation, not a fixed rule of thumb — and uses whichever one actually reconstructs it most accurately for that specific file. This is the built-in version of converting the same source three or four ways and comparing the results by hand: `optimize` does that measurement internally, once, before writing the real output.
+2. **Use `-resample optimize` on high-relief sources. As of v0.59.0 it measures the right thing.** It warps your source down to the requested post spacing with each of Nearest Neighbor, Bilinear, Cubic Convolution, Cubic B-Spline, Average and Lanczos — the real conversion, not a proxy for it — over six sub-pixel grid phases, and scores each against the best available estimate of the true terrain height at every target post. Cubic-family candidates are scored on the same source-range clamp their delivered tiles receive, so overshoot at a few sharp edges does not unfairly penalise them.
+
+   ```bash
+   python dem2dged.py mountain_dem.tif output_folder --level 5 --resample optimize
+   ```
+
+   > **What changed, and why you should care if you have run this before.** Through v0.58.1 `optimize` ranked candidates on how well they *reconstructed* a point-sampled training grid — an upsampling test standing in for a downsampling decision. On steep terrain above roughly 8x the two diverge, and the ranking came out inverted: at 16x it put Cubic B-Spline first (true RMSE 55.6 m) and Nearest Neighbor last (10.2 m). A second symptom was `near` and `average` scoring bit-identically at every ratio, because GDAL's `average` degenerates to point sampling when it upsamples. Over 32 ground-truth cases the new measurement picks correctly **28 times instead of 6**, cutting the avoidable error from **+573.62 m to +0.53 m**. Reproduce it yourself with [`verify_mountain_terrain_v0.59.0.py`](verify_mountain_terrain_v0.59.0.py). **If you produced a delivery with `-resample optimize` on steep terrain at a high ratio under v0.58.1 or earlier, re-run `optimize` — it may well choose differently now.** Deliveries made with `auto` or an explicit resampler are unaffected.
+   >
+   > The hold-out test has not been deleted: it is still used where it is the *correct* measure — equal post spacing or upsampling, where there is no decimation to score — and as a fallback if the decimation test cannot be set up on a given source. On that fallback path the high-ratio warning still appears.
 
 ```bash
 python dem2dged.py mountain_dem.tif output_folder --level 5 --resample optimize
@@ -377,13 +444,35 @@ python dem2dged.py mountain_dem.tif output_folder --level 5 --resample optimize
 
 If you'd rather see the comparison yourself instead of trusting the automatic pick, use the GUI's "Resampling Comparison Test" (any subset of the three manual methods, side by side with a ranked HTML report) — see "Verifying output" below.
 
-3. **Consider `--prefilter gaussian` when you are downsampling a high-relief source.** New in v0.49, opt-in. The two levers above choose *where* to sample and *how* to interpolate between samples; this one addresses a third, separate error source — aliasing — that neither of them can touch. See the next section.
+3. **`--prefilter gaussian` addresses a third, separate error source — aliasing — but it costs point accuracy.** New in v0.49, opt-in, off by default. The two levers above choose *where* to sample and *how* to interpolate between samples; this one removes detail the target spacing cannot carry, before that detail folds back in as false structure. It genuinely does that. It also measurably **worsens** elevation error at each individual post on steep terrain. Which of those two things you care about decides whether you want it. Read the next section before turning it on.
 
 ---
 
-### Anti-alias pre-filtering for high-relief sources
+### Anti-alias pre-filtering: what it fixes, and what it costs
 
-**New in v0.49. Off by default.**
+**New in v0.49. Off by default. Not recommended for point accuracy (v0.57.0
+correction).**
+
+> **Read this first.** Up to and including v0.58.0 this section, the user
+> manual and the quick-start guide all recommended `--prefilter gaussian`
+> for mountainous sources. v0.57.0 retracted that recommendation in the CLI
+> help and the GUI dropdown after a controlled measurement, but the documents
+> were not updated with it until v0.58.1. The retraction is not a reversal of
+> the v0.49 measurement -- **the two measurements answer different
+> questions**, and both results stand:
+>
+> | Measurement | Reference it scores against | What it answers | Filter verdict |
+> |---|---|---|---|
+> | `selftest_prefilter.py` (v0.49) | an **ideal band-limited** surface -- the best any product at that spacing could contain | "How much false, aliased structure is in the product?" | **large improvement** on rough terrain (up to -82% RMSE) |
+> | `dem2dged_v0.56.0_mountain_terrain_review.md` / `..._v0.57.1_..._recheck.md` | **true elevation at each delivered post** | "How wrong is the height at this post?" | **worse at every ratio and resampler tested on steep terrain, by 44-102%** |
+>
+> Both are true because the filter trades one for the other: it removes
+> aliased structure by smoothing, and smoothing systematically clips real
+> summits and fills real valleys. If your acceptance criterion is LE90
+> against surveyed spot heights -- which is what DGIWG 250 absolute vertical
+> accuracy is about -- **leave the filter off**. If your criterion is terrain
+> realism over an area, and you have measured the trade on your own data, it
+> may still be the right choice.
 
 #### What problem this solves
 
@@ -412,9 +501,9 @@ python dem2dged.py mountain_dem.tif output_folder --level 3 \
 
 The default sigma is `(target GSD / source GSD − 1) / 2` source pixels — the standard image-pyramid anti-aliasing rule. It is exactly `0` when the target spacing equals the source spacing, and the filter is **skipped entirely when you are upsampling**, since there is nothing to alias. A message says so rather than silently doing nothing.
 
-#### Measured effect, and where it backfires
+#### Measured effect (1): aliasing, versus an ideal band-limited reference
 
-From `selftest_prefilter.py`, on 1/f^β fractal surfaces (the spectrum real topography follows), decimating 2 m posts → 20 m posts, scored against an ideal band-limited reference — the best any 20 m product could possibly contain:
+From `selftest_prefilter.py`, on 1/f^β fractal surfaces (the spectrum real topography follows), decimating 2 m posts → 20 m posts, scored against an ideal band-limited reference — the best any 20 m product could possibly contain. **This table measures aliasing, not point accuracy** — see the second table below:
 
 | Terrain | RMSE, filter off | RMSE, filter on | Change |
 |---|---|---|---|
@@ -427,9 +516,27 @@ From `selftest_prefilter.py`, on 1/f^β fractal surfaces (the spectrum real topo
 
 Read the last row carefully, because it is the reason this feature is opt-in rather than automatic. **On terrain with little short-wavelength energy there is nothing to alias**, so all a low-pass filter can do is blur real signal — it makes the product measurably worse. The benefit is not a property of the filter; it is a property of *your terrain*.
 
-There is also a cost even where it helps: low-pass filtering is a **bias/variance trade**. It lowers aliasing error while systematically clipping real summits and filling real valleys. If your acceptance criterion is LE90 against surveyed spot heights on peaks, that bias may matter more to you than the aliasing does. If it is terrain realism across an area, usually much less.
+#### Measured effect (2): point accuracy, versus true elevation at each post
 
-**So: measure, don't assume.** Convert your own source both ways and compare with `dem2dged_validate.py`:
+The v0.56.0 mountain-terrain investigation ran the same feature against a
+different reference: synthetic mountain terrain with realistic slope
+statistics where the **true elevation at every post is known exactly**. Scored
+that way, on steep terrain, `--prefilter gaussian` **increased** net vertical
+error **at every decimation ratio and every resampler tested, by 44–102%**.
+The v0.57.1 recheck reproduced the result independently.
+
+That is not a contradiction of the table above. Low-pass filtering is a
+**bias/variance trade**: it lowers aliasing error while systematically
+clipping real summits and filling real valleys, and clipped summits are
+exactly what a point-accuracy metric punishes. The filter stacks with the
+resamplers' own low-pass behaviour, so on steep terrain the smoothing
+compounds.
+
+Practical consequence: **for DGED deliveries judged on absolute vertical
+accuracy, leave `--prefilter` at `none`.** The CLI help and the GUI dropdown
+have said so since v0.57.0; this README says so from v0.58.1.
+
+**So: measure, don't assume — and measure the thing you will be judged on.** Convert your own source both ways and compare with `dem2dged_validate.py --terrain-qa mountain`, which reports point-accuracy metrics (bias, MAE, RMSE, P95, max, slope bins), not aliasing:
 
 ```bash
 python dem2dged.py mountain_dem.tif out_plain   --level 3
@@ -781,8 +888,8 @@ This is expected behavior due to the DGED "one-cell overlap" rule (adjacent tile
 - Vertical datum tag: **EGM2008** (EPSG:3855) — metadata only, no height transform
 - Horizontal CRS: WGS-84 geographic (GEO) or UTM (auto-detected or user-specified)
 - No-data value: **−32767**
-- Anti-alias pre-filter: **off by default** (`--prefilter none`). `--prefilter gaussian` low-passes the source before warping so detail below the target Nyquist is removed cleanly instead of aliasing back in; σ defaults to `(target GSD / source GSD − 1) / 2` source pixels and is skipped entirely when not downsampling. NoData-safe (normalised convolution), recorded in the lineage, and measurably harmful on near-planar terrain — see "Anti-alias pre-filtering for high-relief sources"
-- Resampling: **`auto` by default** — `average` when downsampling (a mean, so it never overshoots the source min/max), `bilinear` when up-sampling or near-equal. Override with `-resample`, or use `optimize` to measure the candidates against the source and pick the most accurate. Cubic-family resamplers are clamped back into the source's true range after warping
+- Anti-alias pre-filter: **off by default** (`--prefilter none`). `--prefilter gaussian` low-passes the source before warping so detail below the target Nyquist is removed cleanly instead of aliasing back in; σ defaults to `(target GSD / source GSD − 1) / 2` source pixels and is skipped entirely when not downsampling. NoData-safe (normalised convolution), recorded in the lineage, and and **not recommended for improving point accuracy on any terrain** on the current evidence — see "Anti-alias pre-filtering: what it fixes, and what it costs"
+- Resampling: **`auto` by default** — `average` when downsampling (a mean, so it never overshoots the source min/max), `bilinear` when up-sampling or near-equal. Override with `-resample`, or use `optimize`, which since v0.59.0 warps the source down to the requested post spacing with each of six candidates over six sub-pixel grid phases and scores each against the true terrain height at every target post. Cubic-family resamplers are clamped back into the source's true range after warping
 - Shared tile edges are reconciled post-warp (`reconcile_tile_edges()`), so adjacent tiles are bit-identical along the post row/column the spec requires them to share
 - Sidecar metadata: **ISO 19115-2 / DGIWG DMF 2.0** XML
 
@@ -790,14 +897,22 @@ This is expected behavior due to the DGED "one-cell overlap" rule (adjacent tile
 
 ## Versioning
 
-The project version lives in **one place**: `VERSION` at the top of `dem2dged_lib.py`. On every update, bump that value and add a row to the changelog below. The version is displayed in the CLI banner (`python dem2dged.py --version`), the GUI title bar, and the release zip filename (`dem2dged_vX.XX.zip`). `python audit_pure.py` enforces that all 12 declarations agree.
+The project version lives in **one place**: `VERSION` at the top of `dem2dged_lib.py`. On every update, bump that value and add a row to the changelog below. The version is displayed in the CLI banner (`python dem2dged.py --version`), the GUI title bar, and the release zip filename (`dem2dged_vX.XX.zip`). `python audit_pure.py` enforces that the 12 declarations it knows about agree; since v0.58.1, `python BUMP_VERSION.py --check <version>` audits the wider set — every module, test, selftest, `.pyt`, PyInstaller `version_info` resource and release-note header — and `python BUMP_VERSION.py --from <old> --to <new> --apply` performs the bump. Use it instead of hand-editing: the reason `dem2dged_compare.py`'s import fallback sat at `"0.45"` for thirteen releases, and `tests/*.py` at `0.56.0` for three, is that each single-use bump script carried its own hand-written file list.
 
 `VERSION.txt` (and `VALIDATOR_VERSION.txt`) carry the same history in full prose. They are **hand-maintained documents**: as of v0.45 the packagers rewrite only the three header lines and preserve everything from the first `Changes in` line onward, so entries can no longer be packaged away. v0.46 continues this practice.
 
 ## Changelog
 
+Full prose for every release is in [`VERSION.txt`](VERSION.txt). The table
+below carries the most recent entries plus the detailed historical entries up
+to v0.49; **v0.50.2 through v0.57.1 are documented in `VERSION.txt` only.**
+
 | Version | Change |
 |---|---|
+| v0.59.0 (2026-09-08) | **The mountainous-terrain accuracy fix: `-resample optimize` now measures the operation it will actually perform.** Through v0.58.1 the ranking came from a hold-out cross-validation that point-sampled the source onto a sparse training grid and scored how well each candidate *reconstructed* the full grid from it. Reconstruction is upsampling; a DGED conversion is decimation, and the two diverge sharply as the ratio grows. On steep terrain at 16x the old test produced an exactly inverted ranking — Cubic B-Spline first (true RMSE 55.6 m), Nearest Neighbor last (10.2 m) — reproduced independently on the maintainer's own DGED environment (GDAL 3.13.3) in `DIAG_dem2dged_v0.58.1_log.txt`. A second symptom of the same cause: `near` and `average` scored bit-identically at every ratio, because GDAL's `average` degenerates to point sampling when it upsamples, so two of the five candidates were never distinguished. **The fix** (`dem2dged_compare._prepare_decimate_test()` / `_decimate_stats()` / `_sample_bicubic()` / `_decimate_windows()`): each candidate now warps the source *down* to the requested post spacing — with the same source-range clamp a delivered cubic-family tile receives — and is scored against a narrow Catmull-Rom bicubic sample of the source at each target post's exact location. That reference is deliberately not any candidate's own operation, since GDAL scales its resampling kernel with the downsampling factor while the reference always uses a 4-pixel stencil at native spacing. **Phase averaging:** scoring on one target grid would let a knife-edge alignment decide the ranking (where a target post coincides with a source post, Nearest is trivially exact), so each candidate is scored over six sub-pixel phases and the errors pooled — charging Nearest its real expected offset error and the smoothing methods their real curvature bias. **Measured** (`verify_mountain_terrain_v0.59.0.py`, 32 cases, every candidate scored against the analytic surface the source was generated from): correct candidate chosen **6/32 → 28/32**; avoidable error over the oracle **+573.62 m → +0.53 m, 99.9% removed**. `lanczos` added as a sixth scored candidate — it is returned only when it measures strictly best, and never won in validation. The Resampling Comparison Test's HTML report now ranks on the same measurement, so it can no longer disagree with `optimize`; the hold-out numbers survive as `holdout_rmse` / `holdout_mae` and the summary is relabelled "Best measured accuracy". Analysis cost is bounded by `MAX_DECIMATE_PIXELS`: a source larger than that is sampled with up to four windows at **native** post spacing rather than decimated, because decimating would shrink the very ratio under test. The hold-out test is retained where it is correct (equal spacing or upsampling) and as a fallback, and the v0.58.1 high-ratio warning now fires only on that fallback path. 16 new tests in `tests/test_v059_regressions.py`, four of which score the tool's choice against the analytic surface rather than against the tool's own metric; `audit_pure.py` section 9 now checks the dispatch. **Unchanged:** tile geometry, grid snapping, post positions, filenames, metadata, seam reconciliation, the cubic clamp and every spec-compliance check; `-resample auto` and every explicit `-resample <alg>` are bit-for-bit identical. A delivery not produced with `optimize` does not need regenerating. Verified: `pytest` 471 passed, `audit_pure.py` `RESULT: 0 problem(s)`, `BUMP_VERSION.py --check 0.59.0` clean. |
+| v0.58.1 (2026-09-08) | **Documentation, version-consistency and release-tooling patch.** No conversion, tiling, resampling, metadata or validation logic changed — a v0.58.0 delivery does not need regenerating. **Restored this README**, which v0.58.0 shipped overwritten by `DGED_Loader/README.md` (byte-identical; `MANIFEST.md` still listed the root file as the full reference). **Corrected the anti-alias pre-filter guidance** here, in `DEM2DGED_User_Manual.md` and in `QUICKSTART.html`: all three still recommended `--prefilter gaussian` for mountainous sources, the advice v0.57.0 retracted in the CLI help and GUI dropdown. The v0.49 and v0.57.0 measurements are now presented side by side with the metric each one answers (aliasing vs. point accuracy). **Fixed `dem2dged_compare.py`'s `dem2dged_lib` import fallback**, which had declared `VERSION = "0.45"` since v0.45 — a run whose import failed would have stamped a v0.45 banner on a current-build report. **Synchronised** the `# Version:` headers of every file under `tests/` (0.56.0), `tests/test_v057_regressions.py` (0.57.0) and `selftest_prefilter*.py` (0.57.1), and added the missing headers to `selftest_optimize_resampling.py` and `selftest_resampling_comparison.py`. **New `BUMP_VERSION.py`** — generic, idempotent, dry run by default, with a `--check` audit mode — replaces `BUMP_v0.56.0.py`, `BUMP_v0.57.1.py` and `UPDATE_VERSIONS.py`; the last of those prepended a hardcoded v0.57.1 changelog block to `VERSION.txt` with no idempotence guard and is now a hard-failing shim. **Rewrote `MANIFEST.md`**, which still described the v0.56.0 package. **Refreshed stale banners**: `build_exe.bat` / `build_validate_exe.bat` / `rebuild_exe.bat` / `rebuild_validate_exe.bat` (v0.34), `verify.bat` (v0.41), `QUICKSTART.html`'s footer (v0.49) and "What's new" (v0.55.0), `START_HERE.md`'s lead and "What's new" (v0.55.0), `REBUILD_GUIDE.md`'s sample output (v0.23). Added `REQUIREMENTS_COMPLIANCE_V0.58.1.md` and corrected `REQUIREMENTS_COMPLIANCE_V0.57.1.md`, which cited a `RELEASE_GATE_v0.57.1.py` that has never existed. **Documented, without changing code**, the remaining `-resample optimize` hold-out limitation (reconstruction metric used as a proxy for decimation accuracy); the decimate-and-score rewrite is deferred to v0.59.0. Verified: `pytest` 453 passed, `audit_pure.py` `RESULT: 0 problem(s)`, `DGED_Loader/test_dged_loader.py` all pass, `py_compile` clean on every module and both `.pyt` files. |
+| v0.58.0 (2026-09-08) | **"Show DGED Differences" added to the ArcGIS Pro toolbox.** `DGED_Loader/DGED_Loader.pyt` now contains two tools. The new one resolves exactly one validation result set (rejecting a parent folder holding several, so unrelated deliveries can't be silently mixed), loads `validation/elevation_diff.tif` as the signed DGED-minus-source difference, loads and red-styles `error_mask.tif` at the threshold recorded in `terrain_metrics.json`, recovers the original source DEM from `DEM2DGED_Conversion_Manifest.json` or `terrain_metrics.json` (with an explicit override parameter), and optionally adds the `DGEDL*` delivery tiles — all into one named comparison group ready for Appearance > Swipe. It consumes the artifacts DEM2DGED already produced, so it adds no second alignment or resampling step, and it prints the sign convention plus the terrain-QA summary rather than leaving the reader to guess. Still base ArcGIS Pro only: no mosaic dataset, no Spatial Analyst or Image Analyst, no Standard/Advanced license. Covered by the offline mock-ArcPy harness (`DGED_Loader/test_dged_loader.py`, also run under pytest via `tests/test_dged_loader_harness.py`) and by `DGED_Loader/arcgis_pro_smoke_test.py` for the licensed workstation. |
+| v0.50.2 – v0.57.1 | See [`VERSION.txt`](VERSION.txt). Highlights: v0.54.0 evidence-based compliance, mountain precision QA, reproducibility manifest, vertical-operation preflight and the three-part error budget; v0.55.0 method-attributed validation and comparison reports; v0.56.0 a full-project review fixing seven correctness defects, six robustness gaps and five hygiene items, each covered by a test in `tests/test_v056_regressions.py`; v0.57.0 the three mountain-terrain accuracy fixes (hold-out at the actual decimation ratio, corrected pre-filter guidance, removal of the `rms` resampler) with 21 regression tests in `tests/test_v057_regressions.py`; v0.57.1 a documentation and version-sync pass. |
 | v0.49 (2026-08-13) | **Opt-in Gaussian anti-alias pre-filter for high-relief sources (`--prefilter gaussian` / `--prefilter-sigma`).** Default is `none`, which reproduces v0.48 output bit for bit — a v0.48 delivery does not need regenerating. **The problem:** downsampling a DEM to a coarser DGED level is decimation, and terrain detail shorter than twice the target post spacing cannot be represented at that spacing by any resampler. Without a low-pass filter first it does not vanish — it *folds back* into the product as false long-wavelength structure (aliasing) that looks like terrain but is not, and that no later choice of resampler can remove. Rough terrain follows a 1/f^β spectrum carrying far more short-wavelength energy than flat terrain, so mountainous sources are hit hardest — a distinct error mechanism from the interpolation error v0.48 documented. **New in `dem2dged_lib.py`:** `VALID_PREFILTERS` / `validate_prefilter()`, `gaussian_sigma_for_ratio()` (σ = (r−1)/2 source pixels, the standard image-pyramid rule; exactly 0 when not downsampling, so the filter is skipped rather than gratuitously blurring), `_gaussian_kernel_1d()` / `_convolve1d()` (pure-numpy separable convolution — deliberately no scipy dependency added to the packaged exe), `build_prefiltered_source()` and `cleanup_prefiltered_source()`. Wired into both converters, the `dem2dged.py` dispatcher, and the sidecar lineage statement so a smoothed product is identifiable from its metadata alone. **Measured, not assumed** (`selftest_prefilter.py`, new, on 1/f^β fractal surfaces scored against an ideal band-limited reference, 2 m → 20 m posts): very rough (β 1.5) 51.54 → 9.27 m (−82.0%), mountainous (β 2.0) 35.74 → 9.38 m (−73.8%), hilly (β 2.5) 19.52 → 7.14 m (−63.4%), rolling (β 3.0) 8.81 → 4.31 m (−51.0%), smooth (β 4.0) 1.38 → 1.15 m (−16.4%), **near-planar (β 5.0) 0.18 → 0.32 m — 72.9% WORSE**. That last row is why the feature is opt-in and not automatic: where there is no short-wavelength energy there is nothing to alias, so the filter can only blur real signal. An earlier draft of the selftest used a two-tone synthetic instead of fractal surfaces and produced badly misleading results (it made the filter look net-harmful at high decimation ratios), because a two-tone surface has almost none of the sub-Nyquist energy real terrain carries — the selftest now documents this so it is not 'simplified' back. **Implementation notes:** the filter is a separate pass over the source, not a gdalwarp flag (gdalwarp has no low-pass option; `-r average` is a box filter with large side lobes and no tunable width), so tile geometry, `-te`/`-tr` grid snapping, post positions, resampler choice, edge reconciliation and the cubic-family clamp are all untouched — and the clamp range is still taken from the *original* source, not the smoothed copy. NoData is handled by **normalised convolution**: a plain convolution over a raster storing −32767 in its voids drags that sentinel into surrounding real terrain (measured at over 13,000 m in testing); void footprints are restored exactly, to the pixel. Processed in row strips with a radius-sized halo, verified bit-identical to a whole-array pass, so multi-gigabyte sources are fine. The pure-numpy convolution was verified against `scipy.ndimage.gaussian_filter` to 3e−13. Version bumped to 0.49 across all 12 `audit_pure.py`-checked declarations. **Not run in this environment:** `pytest`, `audit_pure.py` and `selftest_prefilter.py` all need real GDAL — run them in your Anaconda environment and keep the logs. |
 | v0.48 (2026-08-12) | **Documentation: terrain relief, level, and resampling accuracy.** No change to tile geometry, resampling algorithms, filenames, metadata, or any spec-compliance check — a v0.47 delivery does not need regenerating. README.md and QUICKSTART.html now explain why elevation accuracy degrades faster on high-relief (mountainous) terrain than on flat terrain at a fixed DGED level: a coarse post spacing under-samples short-wavelength relief, and every interpolation-based resampler (Bilinear, Cubic, Cubic B-Spline) assumes the terrain is locally smooth between posts — an assumption steep slopes violate, matching v0.46's own measured finding (Bilinear/Cubic 6–10 m sample-window error on steep terrain vs. Nearest Neighbor's near-0 m). The **"Product levels" table now lists the DGED spec's predicted horizontal (CE90) / vertical (LE90) accuracy goals per level** (`dem2dged_lib.LEVEL_ABS_HACC` / `LEVEL_ABS_VACC`, spec Tables 5/6 — the same values `--abs-hacc`/`--abs-vacc` auto-fill) next to GSD, instead of GSD alone. Both documents now explicitly recommend `-resample optimize` for high-relief sources, since it already automates the "convert with all three methods and keep the most accurate one" workflow this update was written to explain. Fixed a QUICKSTART.html gap found while cross-checking this: its options table listed `-resample`'s valid values without `optimize`, though it's been valid since v0.36 and was already correct in README.md's own options list. New `update_manual_v0.48.py` adds the same explanation to the Word manual as a new FAQ entry via the existing safe insertion mechanism — **not run against the real file** (`DEM2DGED_User_Manual.docx` isn't part of the mounted project folder); run it locally and check the printed [OK]/[SKIP] lines. Version bumped to 0.48 across all 12 `audit_pure.py`-checked declarations plus `VERSION.txt`/`VALIDATOR_VERSION.txt`; `python audit_pure.py` reports `RESULT: 0 problem(s)` (verified GDAL-free in this environment). Full `pytest` (needs GDAL) was not run here. Follow-up in the same pass: `RELEASE_CHECK_v0.47.py`/`PACKAGE_v0.47.py` renamed to `RELEASE_CHECK_v0.48.py`/`PACKAGE_v0.48.py` (internal text and `EXPECTED_VERSION` updated to match), `dem2dged_validate_v0.47/` renamed to `dem2dged_validate_v0.48/` with its internal file copies refreshed, `version_info_gui.txt`/`version_info_validate.txt` regenerated via `make_version_info.py` (dependency-free, actually run — was stale at 0.45), and `MANIFEST.md` updated to match. **Not independently re-verified:** an actual `python RELEASE_CHECK_v0.48.py` / `python PACKAGE_v0.48.py` run needs real GDAL + PyInstaller in the Anaconda environment; the zip shipped with this entry was assembled by replicating `dem2dged_package.py`'s own include/exclude rules outside that environment as a convenience, not a substitute for the real release gate. |
 | v0.47 (2026-08-12) | **Accuracy fairness fix for `-resample optimize`, plus a version-consistency catch-up.** `dem2dged_compare.py`'s hold-out cross-validation (the measurement behind `-resample optimize`) scored Cubic reconstructions RAW and unclamped, while delivered tiles made with cubic-family resamplers are clamped into the source's true `[floor(min), ceil(max)]` range before being written (`dem2dged_lib.clamp_tile_to_range()`). A few overshoot pixels at sharp discontinuities — pixels no real delivery ever contains — could inflate RMSE/MAE and make cubic-family methods look worse than what a user actually receives, biasing `optimize` toward Bilinear even where a clamped cubic-family method reconstructs most posts more accurately. `_holdout_stats()` now applies the identical clamp before scoring (verified: a clamped error can never exceed `ceil(source max) − floor(source min)`, a mathematical guarantee). **Cubic B-Spline (`cubicspline`) added as a fourth measured `optimize` candidate** — safe now that overshoot is clamped; it is only ever picked when it measures a strictly lower hold-out RMSE than the other three on that specific source. Verified on a deliberately adversarial synthetic cliff terrain: with the fix in place, `optimize` correctly picked Nearest Neighbor (the only candidate that can't blend across a true discontinuity) — confirming the fairness fix works and correcting an earlier assumption that Cubic B-Spline would be a general improvement; it is not, on sharp terrain it can be the worst choice, which is exactly why measuring per-source instead of hardcoding one algorithm matters. New `selftest_optimize_resampling.py` exercises this end to end. **`DIAGNOSE_SECTION_H_v0.11.py`** (was v0.10) brought up to parity with v0.46's `check_source()`/H2 logic: `--max-diff` (default 10.0, matching the validator), explicit PASS/FAIL verdicts using the validator's own thresholds, the same source-range clamp for cubic-family sources, a deferred GDAL import so `-h` works without an activated environment, and a `--selftest` mode. **Version-consistency catch-up:** `dem2dged_lib.py`'s header comment was stuck at 0.45 (caught by `tests/test_lib.py`'s own header-consistency test), and `dem2dged_package.py`, `dem2dged_validate_package.py` and `BUILD_AND_PACKAGE.py` had all been stuck at `VERSION = "0.45"` since the v0.46 release — meaning a v0.46 packaging run would have built and named its zip `dem2dged_v0.45.zip`, mismatched against every other declaration. All corrected; `audit_pure.py` reports `RESULT: 0 problem(s)` and `pytest` reports 364 passed. No change to tile geometry, filenames, metadata, or the `auto`/default resampling behaviour. |

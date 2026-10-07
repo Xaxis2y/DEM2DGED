@@ -3,7 +3,26 @@
 **SPDX-License-Identifier: GPL-2.0-or-later**  
 **Copyright (c) 2026 Eui Soo SON**
 
-**Current version: v0.59.0**
+**Current version: v0.61.0**
+
+**v0.61.0 release note — accuracy evidence and tail-error reporting.**
+The resampling comparison now reports mean per-case context, P90 absolute
+error and maximum absolute error in addition to its RMSE ranking metric. The
+release explanation distinguishes the six-candidate chance baseline, lists
+the six synthetic-benchmark misses, and labels the benchmark limitation in
+the headline. Regression coverage also confirms that source-metadata HOLD
+stops tile production and that expert overrides are serialized as overrides.
+
+**v0.60.0 release note — accuracy safeguards and release hardening.**
+Geographic optimization now compares metre-based source and target spacing,
+large-source tests use native-resolution windows, and exact source extrema are
+used for the production clamp. Source preflight records CRS, vertical datum,
+PixelIsPoint registration, elevation units and scale/offset; incomplete or
+ambiguous metadata is held by default and an expert override is recorded.
+Comparison reports identify the primary measurement method, and the GUI and
+validator executable builds carry their Tcl/Tk and Windows version resources.
+See [`REQUIREMENTS_COMPLIANCE_V0.61.0.md`](REQUIREMENTS_COMPLIANCE_V0.61.0.md)
+and run `RUN_V0610_VALIDATION.py` from a dedicated Anaconda environment.
 
 **v0.59.0 release note — the mountainous-terrain accuracy fix.**
 `-resample optimize` now measures every candidate on the operation it will

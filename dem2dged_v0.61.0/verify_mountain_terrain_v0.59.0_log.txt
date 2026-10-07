@@ -1,0 +1,63 @@
+verify_mountain_terrain_v0.59.0
+==============================================================================
+timestamp      : 2026-10-07 13:31:05
+python         : 3.11.15 | packaged by Anaconda, Inc. | (main, Jun 11 2026, 15:12:53) [MSC v.1942 64 bit (AMD64)]
+GDAL           : 3.12.4
+numpy          : 2.4.6
+dem2dged       : 0.61.0
+candidates     : near, bilinear, cubic, cubicspline, lanczos, average
+phases scored  : 6
+source size    : 384 x 384 posts
+
+OLD = hold-out reconstruction test (v0.58.1 and earlier)
+NEW = decimate-and-score           (v0.59.0)
+Both are ranked against an ORACLE that scores each candidate's real
+decimation against the analytic surface it was generated from.
+
+terrain   ratio  noise  seed | ORACLE best  OLD pick     NEW pick     | e_oracle    e_OLD    e_NEW
+--------------------------------------------------------------------------------------------------------
+alpine     16.0    0.0     3 | near         cubicspline  near         |   10.157   55.624   10.157
+alpine     16.0    2.0     3 | near         cubicspline  near         |   10.340   55.620   10.340
+alpine     12.5    0.0     3 | near         cubicspline  near         |    4.892   40.209    4.892
+alpine      8.0    0.0     3 | lanczos      cubicspline  lanczos      |    1.852   20.345    1.852
+alpine      8.0    2.0     3 | lanczos      cubicspline  lanczos      |    1.870   20.340    1.870
+alpine      5.5    0.0     3 | lanczos      cubicspline  lanczos      |    0.829   10.590    0.829
+alpine      4.0    0.0     3 | cubic        bilinear     cubic        |    0.437    3.110    0.437
+alpine      2.0    0.0     3 | cubic        cubic        cubic        |    0.148    0.148    0.148
+ridged     16.0    0.0     3 | near         cubicspline  near         |   12.048   55.477   12.048
+ridged     10.3    0.0     3 | near         cubicspline  near         |    5.556   42.450    5.556
+ridged      8.0    1.0     3 | lanczos      cubicspline  lanczos      |    9.695   33.701    9.695
+ridged      4.0    0.0     3 | lanczos      cubicspline  lanczos      |    3.590   13.724    3.590
+ridged      2.0    0.0     3 | lanczos      bilinear     cubic        |    1.400    2.859    1.415
+rolling     8.0    0.0     3 | cubic        bilinear     cubic        |    0.056    0.181    0.056
+rolling     4.0    1.0     3 | cubicspline  cubicspline  cubic        |    0.160    0.160    0.204
+rolling     2.0    1.0     3 | cubicspline  cubicspline  average      |    0.242    0.242    0.462
+alpine     16.0    0.0    21 | near         cubicspline  near         |   10.157   55.624   10.157
+alpine     16.0    2.0    21 | near         cubicspline  near         |   10.333   55.626   10.333
+alpine     12.5    0.0    21 | near         cubicspline  near         |    4.892   40.209    4.892
+alpine      8.0    0.0    21 | lanczos      cubicspline  lanczos      |    1.852   20.345    1.852
+alpine      8.0    2.0    21 | lanczos      cubicspline  lanczos      |    1.865   20.349    1.865
+alpine      5.5    0.0    21 | lanczos      cubicspline  lanczos      |    0.829   10.590    0.829
+alpine      4.0    0.0    21 | cubic        bilinear     cubic        |    0.437    3.110    0.437
+alpine      2.0    0.0    21 | cubic        cubic        cubic        |    0.148    0.148    0.148
+ridged     16.0    0.0    21 | near         cubicspline  near         |   12.048   55.477   12.048
+ridged     10.3    0.0    21 | near         cubicspline  near         |    5.556   42.450    5.556
+ridged      8.0    1.0    21 | lanczos      cubicspline  lanczos      |    9.695   33.700    9.695
+ridged      4.0    0.0    21 | lanczos      cubicspline  lanczos      |    3.590   13.724    3.590
+ridged      2.0    0.0    21 | lanczos      bilinear     cubic        |    1.400    2.859    1.415
+rolling     8.0    0.0    21 | cubic        bilinear     cubic        |    0.056    0.181    0.056
+rolling     4.0    1.0    21 | cubicspline  cubicspline  cubic        |    0.156    0.156    0.204
+rolling     2.0    1.0    21 | cubicspline  cubicspline  average      |    0.241    0.241    0.461
+--------------------------------------------------------------------------------------------------------
+cases                    : 32
+correct candidate chosen : OLD 6/32      NEW 26/32
+realised RMSE, summed    : ORACLE  126.53 m   OLD  709.57 m   NEW  127.09 m
+EXCESS OVER ORACLE       : OLD +583.04 m   NEW   +0.56 m
+                           -> 99.9% of the avoidable error removed
+
+Excess over oracle is the metric that matters: how many metres of
+AVOIDABLE error each ranking method's choices added up to. Counting
+correct picks alone would overstate the fix, because a wrong pick
+between near-tied candidates costs almost nothing.
+
+VERDICT: v0.59.0 IMPROVES ON v0.58.1 on this GDAL build.

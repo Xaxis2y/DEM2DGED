@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Evidence-based explanation of how DEM2DGED v0.60.0 reduces DEM to DGED conversion errors.">
+  <title>How DEM2DGED v0.60.0 Reduces Conversion Error</title>
+  <style>
+    :root {
+      --ink: #17212b;
+      --muted: #536273;
+      --paper: #f7f9fc;
+      --card: #ffffff;
+      --line: #dbe4ed;
+      --blue: #155eef;
+      --blue-dark: #0f3f9f;
+      --teal: #087f8c;
+      --green: #087443;
+      --green-bg: #eaf8f0;
+      --amber: #9a5b00;
+      --amber-bg: #fff5df;
+      --red: #a12828;
+      --shadow: 0 16px 42px rgba(21, 53, 88, 0.10);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef5ff 0, var(--paper) 420px, var(--paper) 100%);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+    }
+    a { color: var(--blue-dark); }
+    .page { max-width: 1180px; margin: 0 auto; padding: 32px 22px 70px; }
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 28px;
+      padding: 48px 48px 42px;
+      color: #fff;
+      background: radial-gradient(circle at 88% 12%, rgba(104, 207, 255, 0.45), transparent 30%), linear-gradient(135deg, #0d327d, #155eef 60%, #00a6a6);
+      box-shadow: var(--shadow);
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      right: -120px;
+      bottom: -200px;
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 50%;
+      box-shadow: 0 0 0 30px rgba(255,255,255,.05), 0 0 0 60px rgba(255,255,255,.04);
+    }
+    .eyebrow { position: relative; z-index: 1; margin: 0 0 10px; text-transform: uppercase; letter-spacing: .14em; font-size: .76rem; font-weight: 800; opacity: .82; }
+    h1 { position: relative; z-index: 1; max-width: 820px; margin: 0; font-size: clamp(2rem, 5vw, 4.2rem); line-height: 1.04; letter-spacing: -.045em; }
+    .hero p { position: relative; z-index: 1; max-width: 760px; margin: 22px 0 0; font-size: 1.12rem; color: #e7f2ff; }
+    .facts { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 34px; }
+    .fact { padding: 18px 16px; border: 1px solid rgba(255,255,255,.22); border-radius: 16px; background: rgba(3, 24, 70, .22); backdrop-filter: blur(8px); }
+    .fact strong { display: block; font-size: 1.82rem; line-height: 1.1; }
+    .fact span { display: block; margin-top: 7px; color: #d5e9ff; font-size: .88rem; }
+    main { display: grid; gap: 22px; margin-top: 22px; }
+    section { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 30px; box-shadow: 0 8px 24px rgba(33, 58, 87, .045); }
+    h2 { margin: 0 0 12px; color: #102c50; font-size: clamp(1.45rem, 3vw, 2.15rem); line-height: 1.15; letter-spacing: -.025em; }
+    h3 { margin: 0 0 6px; color: #123e70; font-size: 1.12rem; }
+    p { margin: 10px 0; }
+    .lead { color: var(--muted); font-size: 1.05rem; max-width: 880px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .card { padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: linear-gradient(180deg, #fff, #f9fbfd); }
+    .card p { color: var(--muted); font-size: .95rem; }
+    .label { display: inline-block; margin-bottom: 10px; padding: 4px 9px; border-radius: 999px; color: var(--blue-dark); background: #e9f1ff; font-size: .74rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
+    .warning { border-left: 5px solid #ed9b24; background: var(--amber-bg); padding: 16px 18px; border-radius: 12px; color: #694300; }
+    .success { border-left: 5px solid #15a05d; background: var(--green-bg); padding: 16px 18px; border-radius: 12px; color: #075a34; }
+    .flow-wrap { margin: 22px 0 4px; padding: 16px; overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; background: #f8fbff; }
+    .flow { min-width: 820px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .flow-node { min-width: 145px; padding: 14px 12px; text-align: center; border: 1px solid #b9d2f5; border-radius: 12px; color: #0d3a70; background: #eaf3ff; font-weight: 750; line-height: 1.25; }
+    .flow-node.accent { border-color: #93d8d7; color: #075c63; background: #e8fbfa; }
+    .arrow { color: var(--blue); font-size: 1.5rem; font-weight: 900; }
+    table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: .94rem; }
+    th, td { padding: 14px 13px; vertical-align: top; text-align: left; border-bottom: 1px solid var(--line); }
+    th { color: #1e456e; background: #f2f7fd; font-size: .82rem; text-transform: uppercase; letter-spacing: .06em; }
+    tr:last-child td { border-bottom: 0; }
+    .steps { display: grid; gap: 12px; margin: 18px 0 0; padding: 0; list-style: none; counter-reset: step; }
+    .steps li { display: grid; grid-template-columns: 38px 1fr; gap: 14px; align-items: start; counter-increment: step; }
+    .steps li::before { content: counter(step); display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; color: #fff; background: var(--blue); font-weight: 800; }
+    .steps strong { color: #163d67; }
+    .metric-table td:nth-child(n+2) { font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .metric-table .old { color: var(--red); }
+    .metric-table .new { color: var(--green); font-weight: 750; }
+    .metric-table .oracle { color: #315e87; }
+    .state { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 18px; }
+    .state > div { padding: 16px; border-radius: 14px; }
+    .state .hold { color: #754800; background: var(--amber-bg); border: 1px solid #f1d18e; }
+    .state .pass { color: #075a34; background: var(--green-bg); border: 1px solid #bce5cd; }
+    .state .override { color: #21476c; background: #edf5ff; border: 1px solid #c8ddfa; }
+    .state strong { display: block; margin-bottom: 4px; }
+    ul { padding-left: 1.25rem; }
+    li + li { margin-top: 7px; }
+    .small { color: var(--muted); font-size: .89rem; }
+    footer { padding: 24px 4px 0; color: var(--muted); font-size: .9rem; }
+    footer p { margin: 5px 0; }
+    code { padding: .12em .35em; border-radius: 5px; background: #edf2f7; color: #193c62; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: .9em; }
+    @media (max-width: 800px) {
+      .page { padding: 16px 12px 42px; }
+      .hero { padding: 32px 24px 28px; border-radius: 20px; }
+      section { padding: 22px 18px; border-radius: 18px; }
+      .facts, .grid-2, .grid-3, .state { grid-template-columns: 1fr 1fr; }
+      .grid-2 .card:last-child { grid-column: 1 / -1; }
+      table { display: block; overflow-x: auto; }
+    }
+    @media (max-width: 520px) {
+      .facts, .grid-2, .grid-3, .state { grid-template-columns: 1fr; }
+      .grid-2 .card:last-child { grid-column: auto; }
+      .facts { gap: 8px; }
+      .fact strong { font-size: 1.45rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <p class="eyebrow">DEM2DGED v0.60.0 · accuracy engineering note</p>
+      <h1>How the conversion error was reduced</h1>
+      <p>v0.60.0 makes the resampling decision match the operation that is actually performed: a DEM is evaluated at the requested DGED post spacing, with physical units, native-resolution source data, explicit metadata gates, and a metric that cannot silently turn into a different test.</p>
+      <div class="facts" aria-label="Release evidence summary">
+        <div class="fact"><strong>26 / 32</strong><span>correct candidate choices in the controlled comparison</span></div>
+        <div class="fact"><strong>+0.56 m</strong><span>new excess RMSE above the oracle baseline</span></div>
+        <div class="fact"><strong>99.9%</strong><span>of avoidable error removed in that comparison</span></div>
+        <div class="fact"><strong>477 / 477</strong><span>automated validation tests passed</span></div>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <h2>The central idea</h2>
+        <p class="lead">The largest improvement was methodological. The optimizer must measure the same kind of transformation that production performs. When the target DGED grid is coarser than the source DEM, the relevant question is not “which filter reconstructs an already fine grid best?” It is “which candidate produces the least error when the source is genuinely reduced to the target posts?”</p>
+        <div class="success"><strong>Result:</strong> candidate ranking is now based on a real decimation-and-score path whenever the source-to-target ratio requires decimation. The report identifies the primary metric instead of presenting a fallback as if it were equivalent evidence.</div>
+        <div class="flow-wrap" role="img" aria-label="Conversion accuracy flow from source inspection to DGED output">
+          <div class="flow">
+            <div class="flow-node">Source DEM</div><div class="arrow">→</div>
+            <div class="flow-node">Inspect CRS, units,<br>registration, metadata</div><div class="arrow">→</div>
+            <div class="flow-node accent">Compute physical<br>source/target ratio</div><div class="arrow">→</div>
+            <div class="flow-node accent">Test real decimation<br>over six phases</div><div class="arrow">→</div>
+            <div class="flow-node">Clamp, report,<br>write DGED</div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>What caused avoidable errors before</h2>
+        <p class="lead">The failure modes were not all interpolation-formula problems. Several were measurement and data-contract problems that could make a mathematically reasonable filter look better or worse for the wrong reason.</p>
+        <div class="grid-2">
+          <article class="card">
+            <span class="label">Measurement direction</span>
+            <h3>Upsampling was not a valid proxy for decimation</h3>
+            <p>At large source-to-target ratios, reconstructing a dense grid and scoring it can invert the ranking of candidates. Production then reduces the source, but the optimizer has selected a method using a different experiment.</p>
+          </article>
+          <article class="card">
+            <span class="label">Coordinate units</span>
+            <h3>Degrees were not metres</h3>
+            <p>Geographic rasters describe spacing in angular units. A ratio calculated directly from degrees does not represent physical ground spacing and can select an unsuitable resampler or prefilter.</p>
+          </article>
+          <article class="card">
+            <span class="label">Large sources</span>
+            <h3>Pre-decimating the test window changed the ratio</h3>
+            <p>Reducing a source window before measuring the candidate made the test easier than the real conversion. The measured ratio no longer matched the source and target grids supplied by the operator.</p>
+          </article>
+          <article class="card">
+            <span class="label">Data contract</span>
+            <h3>Unknown metadata could be treated too optimistically</h3>
+            <p>Missing vertical reference, non-point registration, scale/offset, or unit information can create a large apparent accuracy error. Without a gate, the tool could produce a result that looked valid but was not comparable.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>What changed in v0.60.0</h2>
+        <table>
+          <thead><tr><th>Problem</th><th>Safeguard</th><th>Why it reduces error</th></tr></thead>
+          <tbody>
+            <tr><td>Wrong direction of evaluation</td><td>Decimate the native source to the requested target spacing, then score at target posts.</td><td>The optimizer now evaluates the production-like operation instead of an upsampling proxy.</td></tr>
+            <tr><td>Geographic spacing</td><td>Convert source and target spacing to metres using latitude-aware ground-distance calculations.</td><td>Resampling decisions use physical scale rather than angular degree values.</td></tr>
+            <tr><td>Oversized source windows</td><td>Use bounded native-resolution windows, up to four windows, without source decimation before measurement.</td><td>The tested ratio remains the actual conversion ratio.</td></tr>
+            <tr><td>Non-integer extrema</td><td>Read exact native source extrema and use them for output-range protection.</td><td>Cubic-family overshoot is prevented without rounding away meaningful source limits.</td></tr>
+            <tr><td>Ambiguous source metadata</td><td>Preflight CRS, authority, point registration, metre units, scale/offset, and vertical reference; default to <code>HOLD</code> when required evidence is missing.</td><td>The tool refuses to present an unverified conversion as an accuracy pass.</td></tr>
+            <tr><td>Fallback confusion</td><td>Label <code>DECIMATE-AND-SCORE</code>, <code>HOLD-OUT</code>, and <code>holdout_fallback</code> separately in reports.</td><td>Users can distinguish primary evidence from a degraded or unavailable comparison path.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>How the optimizer now works</h2>
+        <ol class="steps">
+          <li><div><strong>Measure the grids in physical space.</strong><br>For projected data, source and target spacing are measured in metres. For geographic data, the tool converts angular spacing to ground distance rather than dividing degree values directly.</div></li>
+          <li><div><strong>Keep the source at native resolution.</strong><br>For large inputs, the tool selects bounded native-resolution windows. It does not quietly pre-shrink the source before deciding which candidate is best.</div></li>
+          <li><div><strong>Determine the actual operation.</strong><br>If the target posts are coarser, each candidate is evaluated through a real decimation path. Candidate methods include nearest, bilinear, cubic, cubicspline, lanczos, and average where supported by the conversion path.</div></li>
+          <li><div><strong>Score at the requested posts.</strong><br>The result is compared with a native-source reference at the target locations. Six subpixel phases are used so that the decision is not dependent on one fortunate grid alignment.</div></li>
+          <li><div><strong>Select by the primary metric.</strong><br>The lowest relevant RMSE is used for the candidate decision, while the report records the metric family, sample count, phase count, and fallback state.</div></li>
+          <li><div><strong>Protect the output range.</strong><br>The output is checked against the exact native source extrema. This limits overshoot from higher-order interpolation without changing the measured source range through rounding.</div></li>
+        </ol>
+      </section>
+
+      <section>
+        <h2>Metadata preflight is an error barrier</h2>
+        <p class="lead">A conversion cannot be called accurate if the tool does not know what the elevation values mean. v0.60.0 records the source inspection and preflight decisions before tile production.</p>
+        <div class="state">
+          <div class="hold"><strong>HOLD</strong>Required metadata is missing, inconsistent, or unsafe to interpret. The conversion is stopped before tiles are produced.</div>
+          <div class="override"><strong>EXPERT OVERRIDE</strong><code>--allow-unknown-source-metadata</code> records the decision explicitly. It permits a controlled workflow, but it is not an accuracy pass.</div>
+          <div class="pass"><strong>PASS</strong>Horizontal CRS, point registration, metre interpretation, valid scale/offset, and vertical reference meet the preflight contract.</div>
+        </div>
+        <p class="small">The evidence is retained in files such as <code>source_inspection.json</code> and <code>source_preflight.json</code>, so a later review can tell whether the tool used verified metadata or an explicit exception.</p>
+      </section>
+
+      <section>
+        <h2>Measured evidence from the release gate</h2>
+        <p class="lead">The controlled comparison used 32 cases across candidate resamplers, six phase alignments, and analytic terrain surfaces. The values below measure candidate-selection performance relative to an oracle choice on the same run.</p>
+        <table class="metric-table">
+          <thead><tr><th>Evaluation</th><th>Correct choice</th><th>Summed realised RMSE</th><th>Excess over oracle</th></tr></thead>
+          <tbody>
+            <tr><td class="oracle">Oracle reference</td><td>32 / 32 by definition</td><td class="oracle">126.53 m</td><td class="oracle">0.00 m</td></tr>
+            <tr><td class="old">Previous holdout path</td><td class="old">6 / 32</td><td class="old">709.57 m</td><td class="old">+583.04 m</td></tr>
+            <tr><td class="new">v0.60.0 decimate-and-score</td><td class="new">26 / 32</td><td class="new">127.09 m</td><td class="new">+0.56 m</td></tr>
+          </tbody>
+        </table>
+        <div class="success" style="margin-top:18px"><strong>Interpretation:</strong> the new path removed approximately 99.9% of the avoidable excess error in this controlled comparison. It is strong evidence that the measurement direction and ratio handling were corrected; it is not a claim that every DEM in every terrain will have the same result.</div>
+        <p class="small">Run environment: GDAL 3.12.4, NumPy 2.4.6, Python 3.11.15. The test used analytic terrain and evaluates the selection procedure, not absolute geodetic accuracy against independent survey control.</p>
+      </section>
+
+      <section>
+        <h2>Validation evidence beyond the accuracy comparison</h2>
+        <div class="grid-3">
+          <article class="card"><span class="label">Automated tests</span><h3>477 passed</h3><p>All release-gate tests passed with no test failures or errors.</p></article>
+          <article class="card"><span class="label">Static audit</span><h3>0 pure-audit problems</h3><p>The release audit found no reported packaging or source-scope problems.</p></article>
+          <article class="card"><span class="label">ArcGIS Pro</span><h3>Smoke test passed</h3><p>ArcGIS Pro 3.7.2 imported the toolbox and exposed both DGED tools.</p></article>
+          <article class="card"><span class="label">Windows build</span><h3>Executable verified</h3><p>The GUI and validator executables were built, versioned, and smoke-tested.</p></article>
+          <article class="card"><span class="label">DGED loader</span><h3>Offline tests passed</h3><p>Loader and comparison-tool checks completed without requiring a live external service.</p></article>
+          <article class="card"><span class="label">Package</span><h3>Release archive created</h3><p>The binary Windows package and source package are reproducible release artifacts.</p></article>
+        </div>
+      </section>
+
+      <section>
+        <h2>What this does not prove</h2>
+        <div class="warning"><strong>Accuracy boundaries matter.</strong> The conversion optimizer can reduce resampling and candidate-selection error, but it cannot repair incorrect source elevations, an unknown vertical datum, a bad georeferencing transform, or terrain features absent from the source DEM.</div>
+        <ul>
+          <li>It does not establish absolute CE90, LE90, or other product-accuracy statistics without independent control data.</li>
+          <li>It does not prove that the source DEM's vertical datum, units, or acquisition quality are correct merely because metadata fields are present.</li>
+          <li>It does not guarantee that the controlled analytic-terrain ranking will be identical for every terrain type, scale, or GDAL build.</li>
+          <li>It does not replace target-application acceptance, visual inspection, or mission-specific DGED/DTED conformance review.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Recommended operator practice</h2>
+        <div class="grid-2">
+          <article class="card"><h3>Before conversion</h3><ul><li>Confirm horizontal CRS and authority.</li><li>Confirm that raster registration is pixel-is-point when the workflow requires post values.</li><li>Confirm elevation units, scale/offset, and vertical reference.</li><li>Keep the original source and preflight JSON with the release record.</li></ul></article>
+          <article class="card"><h3>During conversion</h3><ul><li>Use <code>-resample optimize</code> when method selection should respond to the source and target ratio.</li><li>For high-relief or strong-decimation cases, use the real decimate-and-score path.</li><li>Do not treat an expert metadata override as proof of accuracy.</li><li>Review the report's metric family and fallback state.</li></ul></article>
+          <article class="card"><h3>After conversion</h3><ul><li>Run terrain QA appropriate to the product and region.</li><li>Inspect edge behavior, nodata boundaries, and high-relief features.</li><li>Compare against independent control when absolute accuracy is required.</li><li>Record the tool version, GDAL version, source metadata, and validation evidence.</li></ul></article>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p><strong>DEM2DGED v0.60.0</strong> · Explanation prepared from the final release-gate evidence on 2026-10-07.</p>
+      <p>Related release documents: <a href="README.md">README</a> · <a href="REQUIREMENTS_COMPLIANCE_V0.60.0.md">requirements compliance</a> · <a href="validation_logs/v0600_validation_20261007_123641.log">validation log</a> · <a href="RUN_V0600_VALIDATION.py">validation runner</a></p>
+      <p class="small">This page explains implemented engineering safeguards and measured comparison results. It is not a substitute for independent geodetic accuracy acceptance.</p>
+    </footer>
+  </div>
+</body>
+</html>

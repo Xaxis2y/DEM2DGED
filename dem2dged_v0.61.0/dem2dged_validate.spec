@@ -1,0 +1,72 @@
+# -*- mode: python ; coding: utf-8 -*-
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (c) 2026 Eui Soo SON
+# NOTE: GDAL/PROJ data dirs are auto-detected from the active Python
+# environment (sys.prefix) rather than hardcoded to a fixed anaconda3
+# install path, so `rebuild_validate_exe.bat` works from any conda env.
+from PyInstaller.utils.hooks import collect_all
+import glob
+import os, sys
+
+spec_dir = os.getcwd()
+
+conda_prefix = sys.prefix
+gdal_data_dir = os.path.join(conda_prefix, "Library", "share", "gdal")
+proj_data_dir = os.path.join(conda_prefix, "Library", "share", "proj")
+if not os.path.isdir(gdal_data_dir):
+    try:
+        import osgeo
+        gdal_data_dir = os.path.join(os.path.dirname(osgeo.__file__), "data", "gdal")
+    except Exception:
+        pass
+
+datas = [('DEM2DGED_Compliance_Policy.json', '.'),
+         (gdal_data_dir, 'gdal'), (proj_data_dir, 'proj')]
+binaries = []
+# Bundle Conda's native GDAL/PROJ dependency tree. The osgeo Python
+# extensions are not sufficient by themselves for a clean-machine startup.
+library_bin = os.path.join(conda_prefix, "Library", "bin")
+if os.path.isdir(library_bin):
+    binaries.extend((path, ".") for path in glob.glob(
+        os.path.join(library_bin, "*.dll")))
+hiddenimports = ['osgeo.gdal', 'osgeo.osr', 'osgeo.ogr', 'osgeo._gdal', 'osgeo._osr', 'osgeo._ogr', 'dem2dged_terrain', 'dem2dged_compliance']
+tmp_ret = collect_all('osgeo')
+datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
+
+
+a = Analysis(
+    ['dem2dged_validate.py'],
+    pathex=[],
+    binaries=binaries,
+    datas=datas,
+    hiddenimports=hiddenimports,
+    hookspath=[],
+    hooksconfig={},
+    runtime_hooks=[],
+    excludes=['PyQt5', 'PySide6', 'PyQt6', 'PySide2', 'tkinter'],
+    noarchive=False,
+    optimize=0,
+)
+pyz = PYZ(a.pure)
+
+exe = EXE(
+    pyz,
+    a.scripts,
+    a.binaries,
+    a.datas,
+    [],
+    name='dem2dged_validate',
+    version=os.path.join(spec_dir, 'version_info_validate.txt'),
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    runtime_tmpdir=None,
+    console=True,
+    disable_windowed_traceback=False,
+    argv_emulation=False,
+    target_arch=None,
+    codesign_identity=None,
+    entitlements_file=None,
+)

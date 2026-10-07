@@ -1,0 +1,112 @@
+
+==============================================================================
+0) Environment
+==============================================================================
+  timestamp        : 2026-09-08 11:44:42
+  folder           : C:\Users\Son\Documents\ChatGPT\dem2dged\dem2dged_v0.58.0
+  sys.executable   : C:\ProgramData\anaconda3\envs\DGED\python.exe
+  python           : 3.10.21 | packaged by conda-forge | (main, Aug 21 2026, 22:38:44) [MSC v.1944 64 bit (AMD64)]
+  CONDA_PREFIX     : C:\ProgramData\anaconda3\envs\DGED
+  numpy            : 2.2.6
+  GDAL (python)    : 3.13.3
+  gdalwarp on PATH : C:\ProgramData\anaconda3\envs\DGED\Library\bin\gdalwarp.exe
+
+==============================================================================
+1) Byte-compile every module, test and toolbox
+==============================================================================
+  [PASS] all 57 Python/.pyt files byte-compile
+
+==============================================================================
+2) Version consistency
+==============================================================================
+
+0 stale declaration(s) against 0.59.0
+  [PASS] BUMP_VERSION.py --check 0.59.0 reports 0 stale
+==============================================================================
+  [PASS] audit_pure.py reports 0 problems
+  [PASS] dem2dged_compare.py import-fallback VERSION is 0.59.0 (was stuck at 0.45)  -- found '0.59.0'
+
+==============================================================================
+3) v0.58.1 regression checks (must still hold)
+==============================================================================
+  [PASS] README.md is the project reference, not a copy of DGED_Loader/README.md
+  [PASS] README.md opens as the dem2dged project reference
+  [PASS] DGED_Loader.pyt matches DGED_Loader/DGED_Loader.pyt
+  [PASS] UPDATE_VERSIONS.py refuses to run (exit != 0)  -- exit=2
+  [PASS] VERSION.txt has exactly one 'Changes in v0.59.0:' section
+  [PASS] BUMP_VERSION.py dry run 0.58.0 -> 0.59.0 now changes 0 files (idempotent)
+  [PASS] DEM2DGED_User_Manual.md carries the v0.57.0 pre-filter correction
+  [PASS] README.md carries the v0.57.0 pre-filter correction
+  [PASS] QUICKSTART.html carries the v0.57.0 pre-filter correction
+  [PASS] selftest_prefilter.py states it measures aliasing, not point accuracy
+  [PASS] dem2dged_compare.HIGH_RATIO_ADVISORY == 8.0
+
+==============================================================================
+4) v0.59.0 -- the resampler-selection fix, against real GDAL
+==============================================================================
+  [PASS] lanczos is a scored candidate (v0.59.0 added it)
+  [PASS] six candidates are scored  -- 6
+  [PASS] the decimate test scores several sub-pixel grid phases  -- 6 phases
+  [PASS] optimize measured the DECIMATION, not a reconstruction  -- {'near': 'decimate', 'bilinear': 'decimate', 'cubic': 'decimate', 'cubicspline': 'decimate', 'lanczos': 'decimate', 'average': 'decimate'}
+  [PASS] the ACTUAL 16x ratio reached the measurement
+  [PASS] no high-ratio warning on the fixed path
+  [PASS] Nearest and Average are no longer degenerate  -- near=10.156502 average=20.744049
+
+  TRUE point accuracy at 16x (vs. the analytic surface):
+    near           RMSE    10.157 m
+    lanczos        RMSE    16.239 m
+    cubic          RMSE    19.471 m
+    average        RMSE    20.745 m
+    bilinear       RMSE    35.298 m
+    cubicspline    RMSE    55.624 m
+  v0.59.0 decimate-and-score ranking:
+    near           RMSE    10.157 m
+    lanczos        RMSE    16.238 m
+    cubic          RMSE    19.469 m
+    average        RMSE    20.744 m
+    bilinear       RMSE    35.297 m
+    cubicspline    RMSE    55.623 m
+  optimize picked 'near'; true best is 'near'.
+  [PASS] optimize now picks the genuinely most accurate candidate  -- picked near (true RMSE 10.157 m), best is near (10.157 m)
+
+  For contrast, the v0.58.1 hold-out test on the same source:
+    cubicspline    RMSE   120.054 m
+    bilinear       RMSE   126.564 m
+    cubic          RMSE   133.448 m
+    lanczos        RMSE   140.451 m
+    near           RMSE   147.551 m
+    average        RMSE   147.551 m
+  v0.58.1 would have picked 'cubicspline' -- true RMSE 55.624 m.
+  v0.59.0 picked 'near' -- true RMSE 10.157 m.
+  Avoidable error removed on this one case: 45.467 m.
+  [PASS] v0.59.0's pick is at least as accurate as v0.58.1's
+  [PASS] upsampling still uses the hold-out reconstruction test (the correct measure there)
+
+==============================================================================
+5) Offline ArcGIS toolbox harness
+==============================================================================
+  last line: ALL TESTS PASSED
+  [PASS] DGED_Loader/test_dged_loader.py passes
+
+==============================================================================
+6) Ground-truth sweep -- the number the release notes quote
+==============================================================================
+  correct candidate chosen : OLD 1/6      NEW 6/6
+  realised RMSE, summed    : ORACLE   36.42 m   OLD  207.55 m   NEW   36.42 m
+  EXCESS OVER ORACLE       : OLD +171.14 m   NEW   +0.00 m
+  -> 100.0% of the avoidable error removed
+  VERDICT: v0.59.0 IMPROVES ON v0.58.1 on this GDAL build.
+  [PASS] the ground-truth sweep confirms v0.59.0 beats v0.58.1 here
+
+==============================================================================
+7) Full pytest suite
+==============================================================================
+  471 passed in 79.95s (0:01:19)
+  [PASS] pytest suite passes
+
+==============================================================================
+RESULT
+==============================================================================
+  28 check(s) run, 0 failed.
+
+  Log written to: C:\Users\Son\Documents\ChatGPT\dem2dged\dem2dged_v0.58.0\DIAG_dem2dged_v0.59.0_log.txt

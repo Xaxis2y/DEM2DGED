@@ -3,26 +3,51 @@
 **SPDX-License-Identifier: GPL-2.0-or-later**  
 **Copyright (c) 2026 Eui Soo SON**
 
-**Current version: v0.61.0**
+**Current version: v0.62.0**
 
-**v0.61.0 release note — accuracy evidence and tail-error reporting.**
-The resampling comparison now reports mean per-case context, P90 absolute
-error and maximum absolute error in addition to its RMSE ranking metric. The
-release explanation distinguishes the six-candidate chance baseline, lists
-the six synthetic-benchmark misses, and labels the benchmark limitation in
-the headline. Regression coverage also confirms that source-metadata HOLD
-stops tile production and that expert overrides are serialized as overrides.
+**v0.62.0 reference finder (Canada and US):** the **Find reference...** button
+(or `python dem2dged_reference.py --source dem.tif --level 5 --list`) looks up
+open lidar DEMs - NRCan HRDEM and USGS 3DEP - covering your source area,
+shows their declared accuracy and whether they are accurate enough for the
+selected DGED level, and downloads only your area as a small GeoTIFF with a
+`*_reference.json` provenance sidecar. Open DEMs are not accurate enough to
+judge fine levels (about 6 and finer); those need surveyed ground control
+points. Network access happens only when you press the button. No
+conversion or compliance logic changed.
 
-**v0.60.0 release note — accuracy safeguards and release hardening.**
-Geographic optimization now compares metre-based source and target spacing,
-large-source tests use native-resolution windows, and exact source extrema are
-used for the production clamp. Source preflight records CRS, vertical datum,
-PixelIsPoint registration, elevation units and scale/offset; incomplete or
-ambiguous metadata is held by default and an expert override is recorded.
-Comparison reports identify the primary measurement method, and the GUI and
-validator executable builds carry their Tcl/Tk and Windows version resources.
-See [`REQUIREMENTS_COMPLIANCE_V0.61.0.md`](REQUIREMENTS_COMPLIANCE_V0.61.0.md)
-and run `RUN_V0610_VALIDATION.py` from a dedicated Anaconda environment.
+**v0.61.6 beginner help for the evidence gate:** new
+[`EVIDENCE_GATE_BEGINNER_GUIDE.md`](EVIDENCE_GATE_BEGINNER_GUIDE.md) (also as
+`.html`) explains the independent reference, the evidence manifest and every
+box of the *DGIWG Accuracy Evidence* section in plain language. The GUI gains
+a **? How to use** button, hover tips and clearer pop-ups. No conversion or
+compliance logic changed.
+
+**v0.61.5 reference-independence screen:** an independent reference that is
+a resampled, re-gridded, reprojected or constant-offset copy of the conversion
+source is now rejected (independence FAIL), even when its bytes differ. The
+ArcGIS Pro toolbox `DGED_Loader.pyt` and `QUICKSTART.html` are packaged again.
+See [`REQUIREMENTS_COMPLIANCE_V0.61.6.md`](REQUIREMENTS_COMPLIANCE_V0.61.6.md).
+
+**v0.61.4 gate-hardening fix:** `--require-full-compliance` can no longer be
+skipped or made trivial. Combined with `--no-validate` or `--terrain-qa none`
+it is rejected before conversion (exit code 2), and the default
+`informational` compliance profile, which has no numeric limits, is replaced
+by `strict`. HOLD now consistently means report status NOT_EVALUATED or FAIL
+with CLI exit code 2. No conversion logic changed. See
+[`REQUIREMENTS_COMPLIANCE_V0.61.4.md`](REQUIREMENTS_COMPLIANCE_V0.61.4.md).
+
+**v0.61.2 conformance-evidence repair:** the full evidence gate now requires
+independent reference identity and method, source/reference independence,
+random and relative horizontal accuracy, random and relative vertical
+accuracy, and real dataset CE90/LE90 metadata estimates. Resampling
+`ERROR_REDUCTION` remains conversion-fidelity evidence only. Reports explicitly
+mark STANAG 3809 as outside the DGED GeoTIFF output scope and operational NATO
+acceptance as external. The Windows package now includes the GPL license,
+corresponding source, and SHA-256 checksums.
+
+**v0.61.1 repair note — source metadata preflight is now explicit for
+PixelIsArea registration, metre units, and vertical reference. The GUI no
+longer reports a held batch as successfully converted.**
 
 **v0.59.0 release note — the mountainous-terrain accuracy fix.**
 `-resample optimize` now measures every candidate on the operation it will

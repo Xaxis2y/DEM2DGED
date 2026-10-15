@@ -1,0 +1,232 @@
+DGED Loader Version Information
+================================
+
+SPDX-License-Identifier: GPL-2.0-or-later
+Copyright (c) 2026 Eui Soo SON
+
+Version: 0.62.8
+Build Date: 2026-10-15
+Package: DGED_Loader_v0.62.8
+Changes in v0.62.8:
+- New "Detect" button next to Advanced > Source vertical. When a conversion is
+  held because the source has no vertical reference, Detect looks for the datum
+  in the places a person would look and lists each hint with where it came from
+  and how reliable it is: the vertical CRS inside the file (high), datum names in
+  the GeoTIFF metadata tags (high/medium), datum names in text/XML/JSON/readme
+  files next to the DEM (medium/low), and the NRCan HRDEM / USGS 3DEP tile naming
+  convention (medium, using the datum declared in reference_catalog.json).
+- Nothing is applied silently. The box is pre-filled only when the high/medium
+  evidence agrees on ONE datum, and only after you press "Use EPSG:xxxx".
+  Conflicting or weak evidence is shown but not applied. PDF documents next to
+  the data are not searched. The datum is never inferred from the height values.
+- What was detected and what you confirmed is recorded in
+  source_metadata.json ("vertical_declaration") next to the tiles.
+- The "Conversion held" dialog and the log now point at Detect.
+- New module dem2dged_datum.py (also a command line:
+  python dem2dged_datum.py my_dem.tif [--json]). It never uses the network and
+  never changes the source raster.
+- Regression tests: tests/test_v0628_regressions.py.
+
+Changes in v0.62.7:
+- Find reference: the search table has a new "Window (M cells)" column and the
+  detail pane states the download size, so a window larger than the 40-million
+  cell cap is visible BEFORE you press Download clip (v0.62.6 only reported it
+  after the download had started, e.g. "window of 174.5 million cells exceeds
+  the limit of 40.0 million").
+- New "Max cells (millions)" box next to the buttons (default 40). If the
+  selected window is larger than the box, the dialog offers to raise it and
+  continue; the tool will not go above 1000 million cells.
+- The download time limit now scales with the window (120 s + 4 s per million
+  cells) instead of a fixed 120 s, so a big healthy download is not killed.
+- The download confirmation shows the window size and warns when less than 90%
+  of your area holds heights in the chosen dataset.
+- Coverage probes now also return the window size (window_cells).
+- Regression tests: tests/test_v0627_regressions.py.
+
+Changes in v0.62.6:
+- Fixed the "Not responding" freeze in Find reference. Root cause (measured with
+  DIAG_FREEZE_v0.62.5.py and DIAG_TK_BISECT_v0.62.5.py on the DGED environment,
+  GDAL 3.13.3): after a GDAL /vsicurl/ network read in a Python THREAD, the next
+  DLL load in the main thread deadlocks. The Search button ran exactly that in
+  a thread of the GUI process, so the GUI froze the next time it needed a DLL
+  (tkinter, native folder/message dialogs). It was not the GIL: GDAL released it.
+- Search (catalog query and coverage probes) now runs in a separate worker
+  process, like the download already did, and the GUI only polls it. The
+  worker's progress lines appear live in the log and the status line.
+- The Cancel button now cancels either a search or a download.
+- dem2dged_reference.py refuses remote GDAL reads from a non-main thread
+  (DEM2DGED_ALLOW_THREADED_VSICURL=1 re-enables them for diagnostics only).
+- Regression tests: tests/test_v0626_regressions.py.
+
+Changes in v0.62.5:
+- Reference clipping is now launched and monitored directly from the Tk event
+  loop with non-blocking timer polling; the GUI never waits on communicate().
+- Cancellation and timeout terminate the complete frozen worker process tree,
+  including the one-file PyInstaller bootloader child.
+
+Changes in v0.62.4:
+- Remote reference clipping now runs in a separate child process with a
+  bounded process timeout and a Cancel download button, so a blocking GDAL
+  network read cannot make the Tk GUI appear frozen.
+- The original v0.62.3 native GDAL/PROJ DLL packaging repair is preserved.
+
+Changes in v0.62.3:
+- Fixed the frozen Windows executable closing immediately because PyInstaller
+  omitted the native Conda GDAL/PROJ dependency closure for osgeo._gdal.
+- The one-file package now validates and bundles the required native runtime
+  DLLs from the DGED environment before building.
+
+Changes in v0.62.2:
+- Republished the validated v0.62.1 reference-finder repair as a clean,
+  version-consistent source and Windows release package.
+
+Changes in v0.62.1:
+- Reference search and remote clipping now have bounded catalog/GDAL network
+  settings and a 120-second operation budget, with visible per-candidate probe
+  progress and a CLI --timeout option.
+- Remote coverage checks are limited to the best eight candidates so a stalled
+  service cannot leave the GUI or command line apparently waiting indefinitely.
+- Clip statistics are computed in 2048-cell blocks instead of loading the whole
+  output into memory. A zero-valid-cell window is rejected and removed rather
+  than being saved as a false independent reference.
+- Regression tests cover the deadline guard, streaming statistics, and all-NoData
+  clip rejection.
+
+Changes in v0.62.0:
+- New reference finder (dem2dged_reference.py, reference_catalog.json): looks up
+  open lidar DEMs that cover your source extent - NRCan HRDEM (Canada, STAC
+  API) and USGS 3DEP 1 m / 1/3 arc-second (US, TNM Access API) - and clips ONLY
+  your area (no resampling, window capped at 40 million cells) into a small
+  GeoTIFF with a *_reference.json sidecar (identifier, SHA-256, declared
+  accuracy, vertical datum, license, warnings).
+- Coverage check: a dataset's outline can be far larger than the area it has
+  heights for (the first live test clipped two tiles that held no data over
+  the test box). Search now samples each of the best candidates over your
+  area, shows "Data in area", ranks datasets without data last, and the
+  automatic choice only takes a dataset with at least 90% valid heights.
+- GUI: "Find reference..." button next to the independent-reference Browse
+  button. Search lists datasets with a "fit for the selected DGED level"
+  column; Download clip fills the reference path and identifier boxes.
+- Command line: python dem2dged_reference.py --source dem.tif --level 5 --list
+  (or --bbox MINLON MINLAT MAXLON MAXLAT; --pick N to clip).
+- Suitability rule of thumb (not a DGIWG rule): OK if the reference's declared
+  LE90 <= the level's vertical random 90% limit / 3; MARGINAL if <= limit / 2.
+  No open dataset reaches OK for levels 6 and finer; those need surveyed
+  ground control points.
+- Network use happens only when you press Find reference / run the command.
+  Only the bounding box is sent. Declared accuracies are the providers', not
+  measured by DEM2DGED, and a download does not prove independence.
+- No conversion, tiling, resampling, metadata or compliance logic changed.
+- Test: TEST_REFERENCE_V0.62.0.py (offline unit tests + live Ottawa / Washington
+  DC clip test, writes logs\reference_test_*.log / .json).
+
+Changes in v0.61.6:
+- New beginner documentation for the full DGIWG 250 evidence gate:
+  EVIDENCE_GATE_BEGINNER_GUIDE.md and .html (what the independent reference
+  is and which file to pick, what the evidence manifest is and how to use
+  it, every box in the GUI, the control-point CSV, pop-up messages).
+- GUI: a "? How to use" button in the DGIWG Accuracy Evidence section opens
+  a plain-language help window with an "Open full guide" button; hover tips
+  on every evidence field and button; a checklist line under the checkbox;
+  the "Full evidence is incomplete" and "Measured metadata required"
+  pop-ups now say how to fix the problem. New module dem2dged_help.py.
+- The release zip now carries the guide (md + html) next to the exe.
+- No conversion, tiling, resampling, metadata or compliance logic changed.
+
+Changes in v0.61.5:
+- DGED_Loader.pyt is shipped again; it was missing from the v0.61.3 and
+  v0.61.4 packages. Toolbox code unchanged since v0.61.3.
+
+Changes in v0.61.4:
+- Version-aligned with v0.61.4. No loader behaviour changed.
+
+Changes in v0.61.3:
+- Version-aligned loader package for the v0.61.3 seven-step evidence workflow.
+- The loader remains visualization/inspection support and does not issue
+  authority acceptance or NATO certification.
+
+Changes in v0.61.2:
+- Version-aligned loader package for the v0.61.2 conformance-evidence release.
+- The loader remains visualization/inspection support and does not constitute
+  NATO or national acceptance certification.
+
+Changes in v0.61.1:
+- Version-aligned loader package for the v0.61.1 source-metadata preflight
+  repair. Loader calculations are unchanged.
+
+Changes in v0.59.0:
+- No toolbox logic changed. Version aligned with DEM2DGED v0.59.0.
+
+Changes in v0.58.1:
+- No toolbox logic changed. Version aligned with DEM2DGED v0.58.1.
+- DGED_Loader/README.md is once again the loader's own README only; the
+  project README it had been copied over in v0.58.0 has been restored.
+
+Changes in v0.58.0:
+- Added "Show DGED Differences" to DGED_Loader.pyt.
+- The tool resolves exactly one validation result set, loads
+  elevation_diff.tif as the signed DGED-minus-source difference, loads and
+  styles error_mask.tif, recovers the original source path from the conversion
+  manifest or terrain_metrics.json, and optionally loads the DGEDL* tiles.
+- It reports stored bias, MAE, RMSE, P95, and maximum absolute difference, and
+  explains that these are conversion-fidelity metrics rather than independent
+  absolute-accuracy evidence.
+- Parent folders containing multiple validation result sets are rejected so
+  unrelated source and output datasets cannot be mixed silently.
+- Added ArcGIS Pro licensed-runtime smoke-test logging and expanded the offline
+  fake-ArcPy harness to cover discovery, source recovery, layer grouping,
+  difference semantics, red mask symbology, metric reporting, and error paths.
+
+Changes in v0.56.0:
+- Version-aligned with DEM2DGED v0.56.0; tile discovery behaviour is unchanged.
+- The test harness now also runs under pytest, via
+  tests/test_dged_loader_harness.py. pytest.ini sets "testpaths = tests", so
+  this harness had never run in the release gate.
+
+Changes in v0.55.0:
+- Version-aligned with DEM2DGED v0.55.0; tile discovery behaviour is unchanged.
+
+Changes in v0.54.0:
+- Version-aligned with DEM2DGED v0.54.0. Tile discovery behaviour is unchanged:
+  only DGEDL* delivery GeoTIFFs are loaded, while source and QA rasters remain
+  excluded from recursive scans.
+
+Changes in v0.50.3:
+- Integrated DGED Loader into the dem2dged v0.50.3 source release.
+- Restricts discovery to `DGEDL*` GeoTIFFs, excluding original source DEMs
+  and terrain-QA artefacts (`elevation_diff.tif`, `error_mask.tif`) during
+  recursive parent-folder loading.
+- Aligned the SPDX/copyright notice and release version across the toolbox,
+  Script Tool source, documentation, test harness and package builder.
+
+Changes in v1.0.0 (initial standalone release):
+- DGED_Loader.pyt: ArcGIS Pro Python Toolbox, "Load DGED Tiles" tool.
+  Main folder + multiple hand-picked subfolders (both optional, at least
+  one required), recursive on/off toggle, optional group-layer
+  organisation, optional Build Pyramids pass. Verified against a mock
+  arcpy harness (27 checks: parameter defaults/order, multivalue parsing
+  via both the iterable-value and valueAsText-fallback code paths,
+  recursive vs. non-recursive walking, folder/tile de-duplication,
+  missing-.xml-sidecar warnings, group create/add/remove sequencing, the
+  no-folders-provided error path) -- real arcpy.mp calls were not
+  exercised, since no ArcGIS Pro install is available in the build
+  environment; test end to end in Pro before relying on it for a real
+  delivery.
+- DGED_Load_Tool_script.py: same logic as a flat GetParameterAsText
+  script, for building a native .atbx via ArcGIS Pro's Script Tool
+  wizard (see ATBX_WIZARD_GUIDE.md). 4 additional parity checks against
+  the same mock harness.
+- .atbx was deliberately NOT hand-built: it's a zipped, Esri-proprietary
+  format with no published schema, and Esri's own guidance is to build
+  it inside Pro rather than by hand. DGED_Loader.pyt is the guaranteed-
+  working primary deliverable; ATBX_WIZARD_GUIDE.md covers the ~2-minute
+  guided path to a genuine .atbx if you specifically need that container.
+
+Installation:
+1. Extract the DEM2DGED v0.58.0 release, or `DGED_Loader_v0.58.0.zip`.
+2. In ArcGIS Pro, Catalog pane > browse to this folder > double-click
+   DGED_Loader.pyt to add it as a toolbox.
+3. Open a map, run "Load DGED Tiles" from inside it.
+
+See README.md for the parameter reference and troubleshooting, and
+ATBX_WIZARD_GUIDE.md for the native-.atbx path.

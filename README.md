@@ -3,7 +3,46 @@
 **SPDX-License-Identifier: GPL-2.0-or-later**  
 **Copyright (c) 2026 Eui Soo SON**
 
-**Current version: v0.62.0**
+**Current version: v0.62.8**
+
+**v0.62.8 source vertical datum detection:** a "Detect" button next to
+Advanced > Source vertical looks for the datum in the file, its metadata tags,
+text files next to the DEM and known provider file-name conventions, shows each
+hint with its reliability, and fills the box only when you press Use.
+
+**v0.62.7 reference download size control:** the Find reference table shows
+the download window in million cells before you download, and a "Max cells
+(millions)" box (default 40) lets you raise the cap for large areas. The
+download time limit scales with the window size.
+
+**v0.62.6 Find-reference freeze fix:** the Search button used to run GDAL
+network reads in a thread of the GUI process; on Windows that left the next
+DLL load (tkinter, folder and message dialogs) deadlocked, shown as "Not
+responding". Search now runs in a separate worker process, like Download,
+and the GUI only polls it.
+
+**v0.62.5 GUI event-loop repair:** reference clipping is launched directly
+from the GUI callback and monitored by non-blocking timer polling. The GUI
+never waits on the worker process, and Cancel/timeout terminate the complete
+PyInstaller worker process tree.
+
+**v0.62.4 reference-download responsiveness fix:** remote clipping now runs
+in a separate child process with a bounded process timeout and a Cancel button,
+so GDAL network reads cannot make the Tk window appear frozen. Datasets with
+low coverage or unsuitable accuracy remain visibly flagged before download.
+
+**v0.62.3 frozen-GDAL repair:** the one-file Windows executable now bundles
+the native Conda GDAL/PROJ dependency closure required by `osgeo._gdal`, so
+the GUI remains open on machines without the DGED environment installed.
+
+**v0.62.2 maintenance release:** preserves the v0.62.1 reference-finder
+reliability fix and republishes the validated source and Windows package with
+consistent version metadata.
+
+**v0.62.1 reference-finder reliability fix:** catalog and remote raster work
+now has bounded time settings, coverage probing is limited to eight candidates,
+and the GUI reports probe progress. Clip statistics are streamed in blocks, and
+an all-NoData window is rejected instead of being saved as a reference.
 
 **v0.62.0 reference finder (Canada and US):** the **Find reference...** button
 (or `python dem2dged_reference.py --source dem.tif --level 5 --list`) looks up

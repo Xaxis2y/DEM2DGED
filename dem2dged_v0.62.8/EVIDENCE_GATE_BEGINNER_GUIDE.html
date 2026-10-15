@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Evidence Gate Beginner Guide - DEM2DGED v0.62.0</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <style>body{font-family:Segoe UI,Arial,sans-serif;max-width:60rem;margin:2rem auto;padding:0 1rem;line-height:1.55;color:#1a1a2e}
+  table{border-collapse:collapse;margin:1rem 0;display:block;overflow-x:auto}th,td{border:1px solid #ccd;padding:.35rem .6rem;vertical-align:top}th{background:#eef1f6}
+  pre{background:#f4f6f9;padding:.8rem;overflow-x:auto;border-radius:4px}code{background:#f4f6f9;padding:0 .2rem;border-radius:3px}
+  h1,h2,h3{color:#1a1a2e}h2{border-bottom:1px solid #ddd;padding-bottom:.2rem;margin-top:2rem}
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Evidence Gate Beginner Guide - DEM2DGED v0.62.0</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#dem2dged-evidence-gate--beginners-guide">DEM2DGED Evidence Gate — Beginner's Guide</a>
+<ul>
+<li><a href="#contents">Contents</a></li>
+<li><a href="#1-do-i-need-this-at-all">1. Do I need this at all?</a></li>
+<li><a href="#2-the-big-idea-in-one-minute">2. The big idea in one minute</a></li>
+<li><a href="#3-words-you-will-see-glossary">3. Words you will see (glossary)</a></li>
+<li><a href="#4-what-is-the-independent-reference">4. What is the "Independent reference"?</a></li>
+<li><a href="#5-what-is-the-evidence-manifest">5. What is the "Evidence manifest"?</a></li>
+<li><a href="#6-every-box-in-the-gui-one-by-one">6. Every box in the GUI, one by one</a></li>
+<li><a href="#7-step-by-step-run-the-full-gate-in-the-gui">7. Step-by-step: run the full gate in the GUI</a></li>
+<li><a href="#8-the-same-thing-from-the-command-line">8. The same thing from the command line</a></li>
+<li><a href="#9-the-pop-up-messages-and-what-to-do">9. The pop-up messages and what to do</a></li>
+<li><a href="#10-reading-the-result">10. Reading the result</a></li>
+<li><a href="#11-every-field-of-the-evidence-manifest-explained">11. Every field of the evidence manifest explained</a></li>
+<li><a href="#12-the-control-point-csv-file">12. The control-point CSV file</a></li>
+<li><a href="#13-the-seven-evidence-steps">13. The seven evidence steps</a></li>
+<li><a href="#14-accuracy-limits-per-level">14. Accuracy limits per level</a></li>
+<li><a href="#15-practice-run-with-safe-test-data">15. Practice run with safe test data</a></li>
+<li><a href="#16-common-mistakes-and-faq">16. Common mistakes and FAQ</a></li>
+<li><a href="#17-what-this-tool-does-not-claim">17. What this tool does not claim</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="dem2dged-evidence-gate--beginners-guide">DEM2DGED Evidence Gate — Beginner's Guide</h1>
+<p>SPDX-License-Identifier: GPL-2.0-or-later Copyright (c) 2026 Eui Soo SON</p>
+<p><strong>For DEM2DGED v0.62.0.</strong> This guide explains, in plain language, the part of DEM2DGED that confuses most new users: the box called <strong>"Require full implemented DGIWG 250 evidence gate"</strong>, the <strong>Independent reference</strong> file, and the <strong>Evidence manifest</strong>. You do not need to know anything about DGIWG before you start.</p>
+<hr />
+<h2 id="contents">Contents</h2>
+<ol>
+<li><a href="#1-do-i-need-this-at-all">Do I need this at all?</a></li>
+<li><a href="#2-the-big-idea-in-one-minute">The big idea in one minute</a></li>
+<li><a href="#3-words-you-will-see-glossary">Words you will see (glossary)</a></li>
+<li><a href="#4-what-is-the-independent-reference">What is the "Independent reference"?</a></li>
+<li><a href="#5-what-is-the-evidence-manifest">What is the "Evidence manifest"?</a></li>
+<li><a href="#6-every-box-in-the-gui-one-by-one">Every box in the GUI, one by one</a></li>
+<li><a href="#7-step-by-step-run-the-full-gate-in-the-gui">Step-by-step: run the full gate in the GUI</a></li>
+<li><a href="#8-the-same-thing-from-the-command-line">The same thing from the command line</a></li>
+<li><a href="#9-the-pop-up-messages-and-what-to-do">The pop-up messages and what to do</a></li>
+<li><a href="#10-reading-the-result">Reading the result</a></li>
+<li><a href="#11-every-field-of-the-evidence-manifest-explained">Every field of the evidence manifest explained</a></li>
+<li><a href="#12-the-control-point-csv-file">The control-point CSV file</a></li>
+<li><a href="#13-the-seven-evidence-steps">The seven evidence steps</a></li>
+<li><a href="#14-accuracy-limits-per-level">Accuracy limits per level</a></li>
+<li><a href="#15-practice-run-with-safe-test-data">Practice run with safe test data</a></li>
+<li><a href="#16-common-mistakes-and-faq">Common mistakes and FAQ</a></li>
+<li><a href="#17-what-this-tool-does-not-claim">What this tool does not claim</a></li>
+</ol>
+<hr />
+<h2 id="1-do-i-need-this-at-all">1. Do I need this at all?</h2>
+<p><strong>Most conversions do not.</strong> A normal conversion already checks that your tiles are built correctly (names, grid, file format, metadata, edges, NoData). That is the default and needs none of the boxes in this guide.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Your situation</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"I just want DGED tiles that open in ArcGIS Pro."</td>
+<td>Leave the evidence boxes <strong>empty</strong>. Skip this guide.</td>
+</tr>
+<tr class="even">
+<td>"I want to check that the conversion did not damage the terrain."</td>
+<td>Tick <strong>Validate after conversion</strong>. No evidence boxes needed.</td>
+</tr>
+<tr class="odd">
+<td>"Someone asked me to <em>prove</em> the delivery meets DGIWG 250 accuracy."</td>
+<td><strong>Use this guide.</strong> You need a second, independent elevation dataset and some measured numbers.</td>
+</tr>
+<tr class="even">
+<td>"I only want a quick demo with fake numbers."</td>
+<td>Do not use the full gate. It is designed to refuse fake or missing evidence.</td>
+</tr>
+</tbody>
+</table>
+<p>If the last two rows do not describe you, close this guide and convert as usual.</p>
+<hr />
+<h2 id="2-the-big-idea-in-one-minute">2. The big idea in one minute</h2>
+<p>DEM2DGED can ask two very different questions:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Question</th>
+<th>Everyday comparison</th>
+<th>How DEM2DGED answers it</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>A. Did the conversion copy my source faithfully?</strong></td>
+<td>"Did the photocopier copy the page correctly?"</td>
+<td>Compares the tiles with your source DEM. Always available. Called <strong>conversion fidelity</strong>.</td>
+</tr>
+<tr class="even">
+<td><strong>B. Is the elevation data itself correct, compared with the real ground?</strong></td>
+<td>"Is the page that was copied even true?"</td>
+<td>Needs a <strong>second, independent dataset</strong> that is more trustworthy than your source. This is the <strong>independent reference</strong>.</td>
+</tr>
+</tbody>
+</table>
+<p>Question A can never answer question B. A perfect copy of a wrong map is still a wrong map. That is why DEM2DGED will not give a full PASS without question B being answered with real, independent evidence.</p>
+<p>The <strong>full evidence gate</strong> is a switch that says: <em>"Do not call this delivery fully checked unless <strong>every</strong> required piece of evidence is present and passes."</em> If anything is missing the result is a <strong>HOLD</strong> (an incomplete result — not a failure of your tiles).</p>
+<pre><code> Your source DEM ──► DEM2DGED ──► DGED tiles
+        │                             │
+        │  (A) fidelity check ◄───────┤
+        │                             │
+ Independent reference ─────────────► (B) accuracy check   ◄── measured numbers
+ (a different, better dataset)                                  (from your survey / quality plan)
+                                      │
+                                      ▼
+                          compliance_report: PASS / FAIL / NOT_EVALUATED
+</code></pre>
+<hr />
+<h2 id="3-words-you-will-see-glossary">3. Words you will see (glossary)</h2>
+<p>You can come back to this table whenever a word is unfamiliar.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Word</th>
+<th>Plain meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>DGED</strong></td>
+<td>The tile format DEM2DGED produces (Defence Gridded Elevation Data).</td>
+</tr>
+<tr class="even">
+<td><strong>DGIWG 250</strong></td>
+<td>The rulebook that defines DGED. "Level 5, Level 6…" come from it.</td>
+</tr>
+<tr class="odd">
+<td><strong>Level</strong></td>
+<td>How fine the grid is. Level 5 ≈ 2 m between points, Level 6 ≈ 1 m, Level 7 ≈ 0.5 m. A higher number means finer detail and <strong>tighter accuracy limits</strong>.</td>
+</tr>
+<tr class="even">
+<td><strong>Post</strong></td>
+<td>One elevation value in the grid (one "pixel").</td>
+</tr>
+<tr class="odd">
+<td><strong>Metres (m)</strong></td>
+<td>Every accuracy number in this guide is in metres.</td>
+</tr>
+<tr class="even">
+<td><strong>Horizontal</strong></td>
+<td>Position on the map (east/north). "Is this hill in the right place?"</td>
+</tr>
+<tr class="odd">
+<td><strong>Vertical</strong></td>
+<td>Height. "Is this hill the right height?"</td>
+</tr>
+<tr class="even">
+<td><strong>Error</strong></td>
+<td>Your data minus the truth (or minus the reference). Can be positive or negative.</td>
+</tr>
+<tr class="odd">
+<td><strong>Bias</strong></td>
+<td>The average error. If every height is 0.3 m too high, the bias is +0.3 m.</td>
+</tr>
+<tr class="even">
+<td><strong>Absolute accuracy</strong></td>
+<td>How close the data is to the real world, including any bias.</td>
+</tr>
+<tr class="odd">
+<td><strong>Random error</strong></td>
+<td>The scatter that is left after you remove the bias.</td>
+</tr>
+<tr class="even">
+<td><strong>Relative accuracy</strong></td>
+<td>How well two nearby points agree with <em>each other</em>, even if both are shifted. Measured on <em>pairs</em> of points.</td>
+</tr>
+<tr class="odd">
+<td><strong>CE90</strong></td>
+<td>"Circular Error 90%". A horizontal accuracy number: 90 % of points are within this many metres of their true position.</td>
+</tr>
+<tr class="even">
+<td><strong>LE90</strong></td>
+<td>"Linear Error 90%". A vertical accuracy number: 90 % of points are within this many metres of their true height.</td>
+</tr>
+<tr class="odd">
+<td><strong>"90 %" / P90</strong></td>
+<td>"90 % of the measurements are at least this good." Statisticians call it the 90th percentile.</td>
+</tr>
+<tr class="even">
+<td><strong>Independent reference</strong></td>
+<td>A second elevation dataset, not made from your source, used as the yardstick. See <a href="#4-what-is-the-independent-reference">section 4</a>.</td>
+</tr>
+<tr class="odd">
+<td><strong>Control points</strong></td>
+<td>Individual spots whose true position and height were measured very accurately (for example by a survey crew).</td>
+</tr>
+<tr class="even">
+<td><strong>Evidence manifest</strong></td>
+<td>A checklist file (<code>compliance_evidence.json</code>) that records your evidence and where the supporting documents are. See <a href="#5-what-is-the-evidence-manifest">section 5</a>.</td>
+</tr>
+<tr class="odd">
+<td><strong>Provenance</strong></td>
+<td>The paper trail: who made a dataset, when, and how.</td>
+</tr>
+<tr class="even">
+<td><strong>Quality plan / evaluation method</strong></td>
+<td>The written procedure that says <em>how</em> accuracy is measured. DEM2DGED does not invent one — you supply its ID.</td>
+</tr>
+<tr class="odd">
+<td><strong>STANAG 2215</strong></td>
+<td>A NATO standard about evaluating the accuracy of geospatial data. DEM2DGED's checks are <em>aligned with</em> it; they do not replace it.</td>
+</tr>
+<tr class="even">
+<td><strong>EGM2008 / EPSG:3855</strong></td>
+<td>The height reference ("zero level") that DGED uses. A DEM measured from a different zero level must be converted first.</td>
+</tr>
+<tr class="odd">
+<td><strong>Vertical datum / vertical EPSG</strong></td>
+<td>The code naming the height reference of your source (for example 3855 = EGM2008, 5773 = EGM96).</td>
+</tr>
+<tr class="even">
+<td><strong>PASS</strong></td>
+<td>Every automatic check had evidence and passed.</td>
+</tr>
+<tr class="odd">
+<td><strong>FAIL</strong></td>
+<td>At least one check ran and did not meet the rule.</td>
+</tr>
+<tr class="even">
+<td><strong>NOT_EVALUATED</strong></td>
+<td>A check could not run because evidence is missing. <strong>This is not a pass.</strong></td>
+</tr>
+<tr class="odd">
+<td><strong>HOLD</strong></td>
+<td>The "stop and complete the evidence" state. In practice: the report is NOT_EVALUATED or FAIL, and the command line returns exit code 2.</td>
+</tr>
+<tr class="even">
+<td><strong>SHA-256</strong></td>
+<td>A fingerprint of a file. Two files with the same fingerprint are identical.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-what-is-the-independent-reference">4. What is the "Independent reference"?</h2>
+<h3 id="in-one-sentence">In one sentence</h3>
+<p><strong>A second elevation raster of the same place that someone else measured by a different method, used as the yardstick for your delivered tiles.</strong></p>
+<h3 id="what-it-is-used-for">What it is used for</h3>
+<p>DEM2DGED compares your finished DGED tiles with the independent reference and calculates the <strong>vertical</strong> accuracy numbers itself (random and absolute vertical error). It also builds an <em>error budget</em> that separates the error that was already in your source from the error added by the conversion.</p>
+<h3 id="what-file-to-pick">What file to pick</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Requirement</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A raster file: <code>.tif</code>, <code>.tiff</code>, <code>.img</code> or <code>.vrt</code>.</td>
+<td>These are the types the <strong>Browse…</strong> button offers.</td>
+</tr>
+<tr class="even">
+<td>Covers the same area as the DEM you are converting (at least a good part of it).</td>
+<td>There must be overlap to compare.</td>
+</tr>
+<tr class="odd">
+<td>One elevation band in <strong>metres</strong>.</td>
+<td>The comparison is done in metres.</td>
+</tr>
+<tr class="even">
+<td><strong>Already in the same height reference (vertical datum) as your DGED output</strong> (EGM2008, EPSG:3855).</td>
+<td>DEM2DGED aligns the position of the two rasters but <strong>never silently shifts heights</strong>. A datum mismatch would show up as a fake error.</td>
+</tr>
+<tr class="odd">
+<td><strong>Not your source DEM, and not made from it.</strong></td>
+<td>See below.</td>
+</tr>
+<tr class="even">
+<td>More trustworthy than your source.</td>
+<td>A yardstick must be better than the thing it measures. Many quality plans ask for a reference that is several times more accurate; follow the rule in <em>your</em> quality plan.</td>
+</tr>
+<tr class="odd">
+<td>Has a paper trail (who, when, how).</td>
+<td>Required for the evidence package (identifier, provider, date, provenance document).</td>
+</tr>
+</tbody>
+</table>
+<h3 id="good-examples">Good examples</h3>
+<ul>
+<li>A survey-grade airborne LiDAR elevation model of the area, produced by a different supplier than your source.</li>
+<li>A national mapping agency's high-accuracy DEM, if your source is a global or satellite DEM.</li>
+<li>A DEM built from a separate field survey or a separate photogrammetry campaign.</li>
+</ul>
+<h3 id="bad-examples-dem2dged-will-reject-or-flag-these">Bad examples (DEM2DGED will reject or flag these)</h3>
+<table>
+<thead>
+<tr class="header">
+<th>What you might try</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>The same file as the source DEM.</td>
+<td>Rejected: independence <strong>FAIL</strong>.</td>
+</tr>
+<tr class="even">
+<td>A copy of the source (copy/paste, different file name).</td>
+<td>Rejected: identical fingerprint, independence <strong>FAIL</strong>.</td>
+</tr>
+<tr class="odd">
+<td>The source re-saved, resampled to another cell size, re-projected, or shifted by a constant.</td>
+<td>Rejected: since v0.61.5 DEM2DGED resamples your source onto the reference grid. If the two differ by no more than about 5 mm after removing a constant offset, the reference is judged <strong>derived from the source</strong> → independence <strong>FAIL</strong>.</td>
+</tr>
+<tr class="even">
+<td>The DGED tiles you are testing.</td>
+<td>Not independent — it is the thing being tested.</td>
+</tr>
+<tr class="odd">
+<td>A reference too small or not overlapping.</td>
+<td>Independence <strong>NOT_EVALUATED</strong> (the check could not run), so the gate holds.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Honest limit of the automatic check.</strong> It catches straight copies and common resampled/shifted copies. It cannot catch every disguised copy (for example one that was heavily smoothed or made with unusual resampling methods). The provenance document you attach (<em>who made the reference and how</em>) remains the real proof of independence. Never choose a derived file on purpose to "get a PASS": the report would then be false.</p>
+</blockquote>
+<h3 id="where-do-i-get-one">Where do I get one?</h3>
+<p>Ask the people who supplied or commissioned the data — a survey provider, a mapping agency, or your quality-assurance team. The project file <code>DEM_SOURCES_GUIDE.md</code> lists places to look for source DEMs. If you have no independent reference, you cannot complete the full gate; ordinary conversion and validation still work (see section 1).</p>
+<hr />
+<h3 id="46-finding-a-reference-automatically-canada-and-us-new-in-v0620">4.6 Finding a reference automatically (Canada and US, new in v0.62.0)</h3>
+<p>You do not have to hunt for the file yourself. Add your source DEM, choose the DGED level, and click <strong>Find reference…</strong> next to <em>Independent reference</em>.</p>
+<ol>
+<li><p>Press <strong>Search</strong>. DEM2DGED asks the public catalogs of Natural Resources Canada (HRDEM) and the US Geological Survey (3DEP) which open lidar DEMs cover your source area. Only the box around your area is sent.</p></li>
+<li><p>Read the table. <strong>Fit for level</strong> is the important column:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Fit</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>OK</code></td>
+<td>The reference's declared vertical accuracy is at least 3 times better than the level needs. Good.</td>
+</tr>
+<tr class="even">
+<td><code>MARGINAL</code></td>
+<td>Between 2 and 3 times better. Usable as a rough check only.</td>
+</tr>
+<tr class="odd">
+<td><code>TOO_COARSE</code></td>
+<td>Not accurate enough to judge this level. Choose another dataset or use surveyed ground control points.</td>
+</tr>
+<tr class="even">
+<td><code>UNKNOWN</code></td>
+<td>The provider does not state an accuracy. Read its metadata.</td>
+</tr>
+</tbody>
+</table></li>
+<li><p>Select a row to read its accuracy statement, vertical datum, license and limits. Press <strong>Download clip</strong>, choose a folder and confirm. Only the pixels inside your area are copied, with no resampling, and the boxes <em>Independent reference</em> and <em>Reference identifier</em> are filled in for you.</p></li>
+<li><p>A small <code>…_reference.json</code> file is saved beside the clip. It records the dataset, its SHA-256, the declared accuracy, the datum, the license and warnings. Keep it with your evidence documents.</p></li>
+</ol>
+<p>Please remember:</p>
+<ul>
+<li><strong>Open DEMs cannot judge fine levels.</strong> The best open US data (3DEP 1 m) is only marginal at Level 5 and too coarse for Levels 6 and finer. Those levels need surveyed ground control points (section 12).</li>
+<li><strong>Check the vertical datum.</strong> HRDEM uses CGVD2013 and 3DEP uses NAVD88. If your source or output uses a different one, heights differ by decimetres to metres and the accuracy numbers will be wrong.</li>
+<li><strong>A download does not prove independence.</strong> If your source DEM was made from the same lidar survey, the reference is not independent. Say so in your reference provenance document.</li>
+<li>The accuracy shown is what the provider declares. DEM2DGED does not measure it.</li>
+</ul>
+<p>Command line: <code>python dem2dged_reference.py --source my_dem.tif --level 5 --list</code> shows the table; add <code>--pick 1</code> (without <code>--list</code>) to download.</p>
+<h2 id="5-what-is-the-evidence-manifest">5. What is the "Evidence manifest"?</h2>
+<h3 id="in-one-sentence-1">In one sentence</h3>
+<p><strong>A checklist/record file named <code>compliance_evidence.json</code> where you write down your evidence — values, document IDs and file locations — so you (and a reviewer) have it all in one place.</strong></p>
+<p>Think of it as the <strong>cover sheet of an inspection folder</strong>. The folder holds the real documents (PDF reports, survey certificates); the cover sheet lists what is inside and records the key numbers.</p>
+<h3 id="what-it-is-not">What it is NOT</h3>
+<ul>
+<li>It does <strong>not</strong> create evidence. Typing a number into it does not make it true.</li>
+<li>It does <strong>not</strong> approve your delivery. Only your designated authority can do that (step 7 in <a href="#13-the-seven-evidence-steps">section 13</a>).</li>
+<li>It is <strong>not required</strong> to run the gate. It is a convenience. You can type every value into the GUI by hand instead.</li>
+</ul>
+<h3 id="what-the-buttons-do">What the buttons do</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Button (GUI)</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Create template…</strong></td>
+<td>You pick an empty folder. DEM2DGED writes the evidence package skeleton there (see below) and fills in the manifest field with its path.</td>
+</tr>
+<tr class="even">
+<td><strong>Browse…</strong></td>
+<td>Pick an existing <code>compliance_evidence.json</code>.</td>
+</tr>
+<tr class="odd">
+<td><strong>Load</strong></td>
+<td>Reads the manifest and <strong>copies its values into the GUI boxes</strong> (reference file, identifier, method, accuracy numbers, source vertical code). It also prints the readiness of your evidence in the log. It changes nothing in the manifest and creates no evidence.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="what-create-template-makes">What "Create template…" makes</h3>
+<pre><code>your_evidence_folder/
+├── compliance_evidence.json        ← the manifest (the cover sheet)
+├── control_points.csv              ← empty table for survey points (optional)
+├── EVIDENCE_WORKFLOW.md            ← the 7 steps, short version
+├── AUTHORITY_ACCEPTANCE_FORM.txt   ← form for the approving authority
+└── documents/
+    └── README.txt                  ← put your real PDFs here
+</code></pre>
+<p>The template will not overwrite existing files: if the folder already holds these files, choose a new folder.</p>
+<p>Section 11 explains every field inside the manifest.</p>
+<hr />
+<h2 id="6-every-box-in-the-gui-one-by-one">6. Every box in the GUI, one by one</h2>
+<p>The box <strong>"DGIWG Accuracy Evidence (required for full gate)"</strong> and two boxes in the options area are involved.</p>
+<table>
+<thead>
+<tr class="header">
+<th>GUI box</th>
+<th>What to enter</th>
+<th>Where the value comes from</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Source vertical</strong> (options area)</td>
+<td>The EPSG number of your <strong>source's</strong> height reference.</td>
+<td>The source's metadata or product specification. Leave empty only if the raster itself carries it.</td>
+<td><code>3855</code> (EGM2008), <code>5773</code> (EGM96)</td>
+</tr>
+<tr class="even">
+<td><strong>Abs. H accuracy</strong> (options area)</td>
+<td>Your <strong>measured</strong> absolute horizontal accuracy (CE90) of the delivered data, in metres. A number, not <code>auto</code>.</td>
+<td>The result of your accuracy evaluation (the "Output absolute H CE90" value below).</td>
+<td><code>1.2</code></td>
+</tr>
+<tr class="odd">
+<td><strong>Abs. V accuracy</strong> (options area)</td>
+<td>Your <strong>measured</strong> absolute vertical accuracy (LE90) of the delivered data, in metres. A number, not <code>auto</code>.</td>
+<td>Your accuracy evaluation.</td>
+<td><code>0.8</code></td>
+</tr>
+<tr class="even">
+<td><strong>Independent reference</strong></td>
+<td>The second elevation raster from <a href="#4-what-is-the-independent-reference">section 4</a>.</td>
+<td>Your survey/mapping provider.</td>
+<td><code>D:\ref\lidar_survey.tif</code></td>
+</tr>
+<tr class="odd">
+<td><strong>Evidence manifest</strong></td>
+<td>Optional. Path to <code>compliance_evidence.json</code>.</td>
+<td><strong>Create template…</strong> or an existing one.</td>
+<td><code>D:\evidence\compliance_evidence.json</code></td>
+</tr>
+<tr class="even">
+<td><strong>Reference identifier</strong></td>
+<td>A name/version/date that uniquely names the reference dataset.</td>
+<td>The reference's metadata or provider.</td>
+<td><code>CONTROL-2026-01</code></td>
+</tr>
+<tr class="odd">
+<td><strong>Evaluation method</strong></td>
+<td>The ID of the written procedure used to evaluate accuracy.</td>
+<td>Your quality plan.</td>
+<td><code>QUALITY-PLAN-2215-01</code></td>
+</tr>
+<tr class="even">
+<td><strong>Source horizontal CE90</strong></td>
+<td>How good the <strong>source's</strong> position accuracy is, in metres, as stated by whoever made it.</td>
+<td>The source's metadata/specification.</td>
+<td><code>0.30</code></td>
+</tr>
+<tr class="odd">
+<td><strong>Source vertical LE90</strong></td>
+<td>How good the <strong>source's</strong> height accuracy is, in metres.</td>
+<td>The source's metadata/specification.</td>
+<td><code>0.80</code></td>
+</tr>
+<tr class="even">
+<td><strong>Output absolute H CE90</strong></td>
+<td>Measured horizontal CE90 of your <strong>delivered output</strong> against independent control.</td>
+<td>Your accuracy evaluation (section 12 can calculate it).</td>
+<td><code>1.2</code></td>
+</tr>
+<tr class="odd">
+<td><strong>Output random H 90%</strong></td>
+<td>Horizontal scatter after removing the average shift, in metres.</td>
+<td>Same.</td>
+<td><code>0.30</code></td>
+</tr>
+<tr class="even">
+<td><strong>Output relative H 90%</strong></td>
+<td>Horizontal agreement between pairs of nearby points, in metres.</td>
+<td>Same.</td>
+<td><code>0.80</code></td>
+</tr>
+<tr class="odd">
+<td><strong>Output relative V 90%</strong></td>
+<td>Vertical agreement between pairs of nearby points, in metres.</td>
+<td>Same.</td>
+<td><code>0.40</code></td>
+</tr>
+<tr class="even">
+<td><strong>Require full implemented DGIWG 250 evidence gate</strong></td>
+<td>The master switch. Tick it only when everything above is filled in.</td>
+<td>—</td>
+<td>☑</td>
+</tr>
+</tbody>
+</table>
+<p>Why are there both "Source" and "Output" accuracy boxes?</p>
+<ul>
+<li><strong>Source</strong> numbers answer: <em>"Was the DEM I started with good enough for the level I asked for?"</em></li>
+<li><strong>Output</strong> numbers answer: <em>"Is what I delivered good enough?"</em></li>
+</ul>
+<p>What DEM2DGED calculates for you versus what you supply:</p>
+<table>
+<thead>
+<tr class="header">
+<th>You supply</th>
+<th>DEM2DGED calculates from the reference raster</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Source CE90 and LE90, output horizontal CE90, random horizontal, relative horizontal, relative vertical, the identifiers and method</td>
+<td>Vertical random error and vertical absolute error of your tiles against the reference</td>
+</tr>
+</tbody>
+</table>
+<p>Horizontal accuracy cannot be worked out from elevation values alone, which is why you must bring measured horizontal numbers from a proper survey or evaluation.</p>
+<hr />
+<h2 id="7-step-by-step-run-the-full-gate-in-the-gui">7. Step-by-step: run the full gate in the GUI</h2>
+<p>Before you start, gather: the source DEM, the independent reference raster, the source's accuracy statement, and your measured accuracy results.</p>
+<ol>
+<li><strong>Open</strong> <code>dem2dged.exe</code> (or run <code>dem2dged_gui.py</code> from the Anaconda Prompt in your <code>DGED</code> environment — never in <code>base</code>).</li>
+<li><strong>Add your source DEM</strong> and choose the <strong>output folder</strong>, <strong>mode</strong> (GEO or UTM) and <strong>level</strong>.</li>
+<li><strong>Source vertical:</strong> enter the height-reference EPSG of your source (for example <code>3855</code>).</li>
+<li><strong>Prepare the evidence</strong> (pick one):
+<ul>
+<li><strong>Quick way:</strong> skip the manifest and type values straight into the boxes in section 6.</li>
+<li><strong>Organised way:</strong> click <strong>Create template…</strong>, choose a new empty folder, open <code>compliance_evidence.json</code> in a text editor, fill in the fields (section 11), put your PDFs in <code>documents/</code>, save, then click <strong>Load</strong>.</li>
+</ul></li>
+<li><strong>Check every box</strong> in section 6 has a value. The two <strong>Abs. H / Abs. V accuracy</strong> boxes must be numbers, not <code>auto</code>.</li>
+<li>Make sure <strong>Validate after conversion</strong> is ticked (the gate switches it on for you).</li>
+<li><strong>Tick</strong> <em>Require full implemented DGIWG 250 evidence gate</em>.</li>
+<li>Click <strong>Convert</strong>.
+<ul>
+<li>If a pop-up appears, read <a href="#9-the-pop-up-messages-and-what-to-do">section 9</a>. Nothing has been converted yet; fix what it says and click Convert again.</li>
+</ul></li>
+<li>When the run finishes, open <code>&lt;output&gt;\validation\report.html</code> and <code>compliance_report.txt</code> (<a href="#10-reading-the-result">section 10</a>).</li>
+</ol>
+<blockquote>
+<p><strong>Strict profile:</strong> when the gate is ticked, DEM2DGED automatically uses the <em>strict</em> terrain-quality profile, because the lenient default has no numeric limits and could pass anything.</p>
+</blockquote>
+<hr />
+<h2 id="8-the-same-thing-from-the-command-line">8. The same thing from the command line</h2>
+<p>Open an <strong>Anaconda Prompt</strong>, activate your dedicated environment (never <code>base</code>), and run (all on one line):</p>
+<pre class="bat"><code>conda activate DGED
+python dem2dged.py source.tif output --mode geo --level 6 ^
+  --source-vertical 3855 ^
+  --source-horizontal-accuracy 0.30 --source-vertical-accuracy 0.80 ^
+  --reference-dem independent_control.tif ^
+  --reference-identifier &quot;CONTROL-2026-01&quot; ^
+  --accuracy-evaluation-method &quot;QUALITY-PLAN-2215-01&quot; ^
+  --reference-horizontal-ce90 1.20 --reference-horizontal-random-90 0.30 ^
+  --reference-relative-horizontal-90 0.80 --reference-relative-vertical-90 0.40 ^
+  --abs-hacc 1.20 --abs-vacc 0.80 ^
+  --terrain-qa full --compliance-profile strict --require-full-compliance
+</code></pre>
+<p>(<code>^</code> continues a command onto the next line in Windows.) The numbers above are <strong>illustrations only</strong>. Use your own measured values.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Option</th>
+<th>GUI box it matches</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>--source-vertical</code></td>
+<td>Source vertical</td>
+</tr>
+<tr class="even">
+<td><code>--source-horizontal-accuracy</code> / <code>--source-vertical-accuracy</code></td>
+<td>Source horizontal CE90 / Source vertical LE90</td>
+</tr>
+<tr class="odd">
+<td><code>--reference-dem</code></td>
+<td>Independent reference</td>
+</tr>
+<tr class="even">
+<td><code>--reference-identifier</code></td>
+<td>Reference identifier</td>
+</tr>
+<tr class="odd">
+<td><code>--accuracy-evaluation-method</code></td>
+<td>Evaluation method</td>
+</tr>
+<tr class="even">
+<td><code>--reference-horizontal-ce90</code></td>
+<td>Output absolute H CE90</td>
+</tr>
+<tr class="odd">
+<td><code>--reference-horizontal-random-90</code></td>
+<td>Output random H 90%</td>
+</tr>
+<tr class="even">
+<td><code>--reference-relative-horizontal-90</code></td>
+<td>Output relative H 90%</td>
+</tr>
+<tr class="odd">
+<td><code>--reference-relative-vertical-90</code></td>
+<td>Output relative V 90%</td>
+</tr>
+<tr class="even">
+<td><code>--abs-hacc</code> / <code>--abs-vacc</code></td>
+<td>Abs. H accuracy / Abs. V accuracy</td>
+</tr>
+<tr class="odd">
+<td><code>--require-full-compliance</code></td>
+<td>The master switch</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Exit codes:</strong> <code>0</code> = full gate passed. <code>2</code> = <strong>HOLD</strong> (something missing or failed; read the report). <code>--require-full-compliance</code> cannot be combined with <code>--no-validate</code> or <code>--terrain-qa none</code> — the program refuses before converting, because those options would skip the very checks the gate needs.</p>
+<p>Evidence-package helper (separate small tool):</p>
+<pre class="bat"><code>python dem2dged_evidence.py init  D:\evidence --level 6
+python dem2dged_evidence.py calculate D:\evidence\control_points.csv
+python dem2dged_evidence.py check D:\evidence\compliance_evidence.json
+</code></pre>
+<hr />
+<h2 id="9-the-pop-up-messages-and-what-to-do">9. The pop-up messages and what to do</h2>
+<p>These appear when you click <strong>Convert</strong> with the gate ticked. They appear <strong>before</strong> anything is converted, so nothing is wasted.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Message you see</th>
+<th>What it means</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Full evidence is incomplete</strong> — "Strict DGIWG evidence mode requires: …" followed by a list.</td>
+<td>Each bullet is an empty box.</td>
+<td>Fill in every listed box (<a href="#6-every-box-in-the-gui-one-by-one">section 6</a>), or untick the gate if you do not need it.</td>
+</tr>
+<tr class="even">
+<td><strong>Measured metadata required</strong> — "Abs. H accuracy / Abs. V accuracy must contain a measured … value".</td>
+<td>The box still says <code>auto</code>. <code>auto</code> means "use the rule-book <em>goal</em>", and a goal is not evidence.</td>
+<td>Replace <code>auto</code> with your real measured number in metres.</td>
+</tr>
+<tr class="odd">
+<td><strong>Invalid accuracy evidence</strong> — "… must be a number in metres."</td>
+<td>You typed text, or a comma instead of a point.</td>
+<td>Use digits and a dot, e.g. <code>0.30</code>. No unit text.</td>
+</tr>
+<tr class="even">
+<td><strong>Invalid accuracy evidence</strong> — "… cannot be negative."</td>
+<td>An accuracy value is below zero.</td>
+<td>Accuracy values are positive distances.</td>
+</tr>
+<tr class="odd">
+<td><strong>Reference not found</strong> — "The independent reference file does not exist".</td>
+<td>The path is wrong or the file moved.</td>
+<td>Use <strong>Browse…</strong> to pick it again.</td>
+</tr>
+<tr class="even">
+<td><strong>Validator unavailable</strong></td>
+<td><code>dem2dged_validate</code> could not load in this installation.</td>
+<td>Reinstall/rebuild; the gate cannot run without it.</td>
+</tr>
+<tr class="odd">
+<td><strong>Evidence manifest not found / could not be loaded</strong></td>
+<td>The manifest path is empty, wrong, or the file is not a DEM2DGED manifest.</td>
+<td>Pick <code>compliance_evidence.json</code> made by <strong>Create template…</strong>; check it is valid JSON (no missing commas or quotes).</td>
+</tr>
+<tr class="even">
+<td><strong>Evidence workflow unavailable</strong></td>
+<td><code>dem2dged_evidence.py</code> is missing from this installation.</td>
+<td>Use the files from the release package.</td>
+</tr>
+</tbody>
+</table>
+<p>Messages in the <strong>log</strong> after the run:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Log line</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Reference independence: PASS</code></td>
+<td>Your reference is not a copy of the source.</td>
+</tr>
+<tr class="even">
+<td><code>Reference independence: FAIL — … derived from the source</code></td>
+<td>The reference is the source, a copy of it, or a resampled/shifted version. Choose a truly independent dataset.</td>
+</tr>
+<tr class="odd">
+<td><code>Reference independence: NOT_EVALUATED — … only N overlapping posts</code></td>
+<td>Too little overlap to judge. Use a reference that covers the delivered area.</td>
+</tr>
+<tr class="even">
+<td><code>Compliance HOLD: full evidence gate did not pass</code></td>
+<td>The run finished but the report is not PASS. Open the report to see which item is missing or failed.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="10-reading-the-result">10. Reading the result</h2>
+<p>Open these files in the output folder (you can open <code>.html</code> in any browser):</p>
+<table>
+<thead>
+<tr class="header">
+<th>File</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>validation\compliance_report.txt</code></td>
+<td>The easiest summary. Start here.</td>
+</tr>
+<tr class="even">
+<td><code>validation\compliance_report.json</code></td>
+<td>Same information for programs.</td>
+</tr>
+<tr class="odd">
+<td><code>validation\report.html</code></td>
+<td>Pretty overview with statistics.</td>
+</tr>
+<tr class="even">
+<td><code>DGED_Validation_Report.html</code></td>
+<td>Structure checks of the tiles.</td>
+</tr>
+<tr class="odd">
+<td><code>validation\error_budget.json</code></td>
+<td>Splits the final error into "was in the source" and "added by the conversion".</td>
+</tr>
+<tr class="even">
+<td><code>validation\independent_reference\…</code></td>
+<td>Detailed comparison against your reference.</td>
+</tr>
+</tbody>
+</table>
+<p>The report is divided into <strong>sections</strong>. Each is PASS, FAIL or NOT_EVALUATED; the overall result is FAIL if any is FAIL, NOT_EVALUATED if none fail but one is missing, and PASS only when all pass.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Section</th>
+<th>Question it answers</th>
+<th>Typical reason it is not PASS</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>product_structure</code></td>
+<td>Are the tiles built correctly (names, grid, format)?</td>
+<td>A validator check failed (see <code>DGED_Validation_Report</code>).</td>
+</tr>
+<tr class="even">
+<td><code>source_eligibility</code></td>
+<td>Was the source fine enough, with a stated height reference and accuracy, for this level?</td>
+<td>Source coarser than the level; vertical code or accuracy missing; accuracy worse than the level's goal.</td>
+</tr>
+<tr class="odd">
+<td><code>conversion_fidelity</code></td>
+<td>Is the conversion faithful to the source?</td>
+<td>Terrain QA off, or errors above the strict limits. (This is <strong>not</strong> accuracy.)</td>
+</tr>
+<tr class="even">
+<td><code>independent_accuracy</code></td>
+<td>Does the output meet the level's accuracy limits, measured against independent evidence?</td>
+<td>Reference missing/not independent; identifier or method missing; a measured number missing or above the limit.</td>
+</tr>
+<tr class="odd">
+<td><code>accuracy_metadata</code></td>
+<td>Are the accuracy numbers in the tile metadata real numbers?</td>
+<td><code>Abs. H/V accuracy</code> left at <code>auto</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>Each failing line also shows a short reason in the text report.</p>
+<hr />
+<h2 id="11-every-field-of-the-evidence-manifest-explained">11. Every field of the evidence manifest explained</h2>
+<p>Open <code>compliance_evidence.json</code> in Notepad (or any text editor). Keep the structure; only change the values between the quotation marks. Text goes in <code>"quotes"</code>, numbers do not.</p>
+<p>Fields you do <strong>not</strong> edit are marked <em>(automatic)</em>.</p>
+<h3 id="top-level">Top level</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Meaning</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>schema</code> <em>(automatic)</em></td>
+<td>Identifies the file format. Do not change it.</td>
+<td><code>DEM2DGED-evidence-package-1.0</code></td>
+</tr>
+<tr class="even">
+<td><code>tool_version</code> <em>(automatic)</em></td>
+<td>Version that created the file.</td>
+<td><code>0.62.0</code></td>
+</tr>
+<tr class="odd">
+<td><code>created_utc</code> <em>(automatic)</em></td>
+<td>When the template was made.</td>
+<td><code>2026-10-14T…</code></td>
+</tr>
+<tr class="even">
+<td><code>product_level</code></td>
+<td>The DGED level of this delivery. Must match the level you convert.</td>
+<td><code>"6"</code></td>
+</tr>
+<tr class="odd">
+<td><code>strict_validation_report</code></td>
+<td>Path to the report DEM2DGED writes after a <strong>gated</strong> run: <code>&lt;output&gt;\validation\compliance_report.json</code>. Leave empty until the first run, then fill it in.</td>
+<td><code>"D:\\out\\validation\\compliance_report.json"</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="source--facts-about-the-dem-you-are-converting"><code>source</code> — facts about the DEM you are converting</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Meaning</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>raster_path</code></td>
+<td>Path to the source DEM file.</td>
+<td><code>"source.tif"</code></td>
+</tr>
+<tr class="even">
+<td><code>vertical_epsg</code></td>
+<td>EPSG number of its height reference.</td>
+<td><code>"3855"</code></td>
+</tr>
+<tr class="odd">
+<td><code>vertical_datum_evidence</code></td>
+<td>The document that proves the height reference. It has three sub-fields: <code>path</code> (the file in <code>documents/</code>), <code>document_id</code> (its reference number/title), <code>issuer</code> (who wrote it).</td>
+<td><code>documents/source_vertical_datum.pdf</code></td>
+</tr>
+<tr class="even">
+<td><code>horizontal_ce90_m</code></td>
+<td>The source's stated position accuracy, in metres.</td>
+<td><code>0.30</code></td>
+</tr>
+<tr class="odd">
+<td><code>vertical_le90_m</code></td>
+<td>The source's stated height accuracy, in metres.</td>
+<td><code>0.80</code></td>
+</tr>
+<tr class="even">
+<td><code>accuracy_evidence</code></td>
+<td>The document that proves those two numbers (<code>path</code>, <code>document_id</code>, <code>issuer</code>).</td>
+<td><code>documents/source_accuracy.pdf</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="independent_control--facts-about-the-reference"><code>independent_control</code> — facts about the reference</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Meaning</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>dataset_path</code></td>
+<td>The independent reference raster.</td>
+<td><code>"independent_control.tif"</code></td>
+</tr>
+<tr class="even">
+<td><code>identifier</code></td>
+<td>A unique name/version/date for it.</td>
+<td><code>"CONTROL-2026-01"</code></td>
+</tr>
+<tr class="odd">
+<td><code>provider</code></td>
+<td>Who produced it.</td>
+<td><code>"Independent Survey Authority"</code></td>
+</tr>
+<tr class="even">
+<td><code>acquisition_date</code></td>
+<td>When the data was collected.</td>
+<td><code>"2026-01-15"</code></td>
+</tr>
+<tr class="odd">
+<td><code>independence_statement</code></td>
+<td>One or two sentences saying why it is independent.</td>
+<td><code>"Acquired by a separate survey; not derived from the source."</code></td>
+</tr>
+<tr class="even">
+<td><code>evidence_document</code></td>
+<td>Provenance paper (<code>path</code>, <code>document_id</code>, <code>issuer</code>).</td>
+<td><code>documents/control_dataset_provenance.pdf</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="evaluation--how-accuracy-was-measured"><code>evaluation</code> — how accuracy was measured</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Meaning</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>method_identifier</code></td>
+<td>ID of the written evaluation procedure.</td>
+<td><code>"QUALITY-PLAN-2215-01"</code></td>
+</tr>
+<tr class="even">
+<td><code>method_document</code></td>
+<td>The procedure document (<code>path</code>, <code>document_id</code>, <code>issuer</code>).</td>
+<td><code>documents/accuracy_evaluation_method.pdf</code></td>
+</tr>
+<tr class="odd">
+<td><code>control_points_csv</code></td>
+<td>The table of measured points (<a href="#12-the-control-point-csv-file">section 12</a>). Optional.</td>
+<td><code>"control_points.csv"</code></td>
+</tr>
+<tr class="even">
+<td><code>approved_minimum_control_points</code></td>
+<td>The smallest number of points your procedure allows. A whole number.</td>
+<td><code>20</code></td>
+</tr>
+<tr class="odd">
+<td><code>results_document</code></td>
+<td>The report of the measured results (<code>path</code>, <code>document_id</code>, <code>issuer</code>).</td>
+<td><code>documents/accuracy_results.pdf</code></td>
+</tr>
+<tr class="even">
+<td><code>declared_results</code></td>
+<td>The six measured numbers, in metres (see below). Ignored for any value that is calculated from the CSV.</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>level_limits_for_reference</code> <em>(automatic)</em></td>
+<td>The limits for your level, shown for convenience.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><code>declared_results</code> fields:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>horizontal_absolute_ce90_m</code></td>
+<td>Measured horizontal CE90 of the output. Becomes the <strong>Abs. H accuracy</strong> metadata.</td>
+</tr>
+<tr class="even">
+<td><code>horizontal_random_90_m</code></td>
+<td>Horizontal scatter after removing the average shift.</td>
+</tr>
+<tr class="odd">
+<td><code>horizontal_relative_90_m</code></td>
+<td>Horizontal agreement between point pairs.</td>
+</tr>
+<tr class="even">
+<td><code>vertical_absolute_le90_m</code></td>
+<td>Measured vertical LE90 of the output. Becomes the <strong>Abs. V accuracy</strong> metadata.</td>
+</tr>
+<tr class="odd">
+<td><code>vertical_random_90_m</code></td>
+<td>Vertical scatter after removing the average height shift.</td>
+</tr>
+<tr class="even">
+<td><code>vertical_relative_90_m</code></td>
+<td>Vertical agreement between point pairs.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="authority_acceptance--the-sign-off-never-you"><code>authority_acceptance</code> — the sign-off (never you)</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>status</code></td>
+<td>Starts as <code>"PENDING_AUTHORITY"</code>. Only the <strong>designated approving authority</strong> may change it to <code>"ACCEPTED"</code> (or <code>"REJECTED"</code>).</td>
+</tr>
+<tr class="even">
+<td><code>authority</code>, <code>reviewer</code>, <code>decision_date</code></td>
+<td>Who approved, the person, and the date (<code>YYYY-MM-DD</code>).</td>
+</tr>
+<tr class="odd">
+<td><code>record_document</code></td>
+<td>The <strong>signed</strong> acceptance record file. Without it, ACCEPTED does not count.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>A "document" entry has three parts, and all three are required:</strong> the file must exist (not an empty placeholder), it needs a <code>document_id</code>, and it needs an <code>issuer</code>. Missing any of them keeps that step on HOLD.</p>
+</blockquote>
+<h3 id="a-filled-in-example-illustration-only">A filled-in example (illustration only)</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="er">&quot;source&quot;:</span> <span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a>  <span class="dt">&quot;raster_path&quot;</span><span class="fu">:</span> <span class="st">&quot;source.tif&quot;</span><span class="fu">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a>  <span class="dt">&quot;vertical_epsg&quot;</span><span class="fu">:</span> <span class="st">&quot;3855&quot;</span><span class="fu">,</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a>  <span class="dt">&quot;vertical_datum_evidence&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true"></a>    <span class="dt">&quot;path&quot;</span><span class="fu">:</span> <span class="st">&quot;documents/source_vertical_datum.pdf&quot;</span><span class="fu">,</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true"></a>    <span class="dt">&quot;document_id&quot;</span><span class="fu">:</span> <span class="st">&quot;VERT-001&quot;</span><span class="fu">,</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true"></a>    <span class="dt">&quot;issuer&quot;</span><span class="fu">:</span> <span class="st">&quot;Source Provider&quot;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true"></a>  <span class="fu">},</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true"></a>  <span class="dt">&quot;horizontal_ce90_m&quot;</span><span class="fu">:</span> <span class="fl">0.30</span><span class="fu">,</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true"></a>  <span class="dt">&quot;vertical_le90_m&quot;</span><span class="fu">:</span> <span class="fl">0.80</span><span class="fu">,</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true"></a>  <span class="dt">&quot;accuracy_evidence&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true"></a>    <span class="dt">&quot;path&quot;</span><span class="fu">:</span> <span class="st">&quot;documents/source_accuracy.pdf&quot;</span><span class="fu">,</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true"></a>    <span class="dt">&quot;document_id&quot;</span><span class="fu">:</span> <span class="st">&quot;ACC-001&quot;</span><span class="fu">,</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true"></a>    <span class="dt">&quot;issuer&quot;</span><span class="fu">:</span> <span class="st">&quot;Source Provider&quot;</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true"></a>  <span class="fu">}</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+<p><strong>JSON tips for beginners:</strong> every <code>"name": value</code> pair except the last in a group ends with a comma; text needs straight double quotes <code>"…"</code>; use <code>/</code> or <code>\\</code> (double backslash) in Windows paths inside the file; numbers have no quotes; <code>null</code> means "empty". If <strong>Load</strong> reports an error, paste the file into any online JSON checker or open it in an editor that highlights errors.</p>
+<hr />
+<h2 id="12-the-control-point-csv-file">12. The control-point CSV file</h2>
+<p><code>control_points.csv</code> is an optional table. Each row is one <strong>control point</strong>: a place where you know the true position and height, next to what the delivered data says.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>point_id</code></td>
+<td>A name for the point (<code>A</code>, <code>P-017</code>). Must not be empty.</td>
+</tr>
+<tr class="even">
+<td><code>test_easting_m</code>, <code>test_northing_m</code>, <code>test_elevation_m</code></td>
+<td>Position and height <strong>as read from your delivered DGED data</strong>.</td>
+</tr>
+<tr class="odd">
+<td><code>reference_easting_m</code>, <code>reference_northing_m</code>, <code>reference_elevation_m</code></td>
+<td>The <strong>true</strong> position and height from the survey.</td>
+</tr>
+<tr class="even">
+<td><code>relative_pair_id</code></td>
+<td>Tag two nearby points with the same ID (e.g. <code>P1</code>) to measure relative accuracy. <strong>Each ID must appear exactly twice.</strong> Leave empty if the point is not part of a pair.</td>
+</tr>
+</tbody>
+</table>
+<p>Example (four points, two pairs):</p>
+<pre class="csv"><code>point_id,test_easting_m,test_northing_m,test_elevation_m,reference_easting_m,reference_northing_m,reference_elevation_m,relative_pair_id
+A,100.04,200.03,50.06,100.00,200.00,50.00,P1
+B,110.05,200.02,51.08,110.00,200.00,51.00,P1
+C,100.03,210.04,52.05,100.00,210.00,52.00,P2
+D,110.06,210.03,53.07,110.00,210.00,53.00,P2
+</code></pre>
+<p>Calculate the six accuracy numbers:</p>
+<pre class="bat"><code>python dem2dged_evidence.py calculate control_points.csv
+</code></pre>
+<p>For the table above it reports (metres, rounded):</p>
+<table>
+<thead>
+<tr class="header">
+<th>Result</th>
+<th>Value</th>
+<th>Where it goes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>horizontal_absolute_ce90_m</code></td>
+<td>0.063</td>
+<td>Output absolute H CE90 and Abs. H accuracy</td>
+</tr>
+<tr class="even">
+<td><code>horizontal_random_90_m</code></td>
+<td>0.017</td>
+<td>Output random H 90%</td>
+</tr>
+<tr class="odd">
+<td><code>horizontal_relative_90_m</code></td>
+<td>0.030</td>
+<td>Output relative H 90%</td>
+</tr>
+<tr class="even">
+<td><code>vertical_absolute_le90_m</code></td>
+<td>0.077</td>
+<td>Abs. V accuracy</td>
+</tr>
+<tr class="odd">
+<td><code>vertical_random_90_m</code></td>
+<td>0.015</td>
+<td>(vertical, calculated by the run)</td>
+</tr>
+<tr class="even">
+<td><code>vertical_relative_90_m</code></td>
+<td>0.020</td>
+<td>Output relative V 90%</td>
+</tr>
+</tbody>
+</table>
+<p>How it is computed: for each point, error = delivered − true. "Absolute" = the 90th percentile of the error size. "Random" = the 90th percentile after removing the average error (bias). "Relative" = the 90th percentile of the difference between the errors of the two points in each pair.</p>
+<blockquote>
+<p><strong>Important.</strong> This calculator uses a plain, transparent 90th-percentile formula. Use it <strong>only if your quality plan allows it</strong>. It does not claim to reproduce every STANAG 2215 sampling or acceptance rule. If your plan specifies another method, use the numbers from your plan's results report instead.</p>
+</blockquote>
+<p>How many points do I need? Whatever your approved procedure says. Put that number in <code>approved_minimum_control_points</code>; the checker compares it with the number of rows in your CSV.</p>
+<hr />
+<h2 id="13-the-seven-evidence-steps">13. The seven evidence steps</h2>
+<p>The evidence package lines up with seven steps. Steps 1–6 can be technically checked by DEM2DGED. Step 7 is a human decision.</p>
+<table>
+<thead>
+<tr class="header">
+<th>#</th>
+<th>Step</th>
+<th>You provide</th>
+<th>Status words</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td><strong>Verified source vertical datum</strong></td>
+<td>EPSG code + a document proving it</td>
+<td>PASS / HOLD / FAIL</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td><strong>Verified source accuracy</strong></td>
+<td>Source CE90 and LE90 + a document proving them; they must be within the level's goals</td>
+<td>PASS / HOLD / FAIL</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td><strong>Independent control dataset</strong></td>
+<td>Reference file + identifier, provider, date, independence statement, provenance document. A reference identical to the source is a <strong>FAIL</strong>.</td>
+<td>PASS / HOLD / FAIL</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td><strong>Measured accuracy results</strong></td>
+<td>The six measured numbers (or the CSV), the results document, and a control-point count that meets your approved minimum. Random/relative values must be within the level limits (section 14).</td>
+<td>PASS / HOLD / FAIL</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td><strong>Documented evaluation method</strong></td>
+<td>Method ID + the method document</td>
+<td>PASS / HOLD</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td><strong>Strict validation pass</strong></td>
+<td>The <code>compliance_report.json</code> from a gated DEM2DGED run, with overall <code>PASS</code> and the same level</td>
+<td>PASS / HOLD / FAIL</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td><strong>Authority acceptance</strong></td>
+<td>Signed record from the designated authority</td>
+<td><strong>always HOLD until a human accepts</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Run the checker at any time to see which steps are complete:</p>
+<pre class="bat"><code>python dem2dged_evidence.py check D:\evidence\compliance_evidence.json
+</code></pre>
+<p>It writes readiness reports and prints each step's status. <strong>Technical readiness PASS only means steps 1–6 passed. It is not an acceptance.</strong></p>
+<p>Order that works well:</p>
+<ol>
+<li>Create the template. 2. Collect documents for steps 1, 2, 3 and 5.</li>
+<li>Do the accuracy evaluation (step 4). 4. Run a gated conversion (step 6).</li>
+<li>Put the report path into <code>strict_validation_report</code>. 6. Run <code>check</code>.</li>
+<li>Hand the package to your authority for step 7.</li>
+</ol>
+<hr />
+<h2 id="14-accuracy-limits-per-level">14. Accuracy limits per level</h2>
+<p>These are the numbers your measured values are compared with (DGIWG 250 as implemented in DEM2DGED v0.62.0). All values are in metres.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Level</th>
+<th>Post spacing</th>
+<th>H random 90</th>
+<th>H relative 90</th>
+<th>V random 90</th>
+<th>V relative 90</th>
+<th>Abs H CE90 <em>goal</em></th>
+<th>Abs V LE90 <em>goal</em></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>3</td>
+<td>15</td>
+<td>4.4</td>
+<td>12.4</td>
+<td>2.2</td>
+<td>6.2</td>
+<td>15</td>
+<td>12.4</td>
+</tr>
+<tr class="even">
+<td>4b</td>
+<td>5</td>
+<td>1.75</td>
+<td>5</td>
+<td>0.87</td>
+<td>2.5</td>
+<td>6</td>
+<td>5</td>
+</tr>
+<tr class="odd">
+<td>4</td>
+<td>4</td>
+<td>1.41</td>
+<td>4</td>
+<td>0.71</td>
+<td>2</td>
+<td>5</td>
+<td>4</td>
+</tr>
+<tr class="even">
+<td>5</td>
+<td>2</td>
+<td>0.71</td>
+<td>2</td>
+<td>0.35</td>
+<td>1</td>
+<td>3</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>6</td>
+<td>1</td>
+<td>0.35</td>
+<td>1</td>
+<td>0.18</td>
+<td>0.5</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>7</td>
+<td>0.5</td>
+<td>0.18</td>
+<td>0.5</td>
+<td>0.09</td>
+<td>0.25</td>
+<td>1</td>
+<td>0.5</td>
+</tr>
+<tr class="odd">
+<td>8</td>
+<td>0.25</td>
+<td>0.09</td>
+<td>0.25</td>
+<td>0.04</td>
+<td>0.12</td>
+<td>0.5</td>
+<td>0.25</td>
+</tr>
+<tr class="even">
+<td>9</td>
+<td>0.125</td>
+<td>0.04</td>
+<td>0.125</td>
+<td>0.02</td>
+<td>0.06</td>
+<td>0.25</td>
+<td>0.12</td>
+</tr>
+</tbody>
+</table>
+<p>Levels 0–2 (very coarse) have vertical random limits of 20, 20 and 12 m and no random/relative horizontal limits.</p>
+<ul>
+<li><strong>Random and relative</strong> values must be <strong>at or below</strong> the limit. If not, that check is a <strong>FAIL</strong>.</li>
+<li>The <strong>absolute</strong> CE90/LE90 values in the last two columns are <strong>goals</strong>. You must <em>report your measured value</em> (a blank or <code>auto</code> is not accepted), but a value above the goal does not by itself fail the gate.</li>
+<li>In terrain where the typical slope is <strong>steeper than 20 %</strong>, DGIWG 250 allows the <strong>vertical</strong> limits to be multiplied by <strong>1.4</strong>. DEM2DGED applies this automatically when mountain terrain QA detects it.</li>
+<li>Finer levels have much tighter limits. For Levels 6–9 the horizontal random and relative evidence is especially important and must not be left out.</li>
+<li>If your <strong>source</strong> is coarser than the level you choose, the report shows a <strong>FAIL</strong>: you cannot make fine data from coarse data.</li>
+</ul>
+<hr />
+<h2 id="15-practice-run-with-safe-test-data">15. Practice run with safe test data</h2>
+<p>Want to see a PASS and a FAIL happen without real data? The release includes a test program that builds a small fake DEM and runs the gate on it.</p>
+<pre class="bat"><code>conda activate DGED
+cd /d &lt;folder that contains TEST_GATE_V0.62.0.py&gt;
+python TEST_GATE_V0.62.0.py
+</code></pre>
+<p>It writes a log in the <code>logs</code> folder showing, among other cases: no reference (NOT_EVALUATED), a copy of the source (FAIL), a resampled copy (FAIL), a genuinely independent reference with full evidence (PASS). <strong>The numbers it uses are made up — never reuse them for a real delivery.</strong></p>
+<hr />
+<h2 id="16-common-mistakes-and-faq">16. Common mistakes and FAQ</h2>
+<p><strong>I ticked the box and got a pop-up. Did something break?</strong> No. The gate refuses to start until every piece of evidence is present. Read section 9.</p>
+<p><strong>Can I use the same DEM as both source and reference?</strong> No. That compares a file with itself and proves nothing. DEM2DGED rejects it.</p>
+<p><strong>My reference is a smoothed or resampled version of my source — is that OK?</strong> No. It is derived from the source. It is rejected when detected, and it is not a valid use even when it is not detected.</p>
+<p><strong>What do I type in "Abs. H accuracy" and "Abs. V accuracy"?</strong> Your measured absolute accuracy (CE90 horizontal, LE90 vertical) for the delivered data. Not <code>auto</code>. These numbers are written into the tile metadata.</p>
+<p><strong>Is "Source CE90/LE90" the same as "Abs. H/V accuracy"?</strong> No. Source = quality of the DEM you started with (from its supplier). Abs. = quality of the data you deliver (from your accuracy evaluation).</p>
+<p><strong>Where do the horizontal numbers come from? The tool only has elevations.</strong> From your survey/evaluation: control points measured on the ground compared with the delivered data. See section 12.</p>
+<p><strong>The report says NOT_EVALUATED. Is my data bad?</strong> No. It means a required piece of evidence is missing, so DEM2DGED will not judge. Open <code>compliance_report.txt</code> and read which line says NOT_EVALUATED.</p>
+<p><strong>The report says PASS. Can I say the delivery is NATO-certified?</strong> No. See section 17.</p>
+<p><strong>Do I have to use the evidence manifest?</strong> No. It is an organising aid. Type the values into the GUI if you prefer. You <strong>do</strong> need the documents it points to if a reviewer will examine your evidence package.</p>
+<p><strong>Does "Load" check or change my evidence?</strong> Load copies the manifest's values into the GUI and prints a readiness summary. It never edits the manifest and never turns missing evidence into a pass.</p>
+<p><strong>Can I convert first and gather evidence later?</strong> Yes. Convert normally without the gate. You can re-run later with the reference and numbers (or run <code>dem2dged_validate.py</code> on the existing output folder with <code>--terrain-qa</code>, <code>--reference-dem</code> and <code>--require-full-compliance</code>).</p>
+<p><strong>Why does <code>--require-full-compliance</code> refuse to run with <code>--no-validate</code>?</strong> Because the gate is evaluated by the validation step. Skipping validation would make the gate meaningless.</p>
+<p><strong>Which Python environment?</strong> Always a dedicated one (for example <code>DGED</code>). Never install packages into <code>base</code>.</p>
+<hr />
+<h2 id="17-what-this-tool-does-not-claim">17. What this tool does not claim</h2>
+<ul>
+<li>DEM2DGED produces <strong>technical conformance evidence</strong>. It does <strong>not</strong> issue NATO, national, contractual or operational certification.</li>
+<li>A report <strong>PASS</strong> means the checks this software implements had evidence and passed for <em>that delivery</em>. Your accepting authority reviews the evidence against its own controlled standards.</li>
+<li><strong>STANAG 3809 (DTED)</strong> is not the output format of this tool, so it is reported as not applicable. A DTED product needs a separate encoder.</li>
+<li><strong>STANAG 2215</strong> status describes quality-evaluation <em>evidence</em> only.</li>
+<li><strong>Authority acceptance</strong> stays <em>not evaluated / pending</em> until the designated authority signs.</li>
+<li>Do not label the software or a product "NATO certified" because of a PASS.</li>
+</ul>
+<p><em>Related files:</em> <code>README.md</code>, <code>DEM2DGED_User_Manual.md</code>, <code>REQUIREMENTS_COMPLIANCE_V0.62.0.md</code> (the formal rules this guide explains), <code>DEM_SOURCES_GUIDE.md</code>.</p>
+</body>
+</html>

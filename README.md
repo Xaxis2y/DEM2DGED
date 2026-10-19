@@ -3,7 +3,11 @@
 **SPDX-License-Identifier: GPL-2.0-or-later**  
 **Copyright (c) 2026 Eui Soo SON**
 
-**Current version: v0.62.8**
+**Current version: v0.62.10**
+
+**v0.62.10 CGVD2013 on NAD83(CSRS) data:** when PROJ has no strict chain from the declared vertical datum to EGM2008 (CGVD2013 on generic NAD83(CSRS) tiles such as NRCan HRDEM), dem2dged now applies a separate, cross-checked vertical correction to a temporary copy of the source and records the route in the output folder. The strict check is not loosened; other datums still stop when it fails. See dem2dged_vertical.py.
+
+**v0.62.10 geoid grid files:** PROJ could not fetch the CGVD2013 and EGM2008 grids from inside the GUI worker thread. dem2dged now downloads the two grid files itself, once, from cdn.proj.org into `%LOCALAPPDATA%\dem2dged\proj_grids` (folder override: `DEM2DGED_GRID_DIR`; switch the download off with `DEM2DGED_NO_GRID_DOWNLOAD=1` and copy the files in by hand; `python dem2dged_vertical.py --fetch-grids` fetches them ahead of time). The files are checked (size cap, must open as rasters) and their SHA-256 is recorded in vertical_correction.json.
 
 **v0.62.8 source vertical datum detection:** a "Detect" button next to
 Advanced > Source vertical looks for the datum in the file, its metadata tags,
